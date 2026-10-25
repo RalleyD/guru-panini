@@ -1,7 +1,7 @@
 # 0001: Tech stack
 
-Status: **Frontend accepted (Vue 3 + TypeScript, Vite, Vitest)**; hosting and package manager still open. Proof of
-concept, single user. Revisit before real client data goes in.
+Status: **Accepted for the proof of concept**: Vue 3 + TypeScript, Vite, Vitest, pnpm, Cloudflare,
+Supabase. Proof of concept, single user. Revisit before real client data goes in.
 Inputs: [design handoff](../design-handoff.md) and its open questions.
 
 ## Context
@@ -34,12 +34,12 @@ What the design implies:
 | Frontend | **Vue 3 + Vite**, Vue Router, SPA | Runner-up: SvelteKit. Add Nuxt only if server rendering is ever needed. |
 | Validation | [Zod](https://zod.dev) | Runtime validation of forms, API payloads and LLM output. |
 | Backend / DB | **Supabase** (Postgres, Auth, Storage, Edge Functions, pg_cron) | EU region, chosen at project creation. |
-| Hosting (frontend) | Static files on a free host | See "Hosting" below. Not decided. |
+| Hosting (frontend) | **Cloudflare**, static files (Workers with Static Assets preferred over Pages for a new project) | See "Hosting" below. |
 | Assist workflow | Run rows with a stage, advanced by short steps | See "Assist workflow". |
 | Lint / format | Ruff (Python, if any), Biome (TypeScript) | Per `AGENTS.md`. |
 | Build / dev server | **Vite** | Official Vue path (`create-vue`, `@vitejs/plugin-vue`). Bun is not used as bundler. |
 | Tests / types | **Vitest**, `vue-tsc` | Vitest is Vite-native and handles `.vue` files; `bun test` does not. |
-| Package manager | npm or pnpm (not yet chosen) | Bun-as-installer would work, but its support in the chosen host's build system is unverified. |
+| Package manager | **pnpm** | Commit `pnpm-lock.yaml`; pin the version with `"packageManager"` in `package.json` (Corepack). Install with `pnpm install --frozen-lockfile` in CI and on the host. Stricter dependency handling than npm and faster installs. Bun-as-installer rejected: its support in the host's build system is unverified. |
 
 ### Why Vue
 
@@ -83,8 +83,11 @@ Deploy the SPA as static files; keep long-running work off the frontend host.
 | Paid step | Pro $20/month once the agency uses it | Free for static assets |
 | Direction | Mature, polished | Cloudflare steers new projects to Workers with Static Assets; Pages is still supported |
 
-Recommendation: Cloudflare, because it removes the licence problem at no cost. Vercel is also fine
-for a throwaway proof of concept. Because the app is a static SPA, switching hosts later is cheap.
+Decision: Cloudflare, because it removes the licence problem at no cost. Use the free
+`*.workers.dev` (or `*.pages.dev`) subdomain, so no domain purchase is needed. Because the app is a
+static SPA, switching hosts later (for example to Vercel) is cheap. Confirm that Cloudflare's build
+system detects `pnpm-lock.yaml` when setting up the first deploy; if it does not, set the build
+command to enable Corepack and run `pnpm install --frozen-lockfile`.
 Verify current free-tier limits on the official pages before relying on them; secondary sources
 disagree on some numbers (for example Vercel Hobby function duration: 10 to 60 s officially, 300 s
 claimed elsewhere). The design does not depend on either figure.
@@ -111,10 +114,9 @@ claimed elsewhere). The design does not depend on either figure.
 
 ## Open questions
 
-1. Final hosting host (Cloudflare vs Vercel), and package manager (npm vs pnpm).
-2. Which LLM provider, and its EU data-processing terms (handoff question 4).
-3. How much of the unverified free-tier information (limits, pricing) still holds at build time.
-4. Not yet designed: intake, add-client and add-translator forms, notifications, empty and error
+1. Which LLM provider, and its EU data-processing terms (handoff question 4).
+2. How much of the unverified free-tier information (limits, pricing) still holds at build time.
+3. Not yet designed: intake, add-client and add-translator forms, notifications, empty and error
    states.
 
 ## Sources
