@@ -1,6 +1,6 @@
 # 0001: Tech stack
 
-Status: **Frontend accepted (Vue 3 + TypeScript)**; hosting and package tooling still open. Proof of
+Status: **Frontend accepted (Vue 3 + TypeScript, Vite, Vitest)**; hosting and package manager still open. Proof of
 concept, single user. Revisit before real client data goes in.
 Inputs: [design handoff](../design-handoff.md) and its open questions.
 
@@ -37,7 +37,9 @@ What the design implies:
 | Hosting (frontend) | Static files on a free host | See "Hosting" below. Not decided. |
 | Assist workflow | Run rows with a stage, advanced by short steps | See "Assist workflow". |
 | Lint / format | Ruff (Python, if any), Biome (TypeScript) | Per `AGENTS.md`. |
-| Tests / types | Vitest, `vue-tsc` | |
+| Build / dev server | **Vite** | Official Vue path (`create-vue`, `@vitejs/plugin-vue`). Bun is not used as bundler. |
+| Tests / types | **Vitest**, `vue-tsc` | Vitest is Vite-native and handles `.vue` files; `bun test` does not. |
+| Package manager | npm or pnpm (not yet chosen) | Bun-as-installer would work, but its support in the chosen host's build system is unverified. |
 
 ### Why Vue
 
@@ -109,7 +111,7 @@ claimed elsewhere). The design does not depend on either figure.
 
 ## Open questions
 
-1. Final hosting host (Cloudflare vs Vercel).
+1. Final hosting host (Cloudflare vs Vercel), and package manager (npm vs pnpm).
 2. Which LLM provider, and its EU data-processing terms (handoff question 4).
 3. How much of the unverified free-tier information (limits, pricing) still holds at build time.
 4. Not yet designed: intake, add-client and add-translator forms, notifications, empty and error
