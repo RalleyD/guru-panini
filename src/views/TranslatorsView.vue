@@ -1,5 +1,5 @@
 <script setup lang="ts"></script>
 
 <template>
-	<h1>guru-panini</h1>
+	<h1 class="h1">Translators</h1>
 </template>
