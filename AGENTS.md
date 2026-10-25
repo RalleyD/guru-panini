@@ -45,11 +45,17 @@ From the repo root, after `pnpm install --frozen-lockfile`:
 pnpm exec vite --port <port> --strictPort
 ```
 
-Then open `http://localhost:<port>/`; the home page is at `/`. `--strictPort` makes Vite fail
-if the port is taken instead of silently moving to another port.
+Then open `http://localhost:<port>/`; the home page (Overview) is at `/`. `--strictPort` makes
+Vite fail if the port is taken instead of silently moving to another port.
 
 The app lives at the repo root: `index.html` loads `src/main.ts`, which mounts `src/App.vue` with
-the router from `src/router/index.ts`. Pages are in `src/views/`.
+the router from `src/router/index.ts`. `src/App.vue` wraps every page in
+`src/components/AppShell.vue` (sidebar on desktop, top bar and bottom tab bar below 900 px, and the
+`needsYouCount` prop for the Overview badge). Pages are in `src/views/`.
+
+Design tokens (CSS custom properties) are in `src/styles/tokens.css` and base classes (`.card`,
+`.btn`, `.btn-primary`, `.chip` and its variants, `.field`, `.field-label`, `.h1`–`.h3`, `.sr-only`)
+in `src/styles/base.css`; pages should use them rather than raw colours.
 
 ## Validation
 
