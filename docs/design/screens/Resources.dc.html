@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Translators</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+a:hover{color:#5A4A99}
+button,input,select,textarea{font-family:inherit}
+[id]{scroll-margin-top:24px}
+.app{display:flex;min-height:100%;background:#F3F4F8;color:#272B3F;font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.5}
+.side{flex:0 0 248px;background:#FFFFFF;border-right:1px solid #E3E5EE}
+.side-in{position:sticky;top:0;box-sizing:border-box;height:100vh;overflow-y:auto;padding:28px 16px;display:flex;flex-direction:column;gap:24px}
+.main{flex:1 1 0;min-width:0;box-sizing:border-box;padding:40px 56px 64px;display:flex;flex-direction:column;gap:40px}
+.nav-link{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:#434A5E;box-sizing:border-box;min-height:44px}
+.nav-link:hover{background:#F3F4F8;color:#272B3F}
+.nav-link[aria-current="page"]{background:#ECE8F8;color:#4A3B87;font-weight:500}
+.sec-link{display:flex;align-items:center;min-height:36px;padding:0 12px;border-radius:8px;color:#5C6178;font-size:13px}
+.sec-link:hover{background:#F3F4F8;color:#272B3F}
+.card{box-sizing:border-box;padding:28px;border-radius:20px;background:#FFFFFF;border:1px solid #E3E5EE}
+.h1{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:40px;line-height:1.15;letter-spacing:-0.01em}
+.h2{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:24px;line-height:1.25}
+.btn{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #C9CDD8;background:#FFFFFF;color:#272B3F;font-size:14px;font-weight:500;cursor:pointer}
+.btn:hover{background:#F8F9FC;color:#272B3F}
+.btn-primary,.btn-primary:hover{border-color:#5A4A99;background:#5A4A99;color:#FFFFFF}
+.btn-primary:hover{background:#4A3B87}
+.topbar,.chips,.tabbar{display:none}
+@media (max-width:1100px){.main{padding:32px 32px 56px}}
+@media (max-width:899px){
+.app{flex-direction:column}
+.side{display:none}
+.main{padding:20px 16px 32px;gap:28px}
+.topbar{display:flex;position:sticky;top:0;z-index:20;box-sizing:border-box;min-height:56px;align-items:center;justify-content:space-between;padding:6px 8px 6px 16px;background:#FFFFFF;border-bottom:1px solid #E3E5EE}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 16px 0}
+.chips a{flex:none;display:inline-flex;align-items:center;box-sizing:border-box;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid #C9CDD8;background:#FFFFFF;color:#434A5E;font-size:13px;font-weight:500;white-space:nowrap}
+.tabbar{display:flex;position:sticky;bottom:0;z-index:20;gap:4px;padding:4px 8px;background:#FFFFFF;border-top:1px solid #E3E5EE}
+.tabbar a{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;border-radius:12px;font-size:11px;font-weight:500;color:#434A5E}
+.tabbar a[aria-current="page"]{background:#ECE8F8;color:#4A3B87}
+.card{padding:20px;border-radius:16px}
+.h1{font-size:30px}
+.h2{font-size:22px}
+[id]{scroll-margin-top:72px}
+}
+</style>
+</helmet>
+<div class="app">
+
+  <aside class="side">
+    <div class="side-in">
+      <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 0 8px">
+        <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="5" width="18" height="16" rx="6" fill="#B9A9E6"/><rect x="12" y="11" width="18" height="16" rx="6" fill="#BFE3E0" fill-opacity="0.9"/></svg>
+        <span style="font-family: 'Newsreader', Georgia, serif; font-size: 18px; font-weight: 500">[Agency name]</span>
+      </a>
+      <nav aria-label="Main" style="display: flex; flex-direction: column; gap: 2px">
+        <sc-for list="{{nav}}" as="n" hint-placeholder-count="4">
+          <a class="nav-link" href="{{n.href}}" aria-current="{{n.current}}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"/></svg>
+            {{n.label}}
+          </a>
+        </sc-for>
+      </nav>
+      <nav aria-label="On this page" style="display: flex; flex-direction: column; gap: 2px; padding-top: 16px; border-top: 1px solid #E3E5EE">
+        <span style="padding: 0 12px 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5C6178">Translators</span>
+        <sc-for list="{{sections}}" as="s" hint-placeholder-count="3">
+          <a class="sec-link" href="{{s.href}}">{{s.label}}</a>
+        </sc-for>
+      </nav>
+      <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid #E3E5EE; display: flex; flex-direction: column; gap: 2px">
+        <a class="nav-link" href="Main.dc.html#cover">
+          <span aria-hidden="true" style="width: 18px; display: inline-flex; justify-content: center"><span style="width: 8px; height: 8px; border-radius: 50%; background: #3F9A92"></span></span>
+          Cover mode
+          <span style="margin-left: auto; font-size: 12px; color: #5C6178">On</span>
+        </a>
+        <a class="nav-link" href="Settings.dc.html">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9m4 0h3M4 17h3m4 0h9M15 4v6M9 14v6"/></svg>
+          Settings
+        </a>
+        <a class="nav-link" href="Settings.dc.html#support">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg>
+          Support
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <header class="topbar">
+    <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px">
+      <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="5" width="18" height="16" rx="6" fill="#B9A9E6"/><rect x="12" y="11" width="18" height="16" rx="6" fill="#BFE3E0" fill-opacity="0.9"/></svg>
+      <span style="font-family: 'Newsreader', Georgia, serif; font-size: 17px; font-weight: 500">[Agency name]</span>
+    </a>
+    <a href="Settings.dc.html" aria-label="Settings" style="display: inline-flex; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 12px; color: #434A5E">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9m4 0h3M4 17h3m4 0h9M15 4v6M9 14v6"/></svg>
+    </a>
+  </header>
+  <nav class="chips" aria-label="On this page">
+    <sc-for list="{{sections}}" as="s" hint-placeholder-count="3">
+      <a href="{{s.href}}">{{s.label}}</a>
+    </sc-for>
+  </nav>
+
+  <main class="main">
+
+    <header style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px">
+      <div>
+        <h1 class="h1">Translators</h1>
+        <p style="margin: 8px 0 0; font-size: 16px; color: #5C6178; max-width: 52ch">Four translators across three language pairs. Marieke has the least room this fortnight.</p>
+      </div>
+      <button class="btn btn-primary">Add translator</button>
+    </header>
+
+    <section id="people" aria-label="People" style="display: flex; flex-wrap: wrap; gap: 20px">
+      <sc-for list="{{people}}" as="p" hint-placeholder-count="4">
+        <article class="card" style="flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+          <div style="display: flex; align-items: center; gap: 14px">
+            <span style="flex: none; width: 48px; height: 48px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; background: {{p.bg}}; color: {{p.fg}}">{{p.init}}</span>
+            <div style="min-width: 0">
+              <h2 style="margin: 0; font-family: 'Newsreader', Georgia, serif; font-weight: 500; font-size: 19px">{{p.name}}</h2>
+              <div style="font-size: 13px; color: #5C6178">{{p.pair}}</div>
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px">
+            <sc-for list="{{p.skills}}" as="s" hint-placeholder-count="2">
+              <span style="font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; background: #ECEEF3; color: #434A5E">{{s}}</span>
+            </sc-for>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px">
+            <span style="font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: {{p.stateBg}}; color: {{p.stateFg}}">{{p.state}}</span>
+            <span style="font-size: 12px; color: #5C6178">{{p.count}}</span>
+          </div>
+        </article>
+      </sc-for>
+      <button style="flex: 1 1 240px; min-width: 0; min-height: 168px; box-sizing: border-box; padding: 24px; border-radius: 20px; border: 1px dashed #8A90A5; background: transparent; color: #434A5E; font-size: 14px; font-weight: 500; cursor: pointer">Add a translator for another language</button>
+    </section>
+
+    <section id="allocation" aria-labelledby="alloc-h" class="card" style="display: flex; flex-direction: column; gap: 16px">
+      <div>
+        <h2 id="alloc-h" class="h2">Allocation, next two weeks</h2>
+        <p style="margin: 4px 0 0; font-size: 13px; color: #5C6178">27 Oct to 7 Nov, working days. The dashed bar is a proposal, not yet confirmed.</p>
+      </div>
+      <div style="overflow-x: auto">
+        <div style="min-width: 820px; display: flex; flex-direction: column; gap: 4px">
+          <div style="display: flex; gap: 16px; align-items: flex-end">
+            <div style="flex: none; width: 110px"></div>
+            <div style="flex: 1 1 auto; display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px">
+              <sc-for list="{{days}}" as="d" hint-placeholder-count="10">
+                <div style="text-align: center; font-size: 12px; color: #5C6178; padding-bottom: 6px; border-bottom: 1px solid #E3E5EE">
+                  <div>{{d.dow}}</div>
+                  <div style="font-weight: 600; color: #434A5E">{{d.num}}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+            <div style="display: flex; gap: 16px; align-items: center; padding: 10px 0; border-bottom: 1px solid #ECEEF3">
+              <div style="flex: none; width: 110px; display: flex; align-items: center; gap: 10px">
+                <span style="flex: none; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; background: {{r.bg}}; color: {{r.fg}}">{{r.init}}</span>
+                <span style="font-weight: 500">{{r.name}}</span>
+              </div>
+              <div style="flex: 1 1 auto; display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); grid-auto-rows: 30px; gap: 6px; min-width: 0">
+                <sc-for list="{{r.bars}}" as="b" hint-placeholder-count="2">
+                  <div style="grid-column: {{b.col}}; grid-row: {{b.row}}; box-sizing: border-box; padding: 0 10px; border-radius: 8px; display: flex; align-items: center; font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: {{b.bg}}; color: {{b.fg}}; border: {{b.border}}">{{b.label}}</div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: #5C6178">
+        <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #D9D1F2"></span>Legal</span>
+        <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #C5E8E4"></span>Technical</span>
+        <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #CFE0F6"></span>Real estate</span>
+        <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #DADDE6"></span>Business</span>
+      </div>
+    </section>
+
+    <section id="policy" aria-labelledby="policy-h" class="card" style="background: #ECE8F8; border-color: #D9D1F2; display: flex; flex-direction: column; gap: 24px">
+      <div>
+        <h2 id="policy-h" class="h2" style="color: #2E2556">How the draft assistant is used</h2>
+        <p style="margin: 4px 0 0; color: #2E2556; max-width: 64ch">The assistant supports the team; it does not replace it. You decide where it may be suggested, in cover mode or out of it.</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 20px">
+        <div style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+          <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #2E2556">A person decides</h3>
+          <p style="margin: 0; color: #3A3068">Assistance is proposed per project, and per client in cover mode. You turn each on.</p>
+        </div>
+        <div style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+          <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #2E2556">A person signs off</h3>
+          <p style="margin: 0; color: #3A3068">Every assisted draft has a named reviewer of record. Nothing reaches a client directly.</p>
+        </div>
+        <div style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+          <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #2E2556">Some work stays human</h3>
+          <p style="margin: 0; color: #3A3068">Document types you switch off below are never suggested for assistance.</p>
+        </div>
+      </div>
+      <fieldset style="margin: 0; padding: 20px; border: 0; border-radius: 14px; background: #FFFFFF; display: flex; flex-wrap: wrap; gap: 8px 32px">
+        <legend style="padding: 0; font-size: 13px; font-weight: 600; margin-bottom: 8px">May be suggested for</legend>
+        <label style="display: flex; align-items: center; gap: 10px; min-height: 44px"><input type="checkbox" checked style="width: 20px; height: 20px; accent-color: #5A4A99">Technical white papers</label>
+        <label style="display: flex; align-items: center; gap: 10px; min-height: 44px"><input type="checkbox" checked style="width: 20px; height: 20px; accent-color: #5A4A99">Internal business documents</label>
+        <label style="display: flex; align-items: center; gap: 10px; min-height: 44px"><input type="checkbox" style="width: 20px; height: 20px; accent-color: #5A4A99">Legal documents</label>
+        <label style="display: flex; align-items: center; gap: 10px; min-height: 44px"><input type="checkbox" style="width: 20px; height: 20px; accent-color: #5A4A99">Real-estate brochures</label>
+      </fieldset>
+    </section>
+
+  </main>
+
+  <nav class="tabbar" aria-label="Main">
+    <sc-for list="{{nav}}" as="n" hint-placeholder-count="4">
+      <a href="{{n.href}}" aria-current="{{n.current}}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"/></svg>
+        {{n.label}}
+      </a>
+    </sc-for>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ICON = {
+      overview: 'M5 3h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM16 3h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM5 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2zM16 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2z',
+      projects: 'M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
+      clients: 'M9 11.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5.3a3.2 3.2 0 0 1 0 5.4M18 14.4c1.7.8 3 2.6 3 5.6',
+      translators: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z',
+    };
+    const nav = [
+      ['Overview', 'Main.dc.html', 'overview'],
+      ['Projects', 'Project.dc.html', 'projects'],
+      ['Clients', 'Clients.dc.html', 'clients'],
+      ['Translators', 'Resources.dc.html', 'translators'],
+    ].map(([label, href, k]) => ({ label, href, d: ICON[k], current: label === 'Translators' ? 'page' : 'false' }));
+    const sections = [
+      ['People', '#people'], ['Allocation', '#allocation'], ['Assistant policy', '#policy'],
+    ].map(([label, href]) => ({ label, href }));
+
+    const P = {
+      MV: { init: 'MV', bg: '#E7E1F7', fg: '#4A3B87' },
+      JB: { init: 'JB', bg: '#D3EEEB', fg: '#1F5654' },
+      SH: { init: 'SH', bg: '#DAE8F8', fg: '#284F7E' },
+      LR: { init: 'LR', bg: '#DADDE6', fg: '#3B4152' },
+    };
+    const warm = { bg: '#FBEEE6', fg: '#8F4A2A' };
+    const ok = { bg: '#E2F3F1', fg: '#1F5654' };
+    const soon = { bg: '#E4EEFA', fg: '#284F7E' };
+    const people = [
+      { ...P.MV, name: 'Marieke Visser', pair: 'Dutch ↔ English', skills: ['Legal', 'Business', 'Review'], state: 'Limited capacity', stateBg: warm.bg, stateFg: warm.fg, count: '4 projects' },
+      { ...P.JB, name: 'Jonas Bakker', pair: 'Dutch → English', skills: ['Technical', 'Engineering'], state: 'Available', stateBg: ok.bg, stateFg: ok.fg, count: '1 project' },
+      { ...P.SH, name: 'Sofie Haas', pair: 'English → Dutch', skills: ['Real estate', 'Marketing', 'Business'], state: 'Available', stateBg: ok.bg, stateFg: ok.fg, count: '1 project' },
+      { ...P.LR, name: 'Lucía Romero', pair: 'English → Spanish', skills: ['Legal', 'Commercial'], state: 'Free from 30 Oct', stateBg: soon.bg, stateFg: soon.fg, count: '1 project' },
+    ];
+
+    const dows = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+    const nums = ['27 Oct', '28', '29', '30', '31', '3 Nov', '4', '5', '6', '7'];
+    const days = dows.map((dow, i) => ({ dow, num: nums[i] }));
+
+    const type = {
+      legal: { bg: '#D9D1F2', fg: '#2E2556' },
+      tech: { bg: '#C5E8E4', fg: '#123F3D' },
+      estate: { bg: '#CFE0F6', fg: '#1D3F66' },
+      biz: { bg: '#DADDE6', fg: '#2B3042' },
+    };
+    const bar = (label, from, to, row, t, proposed) => ({
+      label,
+      col: from + ' / ' + (to + 1),
+      row: String(row),
+      bg: proposed ? '#FFFFFF' : type[t].bg,
+      fg: type[t].fg,
+      border: proposed ? '1.5px dashed #6F9DD0' : '1.5px solid transparent',
+    });
+    const rows = [
+      { ...P.MV, name: 'Marieke', bars: [
+        bar('Share purchase agreement', 1, 5, 1, 'legal'),
+        bar('Review: Pump station', 6, 8, 1, 'tech'),
+        bar('Investor proposal review', 1, 2, 2, 'biz'),
+        bar('Kade: apply feedback', 6, 7, 2, 'legal'),
+      ] },
+      { ...P.JB, name: 'Jonas', bars: [
+        bar('Pump station white paper', 1, 5, 1, 'tech'),
+      ] },
+      { ...P.SH, name: 'Sofie', bars: [
+        bar('Investor proposal', 1, 2, 1, 'biz'),
+        bar('Proposed: Waterfront Lofts', 4, 8, 1, 'estate', true),
+      ] },
+      { ...P.LR, name: 'Lucía', bars: [
+        bar('Distribution terms', 1, 3, 1, 'legal'),
+      ] },
+    ];
+
+    return { nav, sections, people, days, rows };
+  }
+}
+</script>
+</body>
+</html>
