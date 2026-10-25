@@ -63,6 +63,26 @@ How to read this file:
   Do this after Wave 3 so there is something to show.
 - Decide the LLM provider and its EU data terms before phase 3 (see the tech stack record).
 
+## Parallel track: assistant architecture (phase 3, not queued for the factory)
+
+Design record: [docs/decisions/0002-assistant-architecture.md](../docs/decisions/0002-assistant-architecture.md).
+Focus is assisted drafts. This track runs alongside phases 1 and 2 and needs the owner's input. These
+lines have no checkbox on purpose, so `/factory next` does not claim them. Turn one into a
+checkbox item when its inputs exist.
+
+- Owner task: supply the evaluation material (consented or anonymised eligible documents, a glossary,
+  reference translations or ratings) and agree what improvement justifies adding a stage.
+- Owner task: choose the model provider after reading its EU data terms.
+- Spike: build the evaluation set and the rung 0 baseline (single prompt with glossary and style notes),
+  and report results in docs/spikes/assistant-baseline.md.
+- Spike: prototype the run and step state machine with a stub model on Edge Functions and `pg_cron`,
+  and report time limits and findings in docs/spikes/assist-run-state-machine.md.
+- Spike: extract text from sample Word and PDF files and report what survives (headings, tables,
+  figures, layout) in docs/spikes/document-extraction.md.
+- Phase 3 build, after the spikes: run and step tables with eligibility and caps; the checks and loop
+  (each only if the evaluation shows a gain); then the Assisted draft section, Ask the assistant
+  dialog, approval rows (append-only), cover mode settings and project pause.
+
 ## Changes from the handoff
 
 The handoff's suggested block is used as written except:

@@ -23,6 +23,7 @@ below is filled in, an agent that needs it should say so rather than guess.
   `"packageManager"` in `package.json`. Do not use npm or yarn to install.
 - **Frontend hosting**: Cloudflare (static SPA, free `workers.dev` / `pages.dev` subdomain).
 - Rationale and open questions: [docs/decisions/0001-tech-stack.md](docs/decisions/0001-tech-stack.md).
+- Assistant ("cover me") architecture, phase 3: [docs/decisions/0002-assistant-architecture.md](docs/decisions/0002-assistant-architecture.md).
 
 ## Setup a fresh checkout
 
