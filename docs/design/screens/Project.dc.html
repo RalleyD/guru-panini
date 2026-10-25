@@ -15,7 +15,9 @@ body{margin:0}
 a{color:inherit;text-decoration:none}
 a:hover{color:#5A4A99}
 button,input,select,textarea{font-family:inherit}
+:focus-visible{outline:2px solid #5A4A99;outline-offset:2px}
 [id]{scroll-margin-top:24px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .app{display:flex;min-height:100%;background:#F3F4F8;color:#272B3F;font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.5}
 .side{flex:0 0 248px;background:#FFFFFF;border-right:1px solid #E3E5EE}
 .side-in{position:sticky;top:0;box-sizing:border-box;height:100vh;overflow-y:auto;padding:28px 16px;display:flex;flex-direction:column;gap:24px}
@@ -25,8 +27,9 @@ button,input,select,textarea{font-family:inherit}
 .nav-link[aria-current="page"]{background:#ECE8F8;color:#4A3B87;font-weight:500}
 .sec-link{display:flex;align-items:center;min-height:36px;padding:0 12px;border-radius:8px;color:#5C6178;font-size:13px}
 .sec-link:hover{background:#F3F4F8;color:#272B3F}
+.badge{margin-left:auto;min-width:20px;height:20px;padding:0 6px;box-sizing:border-box;border-radius:999px;background:#5A4A99;color:#FFFFFF;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center}
 .card{box-sizing:border-box;padding:28px;border-radius:20px;background:#FFFFFF;border:1px solid #E3E5EE}
-.h1{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:38px;line-height:1.15;letter-spacing:-0.01em}
+.h1{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:40px;line-height:1.15;letter-spacing:-0.01em}
 .h2{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:24px;line-height:1.25}
 .h3{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:20px;line-height:1.25}
 .btn{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #C9CDD8;background:#FFFFFF;color:#272B3F;font-size:14px;font-weight:500;cursor:pointer}
@@ -34,6 +37,12 @@ button,input,select,textarea{font-family:inherit}
 .btn-primary,.btn-primary:hover{border-color:#5A4A99;background:#5A4A99;color:#FFFFFF}
 .btn-primary:hover{background:#4A3B87}
 .field{box-sizing:border-box;min-height:44px;padding:0 14px;border-radius:12px;border:1px solid #C9CDD8;background:#F8F9FC;color:#272B3F;font-size:14px}
+.opt{display:flex;align-items:flex-start;gap:12px;box-sizing:border-box;padding:14px 16px;border-radius:14px;border:1px solid #E3E5EE;min-height:44px;cursor:pointer}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:14px 12px;border-radius:12px;min-height:44px;box-sizing:border-box}
+.row:hover{background:#F3F4F8;color:#272B3F}
+.board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;min-width:1060px}
+.overlay{position:fixed;top:0;right:0;bottom:0;left:0;z-index:50;box-sizing:border-box;display:flex;align-items:flex-start;justify-content:center;padding:96px 16px 16px;background:rgba(39,43,63,0.45);overflow-y:auto}
+.dialog{width:100%;max-width:520px;box-sizing:border-box;padding:28px;border-radius:20px;background:#FFFFFF;display:flex;flex-direction:column;gap:18px}
 .topbar,.chips,.tabbar{display:none}
 @media (max-width:1100px){.main{padding:32px 32px 56px}}
 @media (max-width:899px){
@@ -44,11 +53,16 @@ button,input,select,textarea{font-family:inherit}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:12px 16px 0}
 .chips a{flex:none;display:inline-flex;align-items:center;box-sizing:border-box;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid #C9CDD8;background:#FFFFFF;color:#434A5E;font-size:13px;font-weight:500;white-space:nowrap}
 .tabbar{display:flex;position:sticky;bottom:0;z-index:20;gap:4px;padding:4px 8px;background:#FFFFFF;border-top:1px solid #E3E5EE}
-.tabbar a{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;border-radius:12px;font-size:11px;font-weight:500;color:#434A5E}
+.tabbar a{flex:1 1 0;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;border-radius:12px;font-size:11px;font-weight:500;color:#434A5E}
 .tabbar a[aria-current="page"]{background:#ECE8F8;color:#4A3B87}
+.tabbar .badge{position:absolute;top:2px;left:calc(50% + 4px);margin:0}
 .card{padding:20px;border-radius:16px}
+.dialog{padding:20px;border-radius:16px}
+.overlay{padding-top:48px}
 .h1{font-size:30px}
 .h2{font-size:22px}
+.hide-sm{display:none !important}
+.board{grid-template-columns:repeat(5,272px);min-width:0}
 [id]{scroll-margin-top:72px}
 }
 </style>
@@ -66,21 +80,24 @@ button,input,select,textarea{font-family:inherit}
           <a class="nav-link" href="{{n.href}}" aria-current="{{n.current}}">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"/></svg>
             {{n.label}}
+            <sc-if value="{{n.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="badge">{{n.badge}}<span class="sr"> need you</span></span></sc-if>
           </a>
         </sc-for>
       </nav>
       <nav aria-label="On this page" style="display: flex; flex-direction: column; gap: 2px; padding-top: 16px; border-top: 1px solid #E3E5EE">
         <span style="padding: 0 12px 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5C6178">This project</span>
-        <sc-for list="{{sections}}" as="s" hint-placeholder-count="8">
+        <sc-for list="{{sections}}" as="s" hint-placeholder-count="6">
           <a class="sec-link" href="{{s.href}}">{{s.label}}</a>
         </sc-for>
       </nav>
       <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid #E3E5EE; display: flex; flex-direction: column; gap: 2px">
-        <a class="nav-link" href="Main.dc.html#cover">
-          <span aria-hidden="true" style="width: 18px; display: inline-flex; justify-content: center"><span style="width: 8px; height: 8px; border-radius: 50%; background: #3F9A92"></span></span>
-          Cover mode
-          <span style="margin-left: auto; font-size: 12px; color: #5C6178">On</span>
-        </a>
+        <sc-if value="{{coverUi}}" hint-placeholder-val="{{ true }}">
+          <a class="nav-link" href="Main.dc.html#cover">
+            <span aria-hidden="true" style="width: 18px; display: inline-flex; justify-content: center"><span style="width: 8px; height: 8px; border-radius: 50%; background: #3F9A92"></span></span>
+            Cover mode
+            <span style="margin-left: auto; font-size: 12px; color: #5C6178">On</span>
+          </a>
+        </sc-if>
         <a class="nav-link" href="Settings.dc.html">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9m4 0h3M4 17h3m4 0h9M15 4v6M9 14v6"/></svg>
           Settings
@@ -103,7 +120,7 @@ button,input,select,textarea{font-family:inherit}
     </a>
   </header>
   <nav class="chips" aria-label="On this page">
-    <sc-for list="{{sections}}" as="s" hint-placeholder-count="8">
+    <sc-for list="{{sections}}" as="s" hint-placeholder-count="6">
       <a href="{{s.href}}">{{s.label}}</a>
     </sc-for>
   </nav>
@@ -111,7 +128,7 @@ button,input,select,textarea{font-family:inherit}
   <main class="main">
 
     <nav aria-label="Breadcrumb" style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; color: #5C6178">
-      <a href="Project.dc.html">Projects</a><span aria-hidden="true">/</span>
+      <a href="Projects.dc.html">Projects</a><span aria-hidden="true">/</span>
       <a href="Clients.dc.html">Delta Hydraulics BV</a><span aria-hidden="true">/</span>
       <span style="color: #272B3F">Pump station white paper</span>
     </nav>
@@ -122,237 +139,284 @@ button,input,select,textarea{font-family:inherit}
         <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
           <span style="font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 999px; background: #E7E1F7; color: #4A3B87">In translation</span>
           <span style="font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 999px; background: #E6E8EE; color: #434A5E">NL → EN</span>
-          <span style="font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 999px; background: #D3EEEB; color: #1F5654">Technical</span>
+          <span style="font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 999px; background: {{docBg}}; color: {{docFg}}">{{docType}}</span>
           <span style="font-size: 13px; color: #5C6178; margin-left: 6px">12,400 words · Due 4 Nov</span>
         </div>
       </div>
-      <div style="display: flex; flex-wrap: wrap; gap: 10px">
-        <a class="btn" href="{{clientMail}}">Message client</a>
-        <a class="btn btn-primary" href="#feedback">Log feedback</a>
-      </div>
+      <a class="btn" href="{{clientMail}}">Message client</a>
     </header>
 
-    <ol aria-label="Project stages" class="card" style="list-style: none; margin: 0; padding-top: 20px; padding-bottom: 20px; display: flex; flex-wrap: nowrap; align-items: center; gap: 12px; overflow-x: auto">
-      <sc-for list="{{stages}}" as="s" hint-placeholder-count="6">
-        <li style="display: flex; align-items: center; gap: 12px; flex: {{s.flex}}">
-          <span style="flex: none; width: 24px; height: 24px; box-sizing: border-box; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: {{s.dotBg}}; border: 2px solid {{s.dotBorder}}">
-            <sc-if value="{{s.done}}" hint-placeholder-val="{{ false }}">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1F5654" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+    <section id="now" aria-label="Where this project is" class="card" style="display: flex; flex-direction: column; gap: 24px">
+      <ol aria-label="Project stages" style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: nowrap; align-items: center; gap: 12px; overflow-x: auto">
+        <sc-for list="{{stages}}" as="s" hint-placeholder-count="6">
+          <li style="display: flex; align-items: center; gap: 12px; flex: {{s.flex}}">
+            <span style="flex: none; width: 24px; height: 24px; box-sizing: border-box; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: {{s.dotBg}}; border: 2px solid {{s.dotBorder}}">
+              <sc-if value="{{s.done}}" hint-placeholder-val="{{ false }}">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1F5654" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+              </sc-if>
+            </span>
+            <span style="font-size: 13px; white-space: nowrap; color: {{s.labelColor}}; font-weight: {{s.labelWeight}}">{{s.label}}</span>
+            <sc-if value="{{s.showLine}}" hint-placeholder-val="{{ true }}">
+              <span aria-hidden="true" style="flex: 1 1 24px; min-width: 16px; height: 2px; border-radius: 2px; background: {{s.lineBg}}"></span>
             </sc-if>
-          </span>
-          <span style="font-size: 13px; white-space: nowrap; color: {{s.labelColor}}; font-weight: {{s.labelWeight}}">{{s.label}}</span>
-          <sc-if value="{{s.showLine}}" hint-placeholder-val="{{ true }}">
-            <span aria-hidden="true" style="flex: 1 1 24px; min-width: 16px; height: 2px; border-radius: 2px; background: {{s.lineBg}}"></span>
+          </li>
+        </sc-for>
+      </ol>
+      <div style="display: flex; flex-wrap: wrap; gap: 24px 40px">
+        <div style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+          <h2 class="h3">Next steps</h2>
+          <label style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px; padding-top: 8px">
+            <input type="checkbox" style="width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: #5A4A99">
+            <span><span style="display: block; font-weight: 500">Confirm &ldquo;afvoerleiding&rdquo; with the client</span><span style="font-size: 12px; color: #5C6178">Before 28 Oct</span></span>
+          </label>
+          <label style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px; padding-top: 8px">
+            <input type="checkbox" style="width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: #5A4A99">
+            <span><span style="display: block; font-weight: 500">Send the reviewed draft to the client</span><span style="font-size: 12px; color: #5C6178">By 31 Oct</span></span>
+          </label>
+        </div>
+        <div style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+          <h2 class="h3">Needs attention</h2>
+          <sc-if value="{{noAttention}}" hint-placeholder-val="{{ false }}">
+            <p style="margin: 0; padding-top: 8px; color: #434A5E">Nothing needs attention.</p>
           </sc-if>
-        </li>
-      </sc-for>
-    </ol>
-
-    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
-
-      <div style="flex: 2 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
-
-        <section id="draft" aria-labelledby="assist-h" style="border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E5EE; overflow: hidden">
-          <div style="padding: 24px 28px; background: #ECE8F8; display: flex; flex-direction: column; gap: 6px">
-            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px">
-              <h2 id="assist-h" class="h2" style="color: #2E2556">Assisted draft</h2>
-              <span style="font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 999px; background: #FFFFFF; color: #4A3B87">Awaiting Marieke&#39;s approval</span>
+          <sc-for list="{{attention}}" as="a" hint-placeholder-count="2">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; padding: 12px 14px; border-radius: 12px; background: #FBEEE6">
+              <span style="flex: 1 1 200px; min-width: 0; color: #5A2F16">{{a.text}}</span>
+              <a href="{{a.href}}" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; font-weight: 500; color: #8F4A2A; text-decoration: underline">{{a.action}}</a>
             </div>
-            <p style="margin: 0; color: #2E2556; max-width: 70ch">Suggested because the content is technical, the client supplied a glossary, and tone sensitivity is low. Marieke Visser remains the reviewer of record, and nothing is delivered until she approves it.</p>
-          </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
 
+    <sc-if value="{{coverUi}}" hint-placeholder-val="{{ true }}">
+      <section id="draft" aria-labelledby="assist-h" style="border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E5EE; overflow: hidden">
+        <div style="padding: 24px 28px; background: {{bandBg}}; display: flex; flex-direction: column; gap: 6px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+            <h2 id="assist-h" class="h2" style="color: {{bandInk}}">Assisted draft</h2>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+              <span style="font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 999px; background: #FFFFFF; color: {{bandInk}}">{{bandChip}}</span>
+              <sc-if value="{{canAsk}}" hint-placeholder-val="{{ true }}">
+                <button class="btn" onClick="{{openAsk}}">Ask the assistant</button>
+              </sc-if>
+            </div>
+          </div>
+          <p style="margin: 0; color: {{bandInk}}; max-width: 70ch">{{assistReason}}</p>
+        </div>
+
+        <sc-if value="{{isAssisted}}" hint-placeholder-val="{{ true }}">
           <div style="padding: 24px 28px; display: flex; flex-direction: column; gap: 24px">
-            <div style="display: flex; flex-direction: column; gap: 10px">
-              <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5C6178">How it was worked</span>
-              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
-                <sc-for list="{{loop}}" as="l" hint-placeholder-count="5">
-                  <div style="display: flex; align-items: center; gap: 8px">
-                    <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; padding: 6px 12px; border-radius: 999px; background: {{l.bg}}; color: {{l.fg}}">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
-                      {{l.label}}
-                    </span>
-                    <sc-if value="{{l.arrow}}" hint-placeholder-val="{{ true }}">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8A90A5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
-                    </sc-if>
-                  </div>
-                </sc-for>
-              </div>
-              <p style="margin: 0; font-size: 13px; color: #5C6178">The middle three stages ran three times, until the reviewing stages had no open points. Completed 24 Oct, 16:40.</p>
+            <sc-if value="{{requested}}" hint-placeholder-val="{{ false }}">
+              <p style="margin: 0; padding: 12px 16px; border-radius: 12px; background: #E4EEFA; color: #1D3F66">{{requestedText}}</p>
+            </sc-if>
+
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <h3 style="margin: 0; font-size: 14px; font-weight: 600">How this draft was made</h3>
+              <sc-for list="{{checks}}" as="c" hint-placeholder-count="4">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; padding: 10px 0; border-top: 1px solid #E3E5EE">
+                  <span style="font-weight: 500">{{c.label}}</span>
+                  <span style="font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: {{c.bg}}; color: {{c.fg}}">{{c.result}}</span>
+                </div>
+              </sc-for>
+              <p style="margin: 4px 0 0; font-size: 13px; color: #5C6178">Each check repeats until it has nothing more to fix on its own. Completed 24 Oct, 16:40.</p>
             </div>
 
             <div style="display: flex; flex-wrap: wrap; gap: 24px">
               <div style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
                 <h3 style="margin: 0; font-size: 14px; font-weight: 600">What was done</h3>
-                <p style="margin: 0; color: #434A5E">A full first draft of 12,400 words, checked against the client&#39;s glossary and for technical accuracy, then read again by a separate fluency pass.</p>
+                <p style="margin: 0; color: #434A5E">A full draft of 12,400 words, checked against the client&#39;s glossary and for technical accuracy, then read again for wording.</p>
               </div>
               <div style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
                 <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #1F5654">Strengths</h3>
                 <ul style="margin: 0; padding-left: 18px; color: #434A5E; display: flex; flex-direction: column; gap: 4px">
-                  <li>Terminology consistent across all 14 chapters</li>
-                  <li>Units and figure references preserved</li>
+                  <li>Terminology is consistent across all 14 chapters</li>
+                  <li>Units and figure references are kept</li>
                   <li>Sentence structure suits a technical reader</li>
                 </ul>
               </div>
               <div style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
                 <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #8F4A2A">Limitations</h3>
                 <ul style="margin: 0; padding-left: 18px; color: #434A5E; display: flex; flex-direction: column; gap: 4px">
-                  <li>Idiomatic phrasing in the introduction</li>
-                  <li>Two terms with more than one valid reading</li>
-                  <li>House style known only through the glossary</li>
+                  <li>Phrasing in the introduction reads unnaturally</li>
+                  <li>Two terms have more than one valid reading</li>
+                  <li>It knows the client&#39;s style only from the glossary</li>
                 </ul>
               </div>
             </div>
 
             <div style="padding: 16px 18px; border-radius: 14px; background: #FBEEE6; display: flex; flex-direction: column; gap: 6px">
-              <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #8F4A2A">Needs a human eye</h3>
-              <p style="margin: 0; color: #5A2F16">Introduction (pp. 1–3), where the register should feel natural to an English-speaking engineer. And &ldquo;afvoerleiding&rdquo; in chapter 6, drafted as &ldquo;discharge line&rdquo; but open to confirmation.</p>
+              <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #8F4A2A">2 points left for a person to decide</h3>
+              <p style="margin: 0; color: #5A2F16">The introduction (pp. 1&ndash;3) reads too literally for an English-speaking engineer. And &ldquo;afvoerleiding&rdquo; in chapter 6 was drafted as &ldquo;discharge line&rdquo;, but it could be read another way.</p>
             </div>
 
-            <div style="display: flex; flex-wrap: wrap; gap: 10px">
-              <button class="btn btn-primary">Open draft</button>
-              <button class="btn">Return to translator only</button>
+            <div style="display: flex; flex-direction: column; gap: 10px">
+              <div style="display: flex; flex-wrap: wrap; gap: 10px">
+                <sc-if value="{{canApprove}}" hint-placeholder-val="{{ true }}">
+                  <button class="btn btn-primary" onClick="{{recordApproval}}">Record Marieke’s approval</button>
+                </sc-if>
+                <button class="btn">Open draft</button>
+                <button class="btn">Send back to the translator</button>
+              </div>
+              <p style="margin: 0; font-size: 12px; color: #5C6178">{{approvalNote}}</p>
             </div>
           </div>
-        </section>
+        </sc-if>
+      </section>
 
-        <section id="ask" aria-labelledby="ask-h" class="card" style="display: flex; flex-direction: column; gap: 16px">
+      <section id="activity" aria-labelledby="cover-h" class="card" style="display: flex; flex-direction: column; gap: 20px; background: {{coverBg}}; border-color: {{coverBorder}}">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px">
+          <div style="flex: 1 1 280px; min-width: 0">
+            <h2 id="cover-h" class="h2" style="color: {{coverInk}}">Cover mode activity</h2>
+            <p style="margin: 4px 0 0; color: {{coverInk}}">{{coverLine}}</p>
+          </div>
+          <button class="btn" aria-pressed="{{paused}}" onClick="{{togglePause}}">{{pauseLabel}}</button>
+        </div>
+
+        <ol aria-label="What cover mode did" style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+          <sc-for list="{{coverSteps}}" as="c" hint-placeholder-count="4">
+            <li style="display: flex; gap: 14px; padding: 12px 0; border-top: 1px solid {{c.rule}}">
+              <span style="flex: none; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: {{c.dotBg}}; color: {{c.dotFg}}; font-size: 11px; font-weight: 600">{{c.n}}</span>
+              <div style="flex: 1 1 auto; min-width: 0">
+                <div style="font-weight: 500; color: #272B3F">{{c.title}}</div>
+                <div style="font-size: 13px; color: #434A5E">{{c.detail}}</div>
+              </div>
+              <span style="flex: none; font-size: 12px; color: #5C6178; text-align: right">{{c.when}}</span>
+            </li>
+          </sc-for>
+        </ol>
+
+        <div style="padding: 16px 18px; border-radius: 14px; background: #FFFFFF; display: flex; flex-direction: column; gap: 10px">
+          <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5C6178">Prepared reply to Hendrik de Wit</span>
+          <p style="margin: 0; color: #272B3F">Dear Hendrik, the draft of the pump station white paper is with our reviewer and will reach you by 31 October. Two terms are marked for your confirmation, and I will send them with the draft.</p>
+          <sc-if value="{{replySent}}" hint-placeholder-val="{{ false }}">
+            <p style="margin: 0; font-size: 13px; color: #1F5654">Marked as sent.</p>
+          </sc-if>
+          <sc-if value="{{replyPending}}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+              <sc-if value="{{replyOpened}}" hint-placeholder-val="{{ false }}">
+                <button class="btn btn-primary" onClick="{{markSent}}">Mark as sent</button>
+              </sc-if>
+              <a class="btn" href="{{clientMail}}" onClick="{{openReply}}">{{openLabel}}</a>
+              <button class="btn" onClick="{{copyReply}}">{{copyLabel}}</button>
+            </div>
+            <p style="margin: 0; font-size: 12px; color: #5C6178">{{replyHint}}</p>
+          </sc-if>
+        </div>
+        <p style="margin: 0; font-size: 13px; color: {{coverInk}}">A named reviewer approves every draft before it reaches the client. Cover mode is set per client. <a href="Clients.dc.html" style="text-decoration: underline">Change on the client page</a></p>
+      </section>
+    </sc-if>
+
+    <section id="feedback" aria-labelledby="fb-h" class="card" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+        <h2 id="fb-h" class="h2">Feedback log</h2>
+        <div role="group" aria-label="Filter feedback" style="display: flex; gap: 6px">
+          <sc-for list="{{filters}}" as="f" hint-placeholder-count="3">
+            <button class="btn" aria-pressed="{{f.pressed}}" onClick="{{f.pick}}" style="padding: 0 14px; border-radius: 999px; font-size: 13px; border-color: {{f.border}}; background: {{f.bg}}; color: {{f.fg}}">{{f.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px">
+        <input aria-label="Feedback to log" placeholder="Add feedback from a draft" class="field" style="flex: 1 1 240px">
+        <select aria-label="Feedback source" class="field" style="background: #FFFFFF">
+          <sc-for list="{{sources}}" as="s" hint-placeholder-count="2">
+            <option>{{s}}</option>
+          </sc-for>
+        </select>
+        <button class="btn">Log</button>
+      </div>
+      <div style="display: flex; flex-direction: column">
+        <sc-for list="{{entries}}" as="e" hint-placeholder-count="3">
+          <article style="display: flex; flex-wrap: wrap; gap: 8px 16px; padding: 18px 0; border-top: 1px solid #E3E5EE">
+            <div style="flex: none; width: 76px; display: flex; flex-direction: column">
+              <span style="font-size: 13px; font-weight: 500">{{e.date}}</span>
+              <span style="font-size: 12px; color: #5C6178">{{e.version}}</span>
+            </div>
+            <div style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+                <span style="font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: {{e.srcBg}}; color: {{e.srcFg}}">{{e.source}}</span>
+                <span style="font-size: 13px; color: #434A5E">{{e.who}}</span>
+                <span style="font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid #C9CDD8; color: #434A5E">{{e.tag}}</span>
+              </div>
+              <p style="margin: 0; color: #272B3F">{{e.text}}</p>
+            </div>
+            <span style="flex: none; align-self: flex-start; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: {{e.stBg}}; color: {{e.stFg}}">{{e.status}}</span>
+          </article>
+        </sc-for>
+        <sc-if value="{{noEntries}}" hint-placeholder-val="{{ false }}">
+          <p style="margin: 0; padding: 18px 0 4px; border-top: 1px solid #E3E5EE; color: #434A5E">Nothing here. Try another filter.</p>
+        </sc-if>
+      </div>
+    </section>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: stretch">
+      <section id="team" aria-labelledby="team-h" class="card" style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+        <h2 id="team-h" class="h3" style="margin-bottom: 4px">Who is on this</h2>
+        <sc-for list="{{team}}" as="p" hint-placeholder-count="3">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 8px 0">
+            <span style="flex: none; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; background: {{p.bg}}; color: {{p.fg}}">{{p.init}}</span>
+            <div style="min-width: 0">
+              <div style="font-weight: 500">{{p.name}}</div>
+              <div style="font-size: 12px; color: #5C6178">{{p.role}}</div>
+            </div>
+          </div>
+        </sc-for>
+        <a href="Resources.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; font-weight: 500; color: #5A4A99">Change allocation</a>
+      </section>
+
+      <section id="details" aria-labelledby="det-h" class="card" style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+        <h2 id="det-h" class="h3">Details</h2>
+        <dl style="margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; font-size: 13px">
+          <dt style="color: #5C6178">Client</dt><dd style="margin: 0; text-align: right">Delta Hydraulics BV</dd>
+          <dt style="color: #5C6178">Languages</dt><dd style="margin: 0; text-align: right">Dutch to English</dd>
+          <dt style="color: #5C6178">Subject</dt><dd style="margin: 0; text-align: right">Pumping stations</dd>
+          <dt style="color: #5C6178">Glossary</dt><dd style="margin: 0; text-align: right">Supplied by client</dd>
+          <dt style="color: #5C6178">Formats</dt><dd style="margin: 0; text-align: right">Word, figures as PDF</dd>
+          <dt style="color: #5C6178">Deadline</dt><dd style="margin: 0; text-align: right">4 Nov</dd>
+        </dl>
+      </section>
+
+      <section id="notes" aria-labelledby="note-h" class="card" style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 8px; background: #E4EEFA; border-color: #CFE0F6">
+        <h2 id="note-h" class="h3" style="color: #1D3F66">Notes</h2>
+        <p style="margin: 0; color: #1D3F66">Client prefers email. Keep metric units throughout. Figure captions keep their original numbering.</p>
+      </section>
+    </div>
+
+    <section id="archive" aria-label="Archive this project" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding: 4px 4px 0">
+      <p style="margin: 0; flex: 1 1 280px; font-size: 13px; color: #5C6178">{{archiveText}}</p>
+      <div style="display: flex; gap: 8px">
+        <sc-if value="{{archiveIdle}}" hint-placeholder-val="{{ true }}">
+          <button class="btn" onClick="{{askArchive}}">Archive project</button>
+        </sc-if>
+        <sc-if value="{{archiveConfirm}}" hint-placeholder-val="{{ false }}">
+          <button class="btn" onClick="{{cancelArchive}}">Cancel</button>
+          <button class="btn btn-primary" onClick="{{confirmArchive}}">Archive</button>
+        </sc-if>
+      </div>
+    </section>
+
+    <sc-if value="{{dialogOpen}}" hint-placeholder-val="{{ false }}">
+      <div class="overlay">
+        <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="ask-h">
           <div>
             <h2 id="ask-h" class="h2">Ask the assistant</h2>
-            <p style="margin: 4px 0 0; font-size: 13px; color: #5C6178">A request runs only once you or the translator in charge confirms it.</p>
+            <p style="margin: 4px 0 0; font-size: 13px; color: #5C6178">It runs only after you confirm. A named reviewer approves the result before it reaches the client.</p>
           </div>
-          <div role="group" aria-label="Request type" style="display: flex; flex-wrap: wrap; gap: 8px">
-            <sc-for list="{{modes}}" as="m" hint-placeholder-count="3">
-              <button class="btn" aria-pressed="{{m.pressed}}" onClick="{{m.pick}}" style="border-color: {{m.border}}; background: {{m.bg}}; color: {{m.fg}}">{{m.label}}</button>
+          <fieldset style="margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px">
+            <legend class="sr">What should it do?</legend>
+            <sc-for list="{{askOptions}}" as="o" hint-placeholder-count="3">
+              <label class="opt" style="background: {{o.bg}}; border-color: {{o.border}}">
+                <input type="radio" name="ask" checked="{{o.checked}}" onChange="{{o.pick}}" style="width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: #5A4A99">
+                <span><span style="display: block; font-weight: 500">{{o.label}}</span><span style="font-size: 13px; color: #434A5E">{{o.help}}</span></span>
+              </label>
             </sc-for>
+          </fieldset>
+          <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px">
+            <button class="btn" onClick="{{closeAsk}}">Cancel</button>
+            <button class="btn btn-primary" onClick="{{confirmAsk}}">Confirm and run</button>
           </div>
-          <p style="margin: 0; color: #434A5E">{{modeHelp}}</p>
-          <div style="display: flex; flex-direction: column; gap: 6px">
-            <label for="assist-note" style="font-size: 13px; font-weight: 500">Note for the assistant (optional)</label>
-            <textarea id="assist-note" rows="3" placeholder="e.g. Keep the introduction closer to the client&#39;s tone" class="field" style="width: 100%; padding: 12px 14px; resize: vertical"></textarea>
-          </div>
-          <div>
-            <button class="btn btn-primary">Request, pending confirmation</button>
-          </div>
-        </section>
-
-        <section id="cover" aria-labelledby="cover-h" class="card" style="display: flex; flex-direction: column; gap: 20px; background: {{coverBg}}; border-color: {{coverBorder}}">
-          <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px">
-            <div style="flex: 1 1 280px; min-width: 0">
-              <h2 id="cover-h" class="h2" style="color: {{coverInk}}">Cover mode</h2>
-              <p style="margin: 4px 0 0; color: {{coverInk}}">{{coverLine}}</p>
-            </div>
-            <button class="btn" aria-pressed="{{paused}}" onClick="{{togglePause}}">{{pauseLabel}}</button>
-          </div>
-
-          <ol aria-label="What cover mode did" style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
-            <sc-for list="{{coverSteps}}" as="c" hint-placeholder-count="4">
-              <li style="display: flex; gap: 14px; padding: 12px 0; border-top: 1px solid {{c.rule}}">
-                <span style="flex: none; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: {{c.dotBg}}; color: {{c.dotFg}}; font-size: 11px; font-weight: 600">{{c.n}}</span>
-                <div style="flex: 1 1 auto; min-width: 0">
-                  <div style="font-weight: 500; color: #272B3F">{{c.title}}</div>
-                  <div style="font-size: 13px; color: #434A5E">{{c.detail}}</div>
-                </div>
-                <span style="flex: none; font-size: 12px; color: #5C6178; text-align: right">{{c.when}}</span>
-              </li>
-            </sc-for>
-          </ol>
-
-          <div style="padding: 16px 18px; border-radius: 14px; background: #FFFFFF; display: flex; flex-direction: column; gap: 10px">
-            <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5C6178">Prepared reply to Hendrik de Wit</span>
-            <p style="margin: 0; color: #272B3F">Dear Hendrik, the draft of the pump station white paper is with our reviewer and will reach you by 31 October. Two terms are marked for your confirmation, and I will send them with the draft.</p>
-            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
-              <a class="btn btn-primary" href="{{clientMail}}">Open in email app</a>
-              <span style="font-size: 12px; color: #5C6178">Cover mode prepares messages. It never sends them.</span>
-            </div>
-          </div>
-          <p style="margin: 0; font-size: 13px; color: {{coverInk}}">On for Delta Hydraulics BV. <a href="Clients.dc.html#cover" style="text-decoration: underline">Change on the client page</a></p>
-        </section>
-
-        <section id="feedback" aria-labelledby="fb-h" class="card" style="display: flex; flex-direction: column; gap: 16px">
-          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
-            <h2 id="fb-h" class="h2">Feedback log</h2>
-            <div role="group" aria-label="Filter feedback" style="display: flex; gap: 6px">
-              <sc-for list="{{filters}}" as="f" hint-placeholder-count="3">
-                <button class="btn" aria-pressed="{{f.pressed}}" onClick="{{f.pick}}" style="padding: 0 14px; border-radius: 999px; font-size: 13px; border-color: {{f.border}}; background: {{f.bg}}; color: {{f.fg}}">{{f.label}}</button>
-              </sc-for>
-            </div>
-          </div>
-          <div style="display: flex; flex-wrap: wrap; gap: 10px">
-            <input aria-label="Feedback to log" placeholder="Add feedback from a draft" class="field" style="flex: 1 1 240px">
-            <select aria-label="Feedback source" class="field" style="background: #FFFFFF">
-              <option>Reviewer</option>
-              <option>Client</option>
-              <option>Assistant</option>
-            </select>
-            <button class="btn">Log</button>
-          </div>
-          <div style="display: flex; flex-direction: column">
-            <sc-for list="{{entries}}" as="e" hint-placeholder-count="4">
-              <article style="display: flex; flex-wrap: wrap; gap: 8px 16px; padding: 18px 0; border-top: 1px solid #E3E5EE">
-                <div style="flex: none; width: 76px; display: flex; flex-direction: column">
-                  <span style="font-size: 13px; font-weight: 500">{{e.date}}</span>
-                  <span style="font-size: 12px; color: #5C6178">{{e.version}}</span>
-                </div>
-                <div style="flex: 1 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
-                  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
-                    <span style="font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: {{e.srcBg}}; color: {{e.srcFg}}">{{e.source}}</span>
-                    <span style="font-size: 13px; color: #434A5E">{{e.who}}</span>
-                    <span style="font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid #C9CDD8; color: #434A5E">{{e.tag}}</span>
-                  </div>
-                  <p style="margin: 0; color: #272B3F">{{e.text}}</p>
-                </div>
-                <span style="flex: none; align-self: flex-start; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: {{e.stBg}}; color: {{e.stFg}}">{{e.status}}</span>
-              </article>
-            </sc-for>
-          </div>
-        </section>
+        </div>
       </div>
-
-      <aside style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
-        <section id="team" aria-labelledby="team-h" class="card" style="display: flex; flex-direction: column; gap: 8px">
-          <h2 id="team-h" class="h3" style="margin-bottom: 4px">Who is on this</h2>
-          <sc-for list="{{team}}" as="p" hint-placeholder-count="3">
-            <div style="display: flex; align-items: center; gap: 12px; padding: 8px 0">
-              <span style="flex: none; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; background: {{p.bg}}; color: {{p.fg}}">{{p.init}}</span>
-              <div style="min-width: 0">
-                <div style="font-weight: 500">{{p.name}}</div>
-                <div style="font-size: 12px; color: #5C6178">{{p.role}}</div>
-              </div>
-            </div>
-          </sc-for>
-          <a href="Resources.dc.html#allocation" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; font-weight: 500; color: #5A4A99">Change allocation</a>
-        </section>
-
-        <section id="next" aria-labelledby="next-h" class="card" style="display: flex; flex-direction: column; gap: 12px">
-          <h2 id="next-h" class="h3">Next steps</h2>
-          <label style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px">
-            <input type="checkbox" style="width: 20px; height: 20px; margin: 2px 0 0; accent-color: #5A4A99">
-            <span><span style="display: block; font-weight: 500">Confirm &ldquo;afvoerleiding&rdquo; with the client</span><span style="font-size: 12px; color: #5C6178">Before 28 Oct</span></span>
-          </label>
-          <label style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px">
-            <input type="checkbox" style="width: 20px; height: 20px; margin: 2px 0 0; accent-color: #5A4A99">
-            <span><span style="display: block; font-weight: 500">Send reviewed draft to the client</span><span style="font-size: 12px; color: #5C6178">By 31 Oct</span></span>
-          </label>
-        </section>
-
-        <section id="details" aria-labelledby="det-h" class="card" style="display: flex; flex-direction: column; gap: 12px">
-          <h2 id="det-h" class="h3">Details</h2>
-          <dl style="margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; font-size: 13px">
-            <dt style="color: #5C6178">Client</dt><dd style="margin: 0; text-align: right">Delta Hydraulics BV</dd>
-            <dt style="color: #5C6178">Languages</dt><dd style="margin: 0; text-align: right">Dutch to English</dd>
-            <dt style="color: #5C6178">Subject</dt><dd style="margin: 0; text-align: right">Pumping stations</dd>
-            <dt style="color: #5C6178">Glossary</dt><dd style="margin: 0; text-align: right">Supplied by client</dd>
-            <dt style="color: #5C6178">Formats</dt><dd style="margin: 0; text-align: right">Word, figures as PDF</dd>
-            <dt style="color: #5C6178">Deadline</dt><dd style="margin: 0; text-align: right">4 Nov</dd>
-          </dl>
-        </section>
-
-        <section id="notes" aria-labelledby="note-h" class="card" style="display: flex; flex-direction: column; gap: 8px; background: #E4EEFA; border-color: #CFE0F6">
-          <h2 id="note-h" class="h3" style="color: #1D3F66">Notes</h2>
-          <p style="margin: 0; color: #1D3F66">Client prefers email. Keep metric units throughout. Figure captions keep their original numbering.</p>
-        </section>
-      </aside>
-    </div>
+    </sc-if>
   </main>
 
   <nav class="tabbar" aria-label="Main">
@@ -360,19 +424,29 @@ button,input,select,textarea{font-family:inherit}
       <a href="{{n.href}}" aria-current="{{n.current}}">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"/></svg>
         {{n.label}}
+        <sc-if value="{{n.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="badge">{{n.badge}}<span class="sr"> need you</span></span></sc-if>
       </a>
     </sc-for>
   </nav>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{}'>
+<script type="text/x-dc" data-dc-script data-props='{"phase":{"editor":"enum","options":["full","one"],"default":"full","section":"Variant"},"assistance":{"editor":"enum","options":["assisted","legal","optout"],"default":"assisted","section":"Variant"}}'>
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { mode: 'translate', filter: 'all', paused: false };
+    this.state = {
+      filter: 'all', dialogOpen: false, askMode: 'translate', requested: null,
+      paused: false, replyOpened: false, replySent: false, copied: false,
+      approved: false, archive: 'idle',
+    };
   }
   renderVals() {
-    const { mode, filter, paused } = this.state;
+    const p1 = (this.props.phase ?? 'full') === 'one';
+    const assistance = this.props.assistance ?? 'assisted';
+    const coverUi = !p1;
+    const { filter, dialogOpen, askMode, requested, paused, replyOpened, replySent, copied, approved, archive } = this.state;
+    const isAssisted = assistance === 'assisted';
+    const canAsk = assistance !== 'legal';
 
     const ICON = {
       overview: 'M5 3h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM16 3h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM5 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2zM16 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2z',
@@ -380,19 +454,32 @@ class Component extends DCLogic {
       clients: 'M9 11.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5.3a3.2 3.2 0 0 1 0 5.4M18 14.4c1.7.8 3 2.6 3 5.6',
       translators: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z',
     };
+    const needs = p1 ? 3 : 4;
     const nav = [
       ['Overview', 'Main.dc.html', 'overview'],
-      ['Projects', 'Project.dc.html', 'projects'],
+      ['Projects', 'Projects.dc.html', 'projects'],
       ['Clients', 'Clients.dc.html', 'clients'],
       ['Translators', 'Resources.dc.html', 'translators'],
-    ].map(([label, href, k]) => ({ label, href, d: ICON[k], current: label === 'Projects' ? 'page' : 'false' }));
+    ].map(([label, href, k]) => ({
+      label, href, d: ICON[k],
+      current: label === 'Projects' ? 'page' : 'false',
+      hasBadge: label === 'Overview', badge: String(needs),
+    }));
 
-    const sections = [
-      ['Assisted draft', '#draft'], ['Ask the assistant', '#ask'], ['Cover mode', '#cover'], ['Feedback log', '#feedback'],
-      ['Who is on this', '#team'], ['Next steps', '#next'], ['Details', '#details'], ['Notes', '#notes'],
-    ].map(([label, href]) => ({ label, href }));
+    const sections = (p1
+      ? [['Feedback log', '#feedback'], ['Who is on this', '#team'], ['Details', '#details'], ['Notes', '#notes']]
+      : [['Assisted draft', '#draft'], ['Cover activity', '#activity'], ['Feedback log', '#feedback'], ['Who is on this', '#team'], ['Details', '#details'], ['Notes', '#notes']]
+    ).map(([label, href]) => ({ label, href }));
 
-    const clientMail = 'mailto:?subject=' + encodeURIComponent('Pump station white paper: update') + '&body=' + encodeURIComponent('Dear Hendrik,\n\nThe draft of the pump station white paper is with our reviewer and will reach you by 31 October. Two terms are marked for your confirmation, and I will send them with the draft.\n\nKind regards,\n[Your name]');
+    const mailBody = 'Dear Hendrik,\n\nThe draft of the pump station white paper is with our reviewer and will reach you by 31 October. Two terms are marked for your confirmation, and I will send them with the draft.\n\nKind regards,\n[Your name]';
+    const mailSubject = 'Pump station white paper: update';
+    const clientMail = 'mailto:?subject=' + encodeURIComponent(mailSubject) + '&body=' + encodeURIComponent(mailBody);
+
+    const docs = {
+      assisted: { t: 'Technical', bg: '#D3EEEB', fg: '#1F5654' },
+      optout: { t: 'Technical', bg: '#D3EEEB', fg: '#1F5654' },
+      legal: { t: 'Legal', bg: '#E7E1F7', fg: '#4A3B87' },
+    }[assistance];
 
     const order = ['Intake', 'Allocated', 'Draft', 'Review', 'Client feedback', 'Delivery'];
     const current = 2;
@@ -411,49 +498,13 @@ class Component extends DCLogic {
       };
     });
 
-    const loopSteps = ['First draft', 'Terminology check', 'Subject-matter review', 'Fluency review', 'Handed to translator'];
-    const loop = loopSteps.map((label, i) => ({
-      label,
-      arrow: i < loopSteps.length - 1,
-      bg: i === loopSteps.length - 1 ? '#E7E1F7' : '#E2F3F1',
-      fg: i === loopSteps.length - 1 ? '#4A3B87' : '#1F5654',
-    }));
-
-    const modeDefs = [
-      { id: 'translate', label: 'Translate', help: 'Prepare a full draft, then run it through terminology, subject-matter and fluency review before it reaches a translator.' },
-      { id: 'review', label: 'Review only', help: 'Read an existing translation and report on accuracy, terminology and tone. The text itself is not changed.' },
-      { id: 'terms', label: 'Terminology check', help: 'Compare the draft against the client glossary and list every deviation for the translator to decide on.' },
-    ];
-    const modes = modeDefs.map((m) => {
-      const on = mode === m.id;
-      return {
-        label: m.label, pressed: on,
-        bg: on ? '#ECE8F8' : '#FFFFFF',
-        fg: on ? '#4A3B87' : '#272B3F',
-        border: on ? '#7C69BA' : '#C9CDD8',
-        pick: () => this.setState({ mode: m.id }),
-      };
-    });
-    const modeHelp = modeDefs.find((m) => m.id === mode).help;
-
-    const coverSteps = [
-      { n: '1', title: 'Analysed the brief', detail: 'Technical, 12,400 words, glossary supplied. Eligible for an assisted draft.', when: '22 Oct', done: true },
-      { n: '2', title: 'Translated and reviewed', detail: 'Three passes: terminology, subject matter, fluency.', when: '24 Oct, 16:40', done: true },
-      { n: '3', title: 'Summary and approval request', detail: 'Sent to Marieke Visser as reviewer of record.', when: '24 Oct, 16:42', done: true },
-      { n: '4', title: 'Reply to the client prepared', detail: 'Waiting for you to open it and press send.', when: 'Ready', done: false },
-    ].map((c) => ({
-      ...c,
-      dotBg: c.done ? '#BFE3E0' : '#FFFFFF',
-      dotFg: c.done ? '#1F5654' : '#5A4A99',
-      rule: paused ? '#E3E5EE' : '#BFE3E0',
-    }));
-
     const all = [
       { date: '24 Oct', version: 'Draft 1', source: 'Reviewer', who: 'Marieke Visser', tag: 'Tone', text: 'The introduction reads literally. A more natural opening would suit an English-speaking engineering audience.', status: 'Open' },
       { date: '24 Oct', version: 'Draft 1', source: 'Reviewer', who: 'Marieke Visser', tag: 'Terminology', text: '“Rotor” should be “impeller” in the pump chapters, per the client glossary.', status: 'Applied' },
-      { date: '23 Oct', version: 'Pass 2', source: 'Assistant', who: 'Subject-matter review', tag: 'Terminology', text: 'Flagged “afvoerleiding”: two plausible readings. Drafted as “discharge line”; needs confirmation.', status: 'Open' },
+      { date: '23 Oct', version: 'Check 2', source: 'Assistant', who: 'Subject matter check', tag: 'Terminology', text: 'Flagged “afvoerleiding”: two plausible readings. Drafted as “discharge line”; needs confirmation.', status: 'Open' },
       { date: '22 Oct', version: 'Brief', source: 'Client', who: 'Hendrik de Wit', tag: 'Brief', text: 'Keep metric units throughout; do not convert to imperial.', status: 'Applied' },
-    ];
+    ].filter((e) => !(p1 && e.source === 'Assistant'));
+    const openCount = all.filter((e) => e.status === 'Open').length;
     const srcStyle = {
       Reviewer: { bg: '#E7E1F7', fg: '#4A3B87' },
       Client: { bg: '#D3EEEB', fg: '#1F5654' },
@@ -469,8 +520,8 @@ class Component extends DCLogic {
       }));
     const filterDefs = [
       { id: 'all', label: 'All ' + all.length },
-      { id: 'open', label: 'Open ' + all.filter((e) => e.status === 'Open').length },
-      { id: 'applied', label: 'Applied ' + all.filter((e) => e.status === 'Applied').length },
+      { id: 'open', label: 'Open ' + openCount },
+      { id: 'applied', label: 'Applied ' + (all.length - openCount) },
     ];
     const filters = filterDefs.map((f) => {
       const on = filter === f.id;
@@ -483,14 +534,98 @@ class Component extends DCLogic {
       };
     });
 
+    const attention = [];
+    if (!p1 && isAssisted && !approved) {
+      attention.push({ text: 'Waiting for Marieke Visser to approve the draft. 2 points are left to decide.', href: '#draft', action: 'See the draft' });
+    }
+    if (openCount > 0) {
+      attention.push({ text: openCount + ' open feedback ' + (openCount === 1 ? 'point' : 'points'), href: '#feedback', action: 'See feedback' });
+    }
+
     const team = [
       { init: 'JB', bg: '#D3EEEB', fg: '#1F5654', name: 'Jonas Bakker', role: 'Translator' },
-      { init: 'MV', bg: '#E7E1F7', fg: '#4A3B87', name: 'Marieke Visser', role: 'Reviewer of record' },
+      { init: 'MV', bg: '#E7E1F7', fg: '#4A3B87', name: 'Marieke Visser', role: 'Reviewer' },
       { init: 'HW', bg: '#E6E8EE', fg: '#434A5E', name: 'Hendrik de Wit', role: 'Client contact' },
     ];
 
+    // Assisted draft section (full variant only)
+    const reasons = {
+      assisted: 'Assisted because this client allows assisted drafts, and technical documents are eligible.',
+      legal: 'Legal documents are never assisted.',
+      optout: 'This client has not opted in to assisted drafts.',
+    };
+    const checks = [
+      { label: 'Drafted', result: '12,400 words', ok: true },
+      { label: 'Checked terminology', result: '1 point left', ok: false },
+      { label: 'Checked subject matter', result: 'No points left', ok: true },
+      { label: 'Checked wording', result: '1 point left', ok: false },
+    ].map((c) => ({ ...c, bg: c.ok ? '#E2F3F1' : '#FBEEE6', fg: c.ok ? '#1F5654' : '#8F4A2A' }));
+
+    const askDefs = [
+      { id: 'translate', label: 'Translate', help: 'Make a full draft, then check terminology, subject matter and wording.' },
+      { id: 'review', label: 'Review only', help: 'Read an existing translation and report on accuracy, terminology and tone. The text is not changed.' },
+      { id: 'terms', label: 'Terminology check', help: 'Compare the draft with the client glossary and list every difference for a person to decide.' },
+    ];
+    const askOptions = askDefs.map((o) => {
+      const on = askMode === o.id;
+      return {
+        ...o, checked: on,
+        bg: on ? '#ECE8F8' : '#FFFFFF',
+        border: on ? '#7C69BA' : '#E3E5EE',
+        pick: () => this.setState({ askMode: o.id }),
+      };
+    });
+    const askLabel = askDefs.find((o) => o.id === askMode).label;
+
+    const coverSteps = (isAssisted
+      ? [
+        { n: '1', title: 'Read the brief', detail: 'Technical, 12,400 words, glossary supplied. Eligible for an assisted draft.', when: '22 Oct', done: true },
+        { n: '2', title: 'Made and checked a draft', detail: 'Drafted, then checked terminology, subject matter and wording.', when: '24 Oct, 16:40', done: true },
+        { n: '3', title: approved ? 'Marieke Visser approved the draft' : 'Asked Marieke Visser to approve', detail: approved ? 'You recorded her approval. The log shows both.' : 'She approves before anything reaches the client.', when: approved ? 'Just now' : '24 Oct, 16:42', done: true },
+        { n: '4', title: 'Prepared a reply to the client', detail: replySent ? 'Marked as sent.' : 'Waiting for you to open it and send.', when: replySent ? 'Done' : 'Ready', done: replySent },
+      ]
+      : [
+        { n: '1', title: 'Read the brief', detail: reasons[assistance], when: '22 Oct', done: true },
+        { n: '2', title: 'Prepared a reply to the client', detail: replySent ? 'Marked as sent.' : 'Waiting for you to open it and send.', when: replySent ? 'Done' : 'Ready', done: replySent },
+      ]
+    ).map((c) => ({
+      ...c,
+      dotBg: c.done ? '#BFE3E0' : '#FFFFFF',
+      dotFg: c.done ? '#1F5654' : '#5A4A99',
+      rule: paused ? '#E3E5EE' : '#BFE3E0',
+    }));
+
     return {
-      nav, sections, clientMail, stages, loop, modes, modeHelp, coverSteps, filters, entries, team,
+      nav, sections, coverUi, clientMail, stages, attention, team, entries, filters,
+      docType: docs.t, docBg: docs.bg, docFg: docs.fg,
+      noAttention: attention.length === 0,
+      noEntries: entries.length === 0,
+      sources: p1 ? ['Reviewer', 'Client'] : ['Reviewer', 'Client', 'Assistant'],
+      isAssisted, canAsk,
+      assistReason: reasons[assistance],
+      bandBg: isAssisted ? '#ECE8F8' : '#ECEEF3',
+      bandInk: isAssisted ? '#2E2556' : '#272B3F',
+      bandChip: isAssisted ? (approved ? 'Approved by Marieke, recorded by you' : 'Awaiting Marieke’s approval') : 'Not assisted',
+      canApprove: !approved,
+      approvalNote: approved
+        ? 'Approval recorded. The log shows that Marieke Visser approved and that you recorded it.'
+        : 'Marieke has no login, so you record her approval here. The log shows that she approved and that you recorded it.',
+      approved, recordApproval: () => this.setState({ approved: true }),
+      archiveIdle: archive === 'idle', archiveConfirm: archive === 'confirm',
+      archiveText: archive === 'idle'
+        ? 'Hide this project from the lists. You can bring it back from the Archived filter.'
+        : (archive === 'confirm' ? 'Archive “Pump station white paper”? Nothing is deleted.' : 'Archived. Find it under the Archived filter on Projects.'),
+      askArchive: () => this.setState({ archive: 'confirm' }),
+      cancelArchive: () => this.setState({ archive: 'idle' }),
+      confirmArchive: () => this.setState({ archive: 'done' }),
+      checks,
+      requested: !!requested,
+      requestedText: requested ? requested + ' requested. It runs now, and the result will appear here for a named reviewer to approve.' : '',
+      dialogOpen, askOptions,
+      openAsk: () => this.setState({ dialogOpen: true }),
+      closeAsk: () => this.setState({ dialogOpen: false }),
+      confirmAsk: () => this.setState({ dialogOpen: false, requested: askLabel }),
+      coverSteps,
       paused,
       pauseLabel: paused ? 'Resume for this project' : 'Pause for this project',
       togglePause: () => this.setState({ paused: !this.state.paused }),
@@ -498,8 +633,21 @@ class Component extends DCLogic {
       coverBorder: paused ? '#E3E5EE' : '#BFE3E0',
       coverInk: paused ? '#272B3F' : '#1E3F40',
       coverLine: paused
-        ? 'Paused for this project. Nothing further will be prepared automatically until you resume.'
-        : 'Active for this project. It analysed the brief, ran the translation and review loop, and prepared the next client reply.',
+        ? 'Paused for this project. Nothing further will be prepared until you resume.'
+        : 'Active for this project. This is what it has done so far.',
+      replySent, replyOpened,
+      replyPending: !replySent,
+      openLabel: replyOpened ? 'Open again' : 'Open in email app',
+      copyLabel: copied ? 'Copied' : 'Copy text',
+      replyHint: replyOpened
+        ? 'Opened. Opening your email app does not send anything, so this stays in Needs you until you mark it as sent.'
+        : 'Opens your email app with the message filled in. You press send.',
+      openReply: () => this.setState({ replyOpened: true }),
+      markSent: () => this.setState({ replySent: true }),
+      copyReply: () => {
+        try { navigator.clipboard.writeText(mailSubject + '\n\n' + mailBody); } catch (e) { /* clipboard blocked: the label still confirms the click */ }
+        this.setState({ copied: true });
+      },
     };
   }
 }

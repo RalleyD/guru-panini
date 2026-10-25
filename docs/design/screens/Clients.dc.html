@@ -15,7 +15,9 @@ body{margin:0}
 a{color:inherit;text-decoration:none}
 a:hover{color:#5A4A99}
 button,input,select,textarea{font-family:inherit}
+:focus-visible{outline:2px solid #5A4A99;outline-offset:2px}
 [id]{scroll-margin-top:24px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .app{display:flex;min-height:100%;background:#F3F4F8;color:#272B3F;font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.5}
 .side{flex:0 0 248px;background:#FFFFFF;border-right:1px solid #E3E5EE}
 .side-in{position:sticky;top:0;box-sizing:border-box;height:100vh;overflow-y:auto;padding:28px 16px;display:flex;flex-direction:column;gap:24px}
@@ -25,16 +27,22 @@ button,input,select,textarea{font-family:inherit}
 .nav-link[aria-current="page"]{background:#ECE8F8;color:#4A3B87;font-weight:500}
 .sec-link{display:flex;align-items:center;min-height:36px;padding:0 12px;border-radius:8px;color:#5C6178;font-size:13px}
 .sec-link:hover{background:#F3F4F8;color:#272B3F}
+.badge{margin-left:auto;min-width:20px;height:20px;padding:0 6px;box-sizing:border-box;border-radius:999px;background:#5A4A99;color:#FFFFFF;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center}
 .card{box-sizing:border-box;padding:28px;border-radius:20px;background:#FFFFFF;border:1px solid #E3E5EE}
 .h1{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:40px;line-height:1.15;letter-spacing:-0.01em}
 .h2{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:24px;line-height:1.25}
+.h3{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:20px;line-height:1.25}
 .btn{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #C9CDD8;background:#FFFFFF;color:#272B3F;font-size:14px;font-weight:500;cursor:pointer}
 .btn:hover{background:#F8F9FC;color:#272B3F}
 .btn-primary,.btn-primary:hover{border-color:#5A4A99;background:#5A4A99;color:#FFFFFF}
 .btn-primary:hover{background:#4A3B87}
 .field{box-sizing:border-box;min-height:44px;padding:0 14px;border-radius:12px;border:1px solid #C9CDD8;background:#FFFFFF;color:#272B3F;font-size:14px}
+.opt{display:flex;align-items:flex-start;gap:12px;box-sizing:border-box;padding:14px 16px;border-radius:14px;border:1px solid #E3E5EE;min-height:44px;cursor:pointer}
 .row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:14px 12px;border-radius:12px;min-height:44px;box-sizing:border-box}
 .row:hover{background:#F3F4F8;color:#272B3F}
+.board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;min-width:1060px}
+.overlay{position:fixed;top:0;right:0;bottom:0;left:0;z-index:50;box-sizing:border-box;display:flex;align-items:flex-start;justify-content:center;padding:96px 16px 16px;background:rgba(39,43,63,0.45);overflow-y:auto}
+.dialog{width:100%;max-width:520px;box-sizing:border-box;padding:28px;border-radius:20px;background:#FFFFFF;display:flex;flex-direction:column;gap:18px}
 .topbar,.chips,.tabbar{display:none}
 @media (max-width:1100px){.main{padding:32px 32px 56px}}
 @media (max-width:899px){
@@ -45,12 +53,16 @@ button,input,select,textarea{font-family:inherit}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:12px 16px 0}
 .chips a{flex:none;display:inline-flex;align-items:center;box-sizing:border-box;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid #C9CDD8;background:#FFFFFF;color:#434A5E;font-size:13px;font-weight:500;white-space:nowrap}
 .tabbar{display:flex;position:sticky;bottom:0;z-index:20;gap:4px;padding:4px 8px;background:#FFFFFF;border-top:1px solid #E3E5EE}
-.tabbar a{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;border-radius:12px;font-size:11px;font-weight:500;color:#434A5E}
+.tabbar a{flex:1 1 0;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;border-radius:12px;font-size:11px;font-weight:500;color:#434A5E}
 .tabbar a[aria-current="page"]{background:#ECE8F8;color:#4A3B87}
+.tabbar .badge{position:absolute;top:2px;left:calc(50% + 4px);margin:0}
 .card{padding:20px;border-radius:16px}
+.dialog{padding:20px;border-radius:16px}
+.overlay{padding-top:48px}
 .h1{font-size:30px}
 .h2{font-size:22px}
 .hide-sm{display:none !important}
+.board{grid-template-columns:repeat(5,272px);min-width:0}
 [id]{scroll-margin-top:72px}
 }
 </style>
@@ -68,21 +80,18 @@ button,input,select,textarea{font-family:inherit}
           <a class="nav-link" href="{{n.href}}" aria-current="{{n.current}}">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"/></svg>
             {{n.label}}
+            <sc-if value="{{n.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="badge">{{n.badge}}<span class="sr"> need you</span></span></sc-if>
           </a>
         </sc-for>
       </nav>
-      <nav aria-label="On this page" style="display: flex; flex-direction: column; gap: 2px; padding-top: 16px; border-top: 1px solid #E3E5EE">
-        <span style="padding: 0 12px 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5C6178">Clients</span>
-        <sc-for list="{{sections}}" as="s" hint-placeholder-count="6">
-          <a class="sec-link" href="{{s.href}}">{{s.label}}</a>
-        </sc-for>
-      </nav>
       <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid #E3E5EE; display: flex; flex-direction: column; gap: 2px">
-        <a class="nav-link" href="Main.dc.html#cover">
-          <span aria-hidden="true" style="width: 18px; display: inline-flex; justify-content: center"><span style="width: 8px; height: 8px; border-radius: 50%; background: #3F9A92"></span></span>
-          Cover mode
-          <span style="margin-left: auto; font-size: 12px; color: #5C6178">On</span>
-        </a>
+        <sc-if value="{{coverUi}}" hint-placeholder-val="{{ true }}">
+          <a class="nav-link" href="Main.dc.html#cover">
+            <span aria-hidden="true" style="width: 18px; display: inline-flex; justify-content: center"><span style="width: 8px; height: 8px; border-radius: 50%; background: #3F9A92"></span></span>
+            Cover mode
+            <span style="margin-left: auto; font-size: 12px; color: #5C6178">On</span>
+          </a>
+        </sc-if>
         <a class="nav-link" href="Settings.dc.html">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9m4 0h3M4 17h3m4 0h9M15 4v6M9 14v6"/></svg>
           Settings
@@ -104,22 +113,17 @@ button,input,select,textarea{font-family:inherit}
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9m4 0h3M4 17h3m4 0h9M15 4v6M9 14v6"/></svg>
     </a>
   </header>
-  <nav class="chips" aria-label="On this page">
-    <sc-for list="{{sections}}" as="s" hint-placeholder-count="6">
-      <a href="{{s.href}}">{{s.label}}</a>
-    </sc-for>
-  </nav>
 
   <main class="main">
 
     <header style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px">
       <div>
         <h1 class="h1">Clients</h1>
-        <p style="margin: 8px 0 0; font-size: 16px; color: #5C6178; max-width: 52ch">Seven clients. Three are waiting to hear from you, and cover mode is on for three.</p>
+        <p style="margin: 8px 0 0; font-size: 16px; color: #5C6178; max-width: 52ch">{{intro}}</p>
       </div>
       <div style="display: flex; flex-wrap: wrap; gap: 10px">
         <input aria-label="Search clients" placeholder="Search clients" class="field" style="width: 220px; max-width: 100%">
-        <button class="btn btn-primary">Add client</button>
+        <a class="btn btn-primary" href="AddClient.dc.html">Add client</a>
       </div>
     </header>
 
@@ -131,17 +135,21 @@ button,input,select,textarea{font-family:inherit}
           <span style="flex: 1 1 200px">Client</span>
           <span style="flex: 0 0 90px">Work</span>
           <span style="flex: 0 0 76px">Last contact</span>
-          <span style="flex: 0 0 96px; text-align: right">Status</span>
+          <span style="flex: 0 0 170px; text-align: right">Status</span>
         </div>
         <sc-for list="{{clients}}" as="c" hint-placeholder-count="7">
           <a class="row" href="Clients.dc.html" style="background: {{c.rowBg}}">
             <div style="flex: 1 1 200px; min-width: 0">
               <div style="font-weight: 500">{{c.name}}</div>
-              <div style="font-size: 12px; color: #5C6178">{{c.pair}} · {{c.work}} · {{c.cover}}</div>
+              <div style="font-size: 12px; color: #5C6178">{{c.pair}} · {{c.work}}</div>
             </div>
             <span style="flex: 0 0 90px; font-size: 13px; color: #434A5E">{{c.active}}</span>
             <span style="flex: 0 0 76px; font-size: 13px; color: #434A5E">{{c.last}}</span>
-            <span style="flex: 0 0 96px; display: flex; justify-content: flex-end"><span style="font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: {{c.stBg}}; color: {{c.stFg}}; white-space: nowrap">{{c.status}}</span></span>
+            <span style="flex: 0 0 170px; display: flex; justify-content: flex-end">
+              <sc-if value="{{c.hasChip}}" hint-placeholder-val="{{ true }}">
+                <span style="font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: {{c.stBg}}; color: {{c.stFg}}; white-space: nowrap">{{c.chip}}</span>
+              </sc-if>
+            </span>
           </a>
         </sc-for>
       </section>
@@ -153,37 +161,35 @@ button,input,select,textarea{font-family:inherit}
           <span style="font-size: 13px; color: #5C6178">Legal · Dutch to English</span>
         </div>
 
-        <div style="padding: 16px 18px; border-radius: 14px; background: #FBEEE6; display: flex; flex-direction: column; gap: 10px">
-          <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #8F4A2A">Waiting to hear from them</h3>
-          <p style="margin: 0; color: #5A2F16">The planning appeal summary draft went out on 20 Oct. A gentle reminder is ready for you.</p>
-          <div>
-            <a class="btn btn-primary" href="{{kadeMail}}">Open in email app</a>
-          </div>
+        <div style="padding: 16px 18px; border-radius: 14px; background: {{waitBg}}; display: flex; flex-direction: column; gap: 10px">
+          <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: {{waitInk}}">{{waitTitle}}</h3>
+          <p style="margin: 0; color: {{waitInk}}">{{waitText}}</p>
+          <sc-if value="{{pending}}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <sc-if value="{{opened}}" hint-placeholder-val="{{ true }}">
+                <button class="btn btn-primary" onClick="{{markSent}}">Mark as sent</button>
+              </sc-if>
+              <a class="btn" href="{{kadeMail}}" onClick="{{openMail}}">{{openLabel}}</a>
+              <button class="btn" onClick="{{copyMail}}">{{copyLabel}}</button>
+            </div>
+          </sc-if>
         </div>
 
-        <div id="cover" style="padding: 16px 18px; border-radius: 14px; background: #E2F3F1; border: 1px solid #BFE3E0; display: flex; flex-direction: column; gap: 6px">
-          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
-            <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: #1F5654">Cover mode for this client</h3>
-            <label style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 13px; font-weight: 500; color: #1F5654">
-              <input type="checkbox" role="switch" checked style="width: 22px; height: 22px; accent-color: #5A4A99">On
-            </label>
-          </div>
-          <label style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px; color: #1E3F40">
-            <input type="checkbox" checked style="width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: #5A4A99">
-            <span>Prepare replies and reminders for me to send</span>
-          </label>
-          <label style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px; color: #1E3F40">
-            <input type="checkbox" checked style="width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: #5A4A99">
-            <span>Run analyse, translate and review on eligible projects</span>
-          </label>
-          <label style="display: flex; align-items: flex-start; gap: 12px; min-height: 44px; color: #1E3F40">
-            <input type="checkbox" checked disabled style="width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: #5A4A99">
-            <span>Ask for approval before anything is delivered <span style="color: #1F5654">(always on)</span></span>
-          </label>
-          <p style="margin: 4px 0 0; font-size: 13px; color: #1E3F40">Legal documents stay with a translator, so for Kade Architecten only replies are prepared.</p>
-        </div>
+        <sc-if value="{{coverUi}}" hint-placeholder-val="{{ true }}">
+          <fieldset id="cover" style="margin: 0; padding: 16px 18px; border: 1px solid #BFE3E0; border-radius: 14px; background: #E2F3F1; display: flex; flex-direction: column; gap: 8px">
+            <legend style="padding: 0 6px; font-size: 14px; font-weight: 600; color: #1F5654">Cover mode for this client</legend>
+            <sc-for list="{{coverOptions}}" as="o" hint-placeholder-count="3">
+              <label class="opt" style="background: {{o.bg}}; border-color: {{o.border}}">
+                <input type="radio" name="cover" checked="{{o.checked}}" onChange="{{o.pick}}" style="width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: #5A4A99">
+                <span><span style="display: block; font-weight: 500">{{o.label}}</span><span style="font-size: 13px; color: #434A5E">{{o.help}}</span></span>
+              </label>
+            </sc-for>
+            <p style="margin: 4px 0 0; font-size: 13px; color: #1E3F40">{{coverReason}}</p>
+            <p style="margin: 0; font-size: 13px; color: #1E3F40">A named reviewer approves every draft before it reaches the client.</p>
+          </fieldset>
+        </sc-if>
 
-        <div id="contact" style="display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; flex-direction: column; gap: 10px">
           <h3 style="margin: 0; font-size: 14px; font-weight: 600">Contact</h3>
           <dl style="margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; font-size: 13px">
             <dt style="color: #5C6178">Name</dt><dd style="margin: 0; text-align: right">[Contact name]</dd>
@@ -192,7 +198,7 @@ button,input,select,textarea{font-family:inherit}
           </dl>
         </div>
 
-        <div id="prefs" style="display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; flex-direction: column; gap: 10px">
           <h3 style="margin: 0; font-size: 14px; font-weight: 600">How they like it written</h3>
           <div style="display: flex; flex-wrap: wrap; gap: 6px">
             <span style="font-size: 12px; padding: 4px 10px; border-radius: 999px; background: #E7E1F7; color: #4A3B87">Formal tone</span>
@@ -202,7 +208,7 @@ button,input,select,textarea{font-family:inherit}
           </div>
         </div>
 
-        <div id="history" style="display: flex; flex-direction: column">
+        <div style="display: flex; flex-direction: column">
           <h3 style="margin: 0 0 6px; font-size: 14px; font-weight: 600">History</h3>
           <a href="Project.dc.html" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; padding: 6px 0; border-top: 1px solid #E3E5EE">
             <span>Planning appeal summary</span><span style="font-size: 12px; color: #5C6178; white-space: nowrap">With client</span>
@@ -211,6 +217,8 @@ button,input,select,textarea{font-family:inherit}
             <span>Zoning correspondence</span><span style="font-size: 12px; color: #5C6178; white-space: nowrap">Delivered Aug</span>
           </a>
         </div>
+
+        <p style="margin: 0; padding-top: 16px; border-top: 1px solid #E3E5EE; font-size: 13px; color: #5C6178">To archive this client, finish or archive its 1 active project first. Archiving hides a client from the lists and keeps its history.</p>
       </aside>
     </div>
   </main>
@@ -220,54 +228,112 @@ button,input,select,textarea{font-family:inherit}
       <a href="{{n.href}}" aria-current="{{n.current}}">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"/></svg>
         {{n.label}}
+        <sc-if value="{{n.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="badge">{{n.badge}}<span class="sr"> need you</span></span></sc-if>
       </a>
     </sc-for>
   </nav>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{}'>
+<script type="text/x-dc" data-dc-script data-props='{"phase":{"editor":"enum","options":["full","one"],"default":"full","section":"Variant"}}'>
 class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { cover: 'replies', opened: true, sent: false, copied: false };
+  }
   renderVals() {
+    const p1 = (this.props.phase ?? 'full') === 'one';
+    const { cover, opened, sent, copied } = this.state;
+
     const ICON = {
       overview: 'M5 3h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM16 3h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM5 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2zM16 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2z',
       projects: 'M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
       clients: 'M9 11.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5.3a3.2 3.2 0 0 1 0 5.4M18 14.4c1.7.8 3 2.6 3 5.6',
       translators: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z',
     };
+    const needs = p1 ? 3 : 4;
     const nav = [
       ['Overview', 'Main.dc.html', 'overview'],
-      ['Projects', 'Project.dc.html', 'projects'],
+      ['Projects', 'Projects.dc.html', 'projects'],
       ['Clients', 'Clients.dc.html', 'clients'],
       ['Translators', 'Resources.dc.html', 'translators'],
-    ].map(([label, href, k]) => ({ label, href, d: ICON[k], current: label === 'Clients' ? 'page' : 'false' }));
-    const sections = [
-      ['All clients', '#list'], ['Selected client', '#client'], ['Cover mode', '#cover'],
-      ['Contact', '#contact'], ['Writing style', '#prefs'], ['History', '#history'],
-    ].map(([label, href]) => ({ label, href }));
+    ].map(([label, href, k]) => ({
+      label, href, d: ICON[k],
+      current: label === 'Clients' ? 'page' : 'false',
+      hasBadge: label === 'Overview', badge: String(needs),
+    }));
 
-    const kadeMail = 'mailto:?subject=' + encodeURIComponent('Planning appeal summary: draft for your comments') + '&body=' + encodeURIComponent('Dear [contact name],\n\nI hope you are well. A gentle reminder that the draft of the planning appeal summary was sent on 20 October. When you have a moment, we would be glad to hear your comments.\n\nKind regards,\n[Your name]');
+    const mailSubject = 'Planning appeal summary: draft for your comments';
+    const mailBody = 'Dear [contact name],\n\nI hope you are well. A gentle reminder that the draft of the planning appeal summary was sent on 20 October. When you have a moment, we would be glad to hear your comments.\n\nKind regards,\n[Your name]';
+    const kadeMail = 'mailto:?subject=' + encodeURIComponent(mailSubject) + '&body=' + encodeURIComponent(mailBody);
 
+    // Chip priority: follow-up due, then cover on, then nothing.
+    const coverChip = { replies: 'Cover: replies', drafts: 'Cover: replies + drafts' };
     const warm = { bg: '#FBEEE6', fg: '#8F4A2A' };
     const calm = { bg: '#E2F3F1', fg: '#1F5654' };
-    const quiet = { bg: '#E6E8EE', fg: '#434A5E' };
-    const mk = (name, pair, work, active, last, follow, cover, status, selected) => ({
-      name, pair, work, active, last,
-      cover: cover ? 'Cover on' : 'Cover off',
-      status: status || (follow ? 'Follow up' : 'On track'),
-      stBg: follow ? warm.bg : (status ? quiet.bg : calm.bg),
-      stFg: follow ? warm.fg : (status ? quiet.fg : calm.fg),
-      rowBg: selected ? '#ECE8F8' : 'transparent',
-    });
+    const mk = (name, pair, work, active, last, followUp, level, selected) => {
+      const lv = p1 ? 'off' : (selected ? cover : level);
+      const chip = followUp ? 'Follow-up due' : (lv !== 'off' ? coverChip[lv] : '');
+      return {
+        name, pair, work, active, last,
+        chip, hasChip: chip !== '',
+        stBg: followUp ? warm.bg : calm.bg,
+        stFg: followUp ? warm.fg : calm.fg,
+        rowBg: selected ? '#ECE8F8' : 'transparent',
+      };
+    };
     const clients = [
-      mk('Van der Meer Notarissen', 'NL → EN', 'Legal', '1 active', '23 Oct', false, false),
-      mk('Delta Hydraulics BV', 'NL → EN', 'Technical', '1 active', '24 Oct', false, true),
-      mk('Linden & Co', 'EN → NL', 'Business', '1 active', '22 Oct', true, true),
-      mk('Casa Norte Imports', 'EN → ES', 'Legal', '1 active', '21 Oct', false, false),
-      mk('Kade Architecten', 'NL → EN', 'Legal', '1 active', '20 Oct', true, true, null, true),
-      mk('Oranje Vastgoed', 'NL → EN', 'Real estate', '1 quote', '22 Oct', true, false),
-      mk('Brink Mediation', 'NL → EN', 'Legal', 'None active', '22 Oct', false, false, 'Delivered'),
+      mk('Van der Meer Notarissen', 'NL → EN', 'Legal', '1 active', '23 Oct', false, 'off'),
+      mk('Delta Hydraulics BV', 'NL → EN', 'Technical', '1 active', '24 Oct', false, 'drafts'),
+      mk('Linden & Co', 'EN → NL', 'Business', '1 active', '22 Oct', true, 'replies'),
+      mk('Casa Norte Imports', 'EN → ES', 'Legal', '1 active', '21 Oct', false, 'off'),
+      mk('Kade Architecten', 'NL → EN', 'Legal', '1 active', '20 Oct', true, 'replies', true),
+      mk('Oranje Vastgoed', 'NL → EN', 'Real estate', '1 quote', '22 Oct', true, 'off'),
+      mk('Brink Mediation', 'NL → EN', 'Legal', 'None active', '22 Oct', false, 'off'),
     ];
-    return { nav, sections, clients, kadeMail };
+
+    const coverDefs = [
+      { id: 'off', label: 'Off', help: 'Cover mode does nothing for this client.' },
+      { id: 'replies', label: 'Prepare replies only', help: 'Follow-ups and replies are written for you to send.' },
+      { id: 'drafts', label: 'Replies and assisted drafts', help: 'As above, and eligible projects get an assisted draft for a named reviewer to approve.' },
+    ];
+    const coverOptions = coverDefs.map((o) => {
+      const on = cover === o.id;
+      return {
+        ...o, checked: on,
+        bg: on ? '#FFFFFF' : 'transparent',
+        border: on ? '#7C69BA' : '#BFE3E0',
+        pick: () => this.setState({ cover: o.id }),
+      };
+    });
+    const coverReason = {
+      off: 'Nothing will be prepared for Kade Architecten.',
+      replies: 'Assisted drafts are off for this client.',
+      drafts: 'Legal documents are never assisted, so no drafts will be started for this client. Replies are still prepared.',
+    }[cover];
+
+    const pending = !sent;
+    return {
+      nav, clients, kadeMail, coverOptions, coverReason,
+      coverUi: !p1,
+      intro: p1 ? 'Seven clients. Three are waiting to hear from you.' : 'Seven clients. Three are waiting to hear from you, and cover mode is on for three.',
+      pending, opened,
+      waitBg: sent ? '#E2F3F1' : '#FBEEE6',
+      waitInk: sent ? '#1E3F40' : '#5A2F16',
+      waitTitle: sent ? 'Marked as sent' : 'Waiting to hear from them',
+      waitText: sent
+        ? 'The reminder is marked as sent. It has left Needs you.'
+        : (opened
+          ? 'The planning appeal summary draft went out on 20 Oct. You opened a reminder yesterday. Opening your email app does not send anything, so mark it as sent once you have.'
+          : 'The planning appeal summary draft went out on 20 Oct. A gentle reminder is ready for you.'),
+      openLabel: opened ? 'Open again' : 'Open in email app',
+      copyLabel: copied ? 'Copied' : 'Copy text',
+      openMail: () => this.setState({ opened: true }),
+      markSent: () => this.setState({ sent: true }),
+      copyMail: () => {
+        try { navigator.clipboard.writeText(mailSubject + '\n\n' + mailBody); } catch (e) { /* clipboard blocked: the label still confirms the click */ }
+        this.setState({ copied: true });
+      },
+    };
   }
 }
 </script>

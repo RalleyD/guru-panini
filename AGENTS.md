@@ -67,6 +67,13 @@ uv run pytest                  # Python tests (pytest assumed; TBD until chosen)
 - Commit job work only on the `factory/<job-id>` branch; `main` is merged to by
   the factory orchestrator or a human.
 
+## UI design
+
+The product spec and wireframes are in [docs/design-handoff.md](docs/design-handoff.md), with the
+screens in `docs/design/screens/` and the suggested build order in
+[docs/factory-handoff.md](docs/factory-handoff.md). Read the handoff before specifying or reviewing
+any page. Phase 1 has no cover-mode UI.
+
 ## Software factory
 
 `/factory <feature>` runs a spec → build → review → approve loop (see
