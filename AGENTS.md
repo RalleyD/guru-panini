@@ -11,11 +11,18 @@ below is filled in, an agent that needs it should say so rather than guess.
 
 - **Python**: environments and dependencies managed with [uv](https://docs.astral.sh/uv/).
   Linted and formatted with [ruff](https://docs.astral.sh/ruff/).
-- **TypeScript** (if/when a frontend or Node tooling is added): linted with
-  [Biome](https://biomejs.dev/) (fast Rust-based lint + format in one tool).
+- **Frontend**: Vue 3 + TypeScript, built and served with [Vite](https://vite.dev/), tested with
+  [Vitest](https://vitest.dev/), type-checked with `vue-tsc`. Single-page app (Vue Router),
+  validation with [Zod](https://zod.dev).
+- **TypeScript lint/format**: [Biome](https://biomejs.dev/) (fast Rust-based lint + format in one tool).
   [oxlint](https://oxc.rs/docs/guide/usage/linter) is a lint-only alternative.
   Not installed yet; add it with the first TypeScript package.
-- Backend framework, frontend framework, database, hosting: **TBD**.
+- **Backend / database**: [Supabase](https://supabase.com/) (Postgres, Auth, Storage, Edge Functions),
+  EU region. Local development with `supabase start`.
+- **Package manager**: [pnpm](https://pnpm.io/). Commit `pnpm-lock.yaml`; pin the version with
+  `"packageManager"` in `package.json`. Do not use npm or yarn to install.
+- **Frontend hosting**: Cloudflare (static SPA, free `workers.dev` / `pages.dev` subdomain).
+- Rationale and open questions: [docs/decisions/0001-tech-stack.md](docs/decisions/0001-tech-stack.md).
 
 ## Setup a fresh checkout
 
@@ -23,15 +30,18 @@ below is filled in, an agent that needs it should say so rather than guess.
 uv sync          # creates .venv and installs deps (once pyproject.toml exists)
 ```
 
-- TypeScript deps: **TBD** (package manager not chosen).
+- TypeScript deps: `pnpm install --frozen-lockfile` (once `package.json` exists). Bun is not used
+  as the bundler or test runner.
+- Backend: `supabase start` for the local stack (needs Docker and the Supabase CLI).
 - Always run Python through uv (`uv run ...`). Never use `pip install` or a
   hand-made venv.
 
 ## Dev server
 
-**TBD.** The factory gives each job its own port, so the start command must
-take a port, e.g. `uv run <server> --port <port>`. Replace this section once a
-server exists. Until then there are no pages for the UX and UI reviewers to
+**TBD until the Vue app exists.** The factory gives each job its own port, so the
+start command must take a port. Expected form once the app is scaffolded:
+`pnpm exec vite --port <port>` (confirm against the real `package.json`). Replace this
+section once the server exists. Until then there are no pages for the UX and UI reviewers to
 open; they should review from the code and mark UI criteria as not applicable.
 
 ## Validation
@@ -44,9 +54,10 @@ uv run ruff format --check .   # Python formatting (use `uv run ruff format .` t
 uv run pytest                  # Python tests (pytest assumed; TBD until chosen)
 ```
 
-- TypeScript lint/format: `npx biome check .` (once Biome is installed).
-- Type-check: **TBD** (e.g. `uv run mypy` / `tsc --noEmit` once chosen).
-- Build: **TBD**.
+- TypeScript lint/format: `pnpm exec biome check .` (once Biome is installed).
+- TypeScript tests: `pnpm exec vitest run` (once Vitest is installed).
+- Type-check: `pnpm exec vue-tsc --noEmit` (once the Vue app exists).
+- Build: `pnpm exec vite build` (once the Vue app exists).
 
 ## Conventions
 
