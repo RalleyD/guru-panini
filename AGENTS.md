@@ -16,7 +16,7 @@ below is filled in, an agent that needs it should say so rather than guess.
   validation with [Zod](https://zod.dev).
 - **TypeScript lint/format**: [Biome](https://biomejs.dev/) (fast Rust-based lint + format in one tool).
   [oxlint](https://oxc.rs/docs/guide/usage/linter) is a lint-only alternative.
-  Not installed yet; add it with the first TypeScript package.
+  Biome is configured in `biome.json`.
 - **Backend / database**: [Supabase](https://supabase.com/) (Postgres, Auth, Storage, Edge Functions),
   EU region. Local development with `supabase start`.
 - **Package manager**: [pnpm](https://pnpm.io/). Commit `pnpm-lock.yaml`; pin the version with
@@ -31,19 +31,25 @@ below is filled in, an agent that needs it should say so rather than guess.
 uv sync          # creates .venv and installs deps (once pyproject.toml exists)
 ```
 
-- TypeScript deps: `pnpm install --frozen-lockfile` (once `package.json` exists). Bun is not used
-  as the bundler or test runner.
+- TypeScript deps: `pnpm install --frozen-lockfile`. Needs Node 22.12 or later (required by Vite and
+  Vitest). Bun is not used as the bundler or test runner.
 - Backend: `supabase start` for the local stack (needs Docker and the Supabase CLI).
 - Always run Python through uv (`uv run ...`). Never use `pip install` or a
   hand-made venv.
 
 ## Dev server
 
-**TBD until the Vue app exists.** The factory gives each job its own port, so the
-start command must take a port. Expected form once the app is scaffolded:
-`pnpm exec vite --port <port>` (confirm against the real `package.json`). Replace this
-section once the server exists. Until then there are no pages for the UX and UI reviewers to
-open; they should review from the code and mark UI criteria as not applicable.
+From the repo root, after `pnpm install --frozen-lockfile`:
+
+```bash
+pnpm exec vite --port <port> --strictPort
+```
+
+Then open `http://localhost:<port>/`; the home page is at `/`. `--strictPort` makes Vite fail
+if the port is taken instead of silently moving to another port.
+
+The app lives at the repo root: `index.html` loads `src/main.ts`, which mounts `src/App.vue` with
+the router from `src/router/index.ts`. Pages are in `src/views/`.
 
 ## Validation
 
@@ -55,10 +61,10 @@ uv run ruff format --check .   # Python formatting (use `uv run ruff format .` t
 uv run pytest                  # Python tests (pytest assumed; TBD until chosen)
 ```
 
-- TypeScript lint/format: `pnpm exec biome check .` (once Biome is installed).
-- TypeScript tests: `pnpm exec vitest run` (once Vitest is installed).
-- Type-check: `pnpm exec vue-tsc --noEmit` (once the Vue app exists).
-- Build: `pnpm exec vite build` (once the Vue app exists).
+- TypeScript lint/format: `pnpm exec biome check .`
+- TypeScript tests: `pnpm exec vitest run`
+- Type-check: `pnpm exec vue-tsc --noEmit`
+- Build: `pnpm exec vite build`
 
 ## Conventions
 
@@ -84,6 +90,5 @@ state and gitignored. Backlog: `factory/backlog.md`. Dashboard:
 <http://localhost:8000/dashboard.html>.
 
 Page checks use the [`agent-browser`](https://github.com/vercel-labs/agent-browser)
-CLI (`npm install -g agent-browser`, then `agent-browser install`). It is only
-needed once the project has pages; install it on the machine running the
-factory.
+CLI (`npm install -g agent-browser`, then `agent-browser install`). It is needed
+now that the app has pages; install it on the machine running the factory.
