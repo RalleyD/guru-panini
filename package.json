@@ -1,0 +1,22 @@
+{
+	"name": "guru-panini",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"packageManager": "pnpm@10.28.0",
+	"dependencies": {
+		"vue": "^3.5.44",
+		"vue-router": "^5.4.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.6.3",
+		"@vitejs/plugin-vue": "^6.0.10",
+		"@vue/test-utils": "^2.5.1",
+		"@vue/tsconfig": "^0.9.1",
+		"jsdom": "^28.1.0",
+		"typescript": "~6.0.3",
+		"vite": "^8.3.5",
+		"vitest": "^5.0.5",
+		"vue-tsc": "^3.3.13"
+	}
+}
