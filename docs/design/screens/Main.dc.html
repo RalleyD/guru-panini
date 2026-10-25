@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Overview</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+a:hover{color:#5A4A99}
+button,input,select,textarea{font-family:inherit}
+[id]{scroll-margin-top:24px}
+.app{display:flex;min-height:100%;background:#F3F4F8;color:#272B3F;font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.5}
+.side{flex:0 0 248px;background:#FFFFFF;border-right:1px solid #E3E5EE}
+.side-in{position:sticky;top:0;box-sizing:border-box;height:100vh;overflow-y:auto;padding:28px 16px;display:flex;flex-direction:column;gap:24px}
+.main{flex:1 1 0;min-width:0;box-sizing:border-box;padding:40px 56px 64px;display:flex;flex-direction:column;gap:40px}
+.nav-link{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:#434A5E;box-sizing:border-box;min-height:44px}
+.nav-link:hover{background:#F3F4F8;color:#272B3F}
+.nav-link[aria-current="page"]{background:#ECE8F8;color:#4A3B87;font-weight:500}
+.sec-link{display:flex;align-items:center;min-height:36px;padding:0 12px;border-radius:8px;color:#5C6178;font-size:13px}
+.sec-link:hover{background:#F3F4F8;color:#272B3F}
+.card{box-sizing:border-box;padding:28px;border-radius:20px;background:#FFFFFF;border:1px solid #E3E5EE}
+.h1{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:40px;line-height:1.15;letter-spacing:-0.01em}
+.h2{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:24px;line-height:1.25}
+.btn{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #C9CDD8;background:#FFFFFF;color:#272B3F;font-size:14px;font-weight:500;cursor:pointer}
+.btn:hover{background:#F8F9FC;color:#272B3F}
+.btn-primary,.btn-primary:hover{border-color:#5A4A99;background:#5A4A99;color:#FFFFFF}
+.btn-primary:hover{background:#4A3B87}
+.board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;min-width:1060px}
+.topbar,.chips,.tabbar{display:none}
+@media (max-width:1100px){.main{padding:32px 32px 56px}}
+@media (max-width:899px){
+.app{flex-direction:column}
+.side{display:none}
+.main{padding:20px 16px 32px;gap:28px}
+.topbar{display:flex;position:sticky;top:0;z-index:20;box-sizing:border-box;min-height:56px;align-items:center;justify-content:space-between;padding:6px 8px 6px 16px;background:#FFFFFF;border-bottom:1px solid #E3E5EE}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 16px 0}
+.chips a{flex:none;display:inline-flex;align-items:center;box-sizing:border-box;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid #C9CDD8;background:#FFFFFF;color:#434A5E;font-size:13px;font-weight:500;white-space:nowrap}
+.tabbar{display:flex;position:sticky;bottom:0;z-index:20;gap:4px;padding:4px 8px;background:#FFFFFF;border-top:1px solid #E3E5EE}
+.tabbar a{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;border-radius:12px;font-size:11px;font-weight:500;color:#434A5E}
+.tabbar a[aria-current="page"]{background:#ECE8F8;color:#4A3B87}
+.card{padding:20px;border-radius:16px}
+.h1{font-size:30px}
+.h2{font-size:22px}
+.board{grid-template-columns:repeat(5,272px);min-width:0}
+[id]{scroll-margin-top:72px}
+}
+</style>
+</helmet>
+<div class="app">
+
+  <aside class="side">
+    <div class="side-in">
+      <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 0 8px">
+        <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="5" width="18" height="16" rx="6" fill="#B9A9E6"/><rect x="12" y="11" width="18" height="16" rx="6" fill="#BFE3E0" fill-opacity="0.9"/></svg>
+        <span style="font-family: 'Newsreader', Georgia, serif; font-size: 18px; font-weight: 500">[Agency name]</span>
+      </a>
+      <nav aria-label="Main" style="display: flex; flex-direction: column; gap: 2px">
+        <sc-for list="{{nav}}" as="n" hint-placeholder-count="4">
+          <a class="nav-link" href="{{n.href}}" aria-current="{{n.current}}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"/></svg>
+            {{n.label}}
+          </a>
+        </sc-for>
+      </nav>
+      <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid #E3E5EE; display: flex; flex-direction: column; gap: 2px">
+        <a class="nav-link" href="Main.dc.html#cover">
+          <span aria-hidden="true" style="width: 18px; display: inline-flex; justify-content: center"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{coverDot}}"></span></span>
+          Cover mode
+          <span style="margin-left: auto; font-size: 12px; color: #5C6178">{{coverWord}}</span>
+        </a>
+        <a class="nav-link" href="Settings.dc.html">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9m4 0h3M4 17h3m4 0h9M15 4v6M9 14v6"/></svg>
+          Settings
+        </a>
+        <a class="nav-link" href="Settings.dc.html#support">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg>
+          Support
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <header class="topbar">
+    <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px">
+      <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="5" width="18" height="16" rx="6" fill="#B9A9E6"/><rect x="12" y="11" width="18" height="16" rx="6" fill="#BFE3E0" fill-opacity="0.9"/></svg>
+      <span style="font-family: 'Newsreader', Georgia, serif; font-size: 17px; font-weight: 500">[Agency name]</span>
+    </a>
+    <a href="Settings.dc.html" aria-label="Settings" style="display: inline-flex; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 12px; color: #434A5E">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9m4 0h3M4 17h3m4 0h9M15 4v6M9 14v6"/></svg>
+    </a>
+  </header>
+
+  <main class="main">
+
+    <header style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px">
+      <div>
+        <p style="margin: 0 0 6px; font-size: 13px; color: #5C6178">Sunday 25 October</p>
+        <h1 class="h1">Good morning.</h1>
+        <p style="margin: 8px 0 0; font-size: 16px; color: #5C6178; max-width: 52ch">Six projects are moving. Three would benefit from a follow-up.</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px">
+        <button class="btn">Add client</button>
+        <button class="btn btn-primary">New project</button>
+      </div>
+    </header>
+
+    <section id="cover" aria-labelledby="cover-h" class="card" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; background: {{coverBg}}; border-color: {{coverBorder}}">
+      <div style="flex: 1 1 320px; min-width: 0">
+        <h2 id="cover-h" class="h2" style="color: {{coverInk}}">{{coverTitle}}</h2>
+        <p style="margin: 6px 0 0; color: {{coverInk}}; max-width: 62ch">{{coverText}}</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+        <sc-if value="{{coverOn}}" hint-placeholder-val="{{ true }}">
+          <a class="btn" href="#follow">Review prepared replies</a>
+        </sc-if>
+        <button role="switch" aria-checked="{{coverOn}}" aria-label="Cover mode" onClick="{{toggleCover}}" style="flex: none; min-width: 64px; min-height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center">
+          <span style="position: relative; display: block; width: 52px; height: 30px; border-radius: 999px; background: {{trackBg}}">
+            <span style="position: absolute; top: 3px; left: {{knobLeft}}; width: 24px; height: 24px; border-radius: 50%; background: #FFFFFF"></span>
+          </span>
+        </button>
+      </div>
+    </section>
+
+    <section id="projects" aria-labelledby="pipeline-h" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+        <h2 id="pipeline-h" class="h2">Projects at a glance</h2>
+        <a href="Project.dc.html" style="font-size: 13px; color: #5A4A99; font-weight: 500">View all</a>
+      </div>
+      <div style="overflow-x: auto; padding-bottom: 4px">
+        <div class="board">
+          <sc-for list="{{columns}}" as="col" hint-placeholder-count="5">
+            <section aria-label="{{col.name}}" style="display: flex; flex-direction: column; gap: 12px; padding: 12px; border-radius: 18px; background: #EBEDF4; align-self: start">
+              <div style="display: flex; align-items: center; gap: 8px; padding: 2px 4px">
+                <span style="width: 8px; height: 8px; border-radius: 50%; background: {{col.dot}}"></span>
+                <h3 style="margin: 0; font-size: 13px; font-weight: 600">{{col.name}}</h3>
+                <span style="margin-left: auto; font-size: 12px; color: #5C6178">{{col.count}}</span>
+              </div>
+              <sc-for list="{{col.cards}}" as="card" hint-placeholder-count="2">
+                <article style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 14px; border: 1px solid #E3E5EE; background: #FFFFFF">
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+                    <span style="font-size: 12px; color: #5C6178">{{card.client}}</span>
+                    <sc-if value="{{card.followUp}}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: #FBEEE6; color: #8F4A2A; white-space: nowrap">Follow up</span>
+                    </sc-if>
+                  </div>
+                  <a href="Project.dc.html" style="font-size: 15px; font-weight: 500; line-height: 1.35; color: #272B3F">{{card.title}}</a>
+                  <div style="display: flex; flex-wrap: wrap; gap: 6px">
+                    <span style="font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; background: #E6E8EE; color: #434A5E">{{card.pair}}</span>
+                    <span style="font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; background: {{card.typeBg}}; color: {{card.typeFg}}">{{card.type}}</span>
+                  </div>
+                  <div style="height: 4px; border-radius: 999px; background: #ECEEF3; overflow: hidden">
+                    <div style="height: 100%; width: {{card.progressW}}; border-radius: 999px; background: #7C69BA"></div>
+                  </div>
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+                    <div style="display: flex; align-items: center">
+                      <sc-if value="{{card.hasOwner}}" hint-placeholder-val="{{ true }}">
+                        <span style="width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; background: {{card.ownerBg}}; color: {{card.ownerFg}}">{{card.ownerInit}}</span>
+                      </sc-if>
+                      <sc-if value="{{card.hasSecond}}" hint-placeholder-val="{{ false }}">
+                        <span style="width: 26px; height: 26px; margin-left: -6px; box-sizing: border-box; border: 2px solid #FFFFFF; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; background: {{card.secondBg}}; color: {{card.secondFg}}">{{card.secondInit}}</span>
+                      </sc-if>
+                      <sc-if value="{{card.unassigned}}" hint-placeholder-val="{{ false }}">
+                        <span style="font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 999px; border: 1px dashed #8A90A5; color: #434A5E">Unassigned</span>
+                      </sc-if>
+                    </div>
+                    <span style="font-size: 12px; color: #5C6178">{{card.due}}</span>
+                  </div>
+                  <sc-if value="{{card.hasNote}}" hint-placeholder-val="{{ false }}">
+                    <p style="margin: 0; padding: 8px 10px; border-radius: 10px; background: #FBEEE6; color: #8F4A2A; font-size: 12px">{{card.note}}</p>
+                  </sc-if>
+                  <sc-if value="{{card.assisted}}" hint-placeholder-val="{{ false }}">
+                    <p style="margin: 0; padding: 8px 10px; border-radius: 10px; background: #E7E1F7; color: #4A3B87; font-size: 12px">{{card.assistedText}}</p>
+                  </sc-if>
+                </article>
+              </sc-for>
+            </section>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+      <section id="follow" aria-labelledby="follow-h" class="card" style="flex: 1.4 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+        <h2 id="follow-h" class="h2">Needs a follow-up</h2>
+        <p style="margin: 0 0 12px; font-size: 13px; color: #5C6178">Each reply is written for you. The button opens your email app with it filled in, and you press send.</p>
+        <sc-for list="{{followUps}}" as="f" hint-placeholder-count="3">
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px 0; border-top: 1px solid #E3E5EE">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+              <div style="flex: 1 1 220px; min-width: 0">
+                <div style="font-weight: 500">{{f.who}}</div>
+                <div style="font-size: 13px; color: #5C6178">{{f.reason}}</div>
+              </div>
+              <a class="btn" href="{{f.mail}}">Open in email app</a>
+            </div>
+            <p style="margin: 0; padding: 12px 14px; border-radius: 12px; background: #F3F4F8; color: #434A5E; font-size: 13px"><span style="display: block; margin-bottom: 2px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5C6178">Prepared reply</span>{{f.preview}}</p>
+          </div>
+        </sc-for>
+      </section>
+
+      <section id="team" aria-labelledby="team-h" class="card" style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+        <h2 id="team-h" class="h2">Who is on what</h2>
+        <p style="margin: 0 0 12px; font-size: 13px; color: #5C6178">Workload this week</p>
+        <sc-for list="{{team}}" as="p" hint-placeholder-count="4">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid #E3E5EE">
+            <span style="flex: none; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; background: {{p.bg}}; color: {{p.fg}}">{{p.init}}</span>
+            <div style="flex: 1 1 auto; min-width: 0">
+              <div style="font-weight: 500">{{p.name}}</div>
+              <div style="font-size: 12px; color: #5C6178">{{p.langs}}</div>
+            </div>
+            <div style="flex: none; width: 88px; display: flex; flex-direction: column; gap: 4px; align-items: flex-end">
+              <div style="width: 100%; height: 6px; border-radius: 999px; background: #ECEEF3; overflow: hidden"><div style="height: 100%; width: {{p.loadW}}; background: #7C69BA; border-radius: 999px"></div></div>
+              <span style="font-size: 12px; color: #5C6178">{{p.count}}</span>
+            </div>
+          </div>
+        </sc-for>
+      </section>
+    </div>
+
+    <section id="assistant" aria-labelledby="assist-h" style="display: flex; flex-direction: column; gap: 16px">
+      <div>
+        <h2 id="assist-h" class="h2">From the draft assistant</h2>
+        <p style="margin: 4px 0 0; font-size: 13px; color: #5C6178; max-width: 64ch">Summaries appear here once an assisted draft has been through its review loop. A named translator approves every draft before it goes anywhere near a client.</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 24px">
+        <article class="card" style="flex: 1 1 340px; min-width: 0; background: #E2F3F1; border-color: #BFE3E0; display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px">
+            <span style="font-size: 12px; font-weight: 600; color: #1F5654">Prepared in cover mode · awaiting approval</span>
+            <span style="font-size: 12px; color: #1F5654">Delta Hydraulics BV</span>
+          </div>
+          <h3 class="h2" style="font-size: 20px">Pump station white paper</h3>
+          <p style="margin: 0; color: #1E3F40">Analysed, translated and reviewed in three passes. Terminology followed the client&#39;s glossary; two passages are flagged for a human decision. Approval has been requested from Marieke Visser.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <span style="font-size: 12px; padding: 4px 10px; border-radius: 999px; background: #FFFFFF; color: #1F5654">Strength: consistent terminology</span>
+            <span style="font-size: 12px; padding: 4px 10px; border-radius: 999px; background: #FFFFFF; color: #8F4A2A">Limit: idiom in the introduction</span>
+          </div>
+          <div>
+            <a class="btn btn-primary" href="Project.dc.html#draft">Read the full summary</a>
+          </div>
+        </article>
+        <article class="card" style="flex: 1 1 340px; min-width: 0; background: #ECE8F8; border-color: #D9D1F2; display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px">
+            <span style="font-size: 12px; font-weight: 600; color: #4A3B87">Suggestion</span>
+            <span style="font-size: 12px; color: #4A3B87">Oranje Vastgoed</span>
+          </div>
+          <h3 class="h2" style="font-size: 20px">Waterfront Lofts brochure</h3>
+          <p style="margin: 0; color: #2E2556">Recommended for a human translator. Marketing tone and local nuance matter most here, so no assisted draft is proposed and cover mode is off for this client.</p>
+          <div>
+            <a class="btn btn-primary" href="Resources.dc.html#people">Assign a translator</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="tabbar" aria-label="Main">
+    <sc-for list="{{nav}}" as="n" hint-placeholder-count="4">
+      <a href="{{n.href}}" aria-current="{{n.current}}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"/></svg>
+        {{n.label}}
+      </a>
+    </sc-for>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { cover: true };
+  }
+  renderVals() {
+    const on = this.state.cover;
+
+    const ICON = {
+      overview: 'M5 3h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM16 3h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM5 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2zM16 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2z',
+      projects: 'M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
+      clients: 'M9 11.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5.3a3.2 3.2 0 0 1 0 5.4M18 14.4c1.7.8 3 2.6 3 5.6',
+      translators: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z',
+    };
+    const nav = [
+      ['Overview', 'Main.dc.html', 'overview'],
+      ['Projects', 'Project.dc.html', 'projects'],
+      ['Clients', 'Clients.dc.html', 'clients'],
+      ['Translators', 'Resources.dc.html', 'translators'],
+    ].map(([label, href, k]) => ({ label, href, d: ICON[k], current: label === 'Overview' ? 'page' : 'false' }));
+
+    const people = {
+      MV: { init: 'MV', bg: '#E7E1F7', fg: '#4A3B87' },
+      JB: { init: 'JB', bg: '#D3EEEB', fg: '#1F5654' },
+      SH: { init: 'SH', bg: '#DAE8F8', fg: '#284F7E' },
+      LR: { init: 'LR', bg: '#DADDE6', fg: '#3B4152' },
+    };
+    const types = {
+      'Legal': { bg: '#E7E1F7', fg: '#4A3B87' },
+      'Real estate': { bg: '#DAE8F8', fg: '#284F7E' },
+      'Technical': { bg: '#D3EEEB', fg: '#1F5654' },
+      'Business': { bg: '#E6E8EE', fg: '#434A5E' },
+    };
+    const card = (client, title, pair, type, progress, owner, second, due, extra) => {
+      const o = owner ? people[owner] : null;
+      const s = second ? people[second] : null;
+      const e = extra || {};
+      return {
+        client, title, pair, type, due,
+        typeBg: types[type].bg, typeFg: types[type].fg,
+        progressW: progress + '%',
+        hasOwner: !!o, ownerInit: o ? o.init : '', ownerBg: o ? o.bg : '', ownerFg: o ? o.fg : '',
+        hasSecond: !!s, secondInit: s ? s.init : '', secondBg: s ? s.bg : '', secondFg: s ? s.fg : '',
+        unassigned: !o,
+        followUp: !!e.note, hasNote: !!e.note, note: e.note || '',
+        assisted: !!e.assisted, assistedText: e.assisted || '',
+      };
+    };
+    const columns = [
+      { name: 'Intake', dot: '#9AA0B4', cards: [
+        card('Oranje Vastgoed', 'Waterfront Lofts brochure', 'NL → EN', 'Real estate', 0, null, null, 'Due 6 Nov', { note: 'Quote sent 3 days ago, not yet accepted' }),
+      ] },
+      { name: 'In translation', dot: '#7C69BA', cards: [
+        card('Van der Meer Notarissen', 'Share purchase agreement', 'NL → EN', 'Legal', 60, 'MV', null, 'Due 31 Oct'),
+        card('Delta Hydraulics BV', 'Pump station white paper', 'NL → EN', 'Technical', 35, 'JB', 'MV', 'Due 4 Nov', { assisted: 'Assisted draft · Marieke reviews' }),
+      ] },
+      { name: 'In review', dot: '#6DB5AF', cards: [
+        card('Linden & Co', 'Investor proposal', 'EN → NL', 'Business', 85, 'SH', 'MV', 'Due 29 Oct', { note: 'Two queries waiting on the client' }),
+        card('Casa Norte Imports', 'Distribution terms', 'EN → ES', 'Legal', 80, 'LR', null, 'Due 30 Oct'),
+      ] },
+      { name: 'With client', dot: '#6F9DD0', cards: [
+        card('Kade Architecten', 'Planning appeal summary', 'NL → EN', 'Legal', 100, 'MV', null, 'Due 3 Nov', { note: 'Draft sent 5 days ago, no feedback yet' }),
+      ] },
+      { name: 'Delivered', dot: '#9AA0B4', cards: [
+        card('Brink Mediation', 'Settlement letter', 'NL → EN', 'Legal', 100, 'MV', null, 'Delivered 22 Oct'),
+      ] },
+    ].map((c) => ({ ...c, count: c.cards.length }));
+
+    const mail = (subject, body) => 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    const followUps = [
+      { who: 'Kade Architecten · Planning appeal summary', reason: 'Draft sent 5 days ago, no feedback yet.',
+        preview: 'Dear [contact name], I hope you are well. A gentle reminder that the draft of the planning appeal summary was sent on 20 October. When you have a moment, we would be glad to hear your comments.',
+        mail: mail('Planning appeal summary: draft for your comments', 'Dear [contact name],\n\nI hope you are well. A gentle reminder that the draft of the planning appeal summary was sent on 20 October. When you have a moment, we would be glad to hear your comments.\n\nKind regards,\n[Your name]') },
+      { who: 'Linden & Co · Investor proposal', reason: 'Two terminology queries are waiting on the client.',
+        preview: 'Dear [contact name], two terminology questions have come up in the investor proposal. Could you confirm which term you prefer for each?',
+        mail: mail('Investor proposal: two terminology questions', 'Dear [contact name],\n\nTwo terminology questions have come up in the investor proposal. Could you confirm which term you prefer for each?\n\nKind regards,\n[Your name]') },
+      { who: 'Oranje Vastgoed · Waterfront Lofts brochure', reason: 'Quote sent 3 days ago, not yet accepted.',
+        preview: 'Dear [contact name], thank you for your interest in a translation of the Waterfront Lofts brochure. I wanted to check whether the quote we sent on 22 October suits you.',
+        mail: mail('Waterfront Lofts brochure: your quote', 'Dear [contact name],\n\nThank you for your interest in a translation of the Waterfront Lofts brochure. I wanted to check whether the quote we sent on 22 October suits you.\n\nKind regards,\n[Your name]') },
+    ];
+
+    const team = [
+      { ...people.MV, name: 'Marieke Visser', langs: 'NL ↔ EN · Legal, business', loadW: '85%', count: '4 projects' },
+      { ...people.JB, name: 'Jonas Bakker', langs: 'NL → EN · Technical', loadW: '40%', count: '1 project' },
+      { ...people.SH, name: 'Sofie Haas', langs: 'EN → NL · Real estate, business', loadW: '45%', count: '1 project' },
+      { ...people.LR, name: 'Lucía Romero', langs: 'EN → ES · Legal', loadW: '35%', count: '1 project' },
+    ];
+
+    return {
+      nav, columns, followUps, team,
+      coverOn: on,
+      coverWord: on ? 'On' : 'Off',
+      coverDot: on ? '#3F9A92' : '#8A90A5',
+      coverBg: on ? '#E2F3F1' : '#FFFFFF',
+      coverBorder: on ? '#BFE3E0' : '#E3E5EE',
+      coverInk: on ? '#1E3F40' : '#272B3F',
+      coverTitle: on ? 'Cover mode is on' : 'Cover mode is off',
+      coverText: on
+        ? 'Working for 3 clients. 2 replies are ready for you to send and 1 translation is waiting for approval. Nothing is sent or delivered without a person.'
+        : 'Turn it on to have replies and eligible translations prepared while you are away. You choose which clients it covers.',
+      trackBg: on ? '#5A4A99' : '#6B7188',
+      knobLeft: on ? '25px' : '3px',
+      toggleCover: () => this.setState({ cover: !this.state.cover }),
+    };
+  }
+}
+</script>
+</body>
+</html>
