@@ -88,9 +88,16 @@ so the "points left for a person to decide" wiring works from day one. The summa
 the draft was made in one step and **no separate checks were run**. The phase 3 screens that show
 "Checked terminology" and so on appear only when those stages exist.
 
-Every assisted draft captures experience as data from the first run: the reviewer's rating (useful,
-needs work, not usable) and a note, and the **approved final text stored beside the draft**, so the size
-of the human edits can be measured later. This is how demo use becomes the evaluation set.
+Every assisted draft captures experience as data from the first run, with no extra screens:
+
+- The **approved final text is stored beside the draft** automatically, so the size of the human edits
+  can be measured later.
+- Written feedback goes through the existing **Support** page (Email support, Report a problem). The
+  Assisted draft section adds a **Send feedback on this draft** link that opens the same Support email
+  prefilled with the run id, prompt version and model, and prompts for a rating and a note. The email
+  never contains document text. There is no rating screen or feedback table of its own.
+
+This is how demo use becomes the evaluation set.
 
 ### Honest summaries
 
@@ -133,7 +140,7 @@ been run on examples collected from the demo.
    draft stored with its run, and the cost cap.
 4. The phase 3 screens that use it: Ask the assistant dialog, Assisted draft section, approval rows,
    and cover activity with project pause.
-5. Feedback capture on every assisted draft (see Decisions), so use of the demo produces data.
+5. Feedback capture (see Decisions): final text stored with the draft, and the Send feedback link.
 6. Later: the friend's annotated examples become the evaluation set; run the plan above; add the
    checks (rung 1) and the loop (rung 2) only where the measures show a gain.
 7. Prepared replies by the same adapter, if wanted.
@@ -155,8 +162,8 @@ been run on examples collected from the demo.
 3. Draft format: plain text beside the source, or a reconstructed Word document.
 4. How documents are segmented and how much context each segment gets.
 5. Whether Edge Function time limits suffice (verify in the state-machine spike) or a worker is needed.
-6. **Confirmation versus automatic runs.** The handoff says every assistant request is confirmed by a
-   person, yet cover mode is meant to run while the owner is away. Proposed for the demo: a person starts
-   every run with Ask the assistant. Automatic starts (a new project, an overdue follow-up) come later,
-   once the owner decides whether a client's opt-in counts as the confirmation.
+6. **Confirmation versus automatic runs (decided for the demo).** A person starts every run with Ask
+   the assistant and its explicit Confirm. After that the run goes through its steps unattended.
+   Automatic starts (a new project, an overdue follow-up) are not built. Still open for later: whether a
+   client's opt-in counts as the confirmation for those.
 7. Demo data: use fake or consented documents only, and set a spending limit on the provider account.

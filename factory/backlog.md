@@ -76,7 +76,7 @@ provider's EU data terms are settled. Jobs that edit Project detail run one at a
 - [ ] Rung 0 draft: a thin provider adapter, a versioned prompt file that translates with the client's glossary and style notes, source text read from the uploaded file, a draft stored with its run, and the flags list. Dutch to English and English to Dutch. The summary must state that no separate checks were run. Needs the provider chosen and a spending limit set.
 - [ ] Ask the assistant dialog and the Assisted draft section on Project detail: choose Translate, Review only or Terminology check, then an explicit Confirm and run. Show what was done, limitations, the flags as "points left for a person to decide", Open draft and the "why not assisted" line. Review only and Terminology check may be stubbed to the same single prompt at this rung. Match Project.
 - [ ] Reviewer approval: named reviewer of record, Record the reviewer's approval by the owner, an append-only approval row (reviewer, owner who recorded it, time) enforced in Postgres, Send back to the translator, and approval rows in Needs you. Nothing is deliverable without an approval row. Match Main and Project.
-- [ ] Feedback capture on assisted drafts: a rating (useful, needs work, not usable) and a note, the approved final text stored beside the draft, and the Assistant source in the feedback log. This item has no wireframe (**needs design**): keep it minimal and flag it for review.
+- [ ] Feedback capture on assisted drafts, with no new screens: store the approved final text beside the draft, and add a Send feedback on this draft link in the Assisted draft section that opens the Support email prefilled with the run id, prompt version and model (never document text) and prompts for a rating and a note. Reuse the Support mailto from Settings.
 - [ ] Cover mode activity and Pause for this project on Project detail, showing what was done for the project. Match Project.
 
 ## Assistant track: owner tasks and spikes
@@ -85,7 +85,9 @@ provider's EU data terms are settled. Jobs that edit Project detail run one at a
 - Owner task: use the demo with fake or consented documents and record experience-based ratings. Over
   time curate annotated example documents with quality notes. They become the evaluation set that
   decides whether checks and a loop are added.
-- Owner task: decide whether a client's opt-in counts as the confirmation for automatic starts.
+- Owner task: decide whether a client's opt-in counts as the confirmation for automatic starts. For the
+  demo a person confirms every run, then it runs unattended.
+- Owner task: receive demo feedback through the Support email, and keep the run ids it quotes.
 - Spike (optional, can run during phase 1): prototype the run and step state machine with a stub model on
   Edge Functions and `pg_cron`; report time limits in docs/spikes/assist-run-state-machine.md.
 - Spike (optional): extract text from sample Word and PDF files and report what survives in
