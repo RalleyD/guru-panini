@@ -95,7 +95,7 @@ button,input,select,textarea{font-family:inherit}
   <main class="main">
 
     <header style="display: flex; flex-direction: column; gap: 8px">
-      <a href="Project.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; color: #5C6178">Back to projects</a>
+      <a href="Projects.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; color: #5C6178">Back to projects</a>
       <h1 class="h1">New project</h1>
       <p style="margin: 0; font-size: 16px; color: #5C6178; max-width: 52ch">Five things to start. You can add everything else later.</p>
     </header>
@@ -156,7 +156,7 @@ button,input,select,textarea{font-family:inherit}
         <div style="display: flex; flex-direction: column; gap: 6px">
           <label for="file" style="font-size: 13px; font-weight: 500">Source file</label>
           <input id="file" type="file" class="field" style="padding: 9px 14px">
-          <span style="font-size: 12px; color: #5C6178">The word count is read from the file. Without one, you can add it later.</span>
+          <span style="font-size: 12px; color: #5C6178">The word count is read from the file. Without a file, no word count is shown.</span>
         </div>
         <div style="display: flex; flex-direction: column; gap: 6px">
           <label for="who" style="font-size: 13px; font-weight: 500">Translator</label>
@@ -204,7 +204,7 @@ class Component extends DCLogic {
     };
     const nav = [
       ['Overview', 'Main.dc.html', 'overview'],
-      ['Projects', 'Project.dc.html', 'projects'],
+      ['Projects', 'Projects.dc.html', 'projects'],
       ['Clients', 'Clients.dc.html', 'clients'],
       ['Translators', 'Resources.dc.html', 'translators'],
     ].map(([label, href, k]) => ({

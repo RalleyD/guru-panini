@@ -128,7 +128,7 @@ button,input,select,textarea{font-family:inherit}
   <main class="main">
 
     <nav aria-label="Breadcrumb" style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; color: #5C6178">
-      <a href="Project.dc.html">Projects</a><span aria-hidden="true">/</span>
+      <a href="Projects.dc.html">Projects</a><span aria-hidden="true">/</span>
       <a href="Clients.dc.html">Delta Hydraulics BV</a><span aria-hidden="true">/</span>
       <span style="color: #272B3F">Pump station white paper</span>
     </nav>
@@ -249,9 +249,15 @@ button,input,select,textarea{font-family:inherit}
               <p style="margin: 0; color: #5A2F16">The introduction (pp. 1&ndash;3) reads too literally for an English-speaking engineer. And &ldquo;afvoerleiding&rdquo; in chapter 6 was drafted as &ldquo;discharge line&rdquo;, but it could be read another way.</p>
             </div>
 
-            <div style="display: flex; flex-wrap: wrap; gap: 10px">
-              <button class="btn btn-primary">Open draft</button>
-              <button class="btn">Send back to the translator</button>
+            <div style="display: flex; flex-direction: column; gap: 10px">
+              <div style="display: flex; flex-wrap: wrap; gap: 10px">
+                <sc-if value="{{canApprove}}" hint-placeholder-val="{{ true }}">
+                  <button class="btn btn-primary" onClick="{{recordApproval}}">Record Marieke’s approval</button>
+                </sc-if>
+                <button class="btn">Open draft</button>
+                <button class="btn">Send back to the translator</button>
+              </div>
+              <p style="margin: 0; font-size: 12px; color: #5C6178">{{approvalNote}}</p>
             </div>
           </div>
         </sc-if>
@@ -375,6 +381,19 @@ button,input,select,textarea{font-family:inherit}
       </section>
     </div>
 
+    <section id="archive" aria-label="Archive this project" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding: 4px 4px 0">
+      <p style="margin: 0; flex: 1 1 280px; font-size: 13px; color: #5C6178">{{archiveText}}</p>
+      <div style="display: flex; gap: 8px">
+        <sc-if value="{{archiveIdle}}" hint-placeholder-val="{{ true }}">
+          <button class="btn" onClick="{{askArchive}}">Archive project</button>
+        </sc-if>
+        <sc-if value="{{archiveConfirm}}" hint-placeholder-val="{{ false }}">
+          <button class="btn" onClick="{{cancelArchive}}">Cancel</button>
+          <button class="btn btn-primary" onClick="{{confirmArchive}}">Archive</button>
+        </sc-if>
+      </div>
+    </section>
+
     <sc-if value="{{dialogOpen}}" hint-placeholder-val="{{ false }}">
       <div class="overlay">
         <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="ask-h">
@@ -418,13 +437,14 @@ class Component extends DCLogic {
     this.state = {
       filter: 'all', dialogOpen: false, askMode: 'translate', requested: null,
       paused: false, replyOpened: false, replySent: false, copied: false,
+      approved: false, archive: 'idle',
     };
   }
   renderVals() {
     const p1 = (this.props.phase ?? 'full') === 'one';
     const assistance = this.props.assistance ?? 'assisted';
     const coverUi = !p1;
-    const { filter, dialogOpen, askMode, requested, paused, replyOpened, replySent, copied } = this.state;
+    const { filter, dialogOpen, askMode, requested, paused, replyOpened, replySent, copied, approved, archive } = this.state;
     const isAssisted = assistance === 'assisted';
     const canAsk = assistance !== 'legal';
 
@@ -437,7 +457,7 @@ class Component extends DCLogic {
     const needs = p1 ? 3 : 4;
     const nav = [
       ['Overview', 'Main.dc.html', 'overview'],
-      ['Projects', 'Project.dc.html', 'projects'],
+      ['Projects', 'Projects.dc.html', 'projects'],
       ['Clients', 'Clients.dc.html', 'clients'],
       ['Translators', 'Resources.dc.html', 'translators'],
     ].map(([label, href, k]) => ({
@@ -515,7 +535,7 @@ class Component extends DCLogic {
     });
 
     const attention = [];
-    if (!p1 && isAssisted) {
+    if (!p1 && isAssisted && !approved) {
       attention.push({ text: 'Waiting for Marieke Visser to approve the draft. 2 points are left to decide.', href: '#draft', action: 'See the draft' });
     }
     if (openCount > 0) {
@@ -561,7 +581,7 @@ class Component extends DCLogic {
       ? [
         { n: '1', title: 'Read the brief', detail: 'Technical, 12,400 words, glossary supplied. Eligible for an assisted draft.', when: '22 Oct', done: true },
         { n: '2', title: 'Made and checked a draft', detail: 'Drafted, then checked terminology, subject matter and wording.', when: '24 Oct, 16:40', done: true },
-        { n: '3', title: 'Asked Marieke Visser to approve', detail: 'She approves before anything reaches the client.', when: '24 Oct, 16:42', done: true },
+        { n: '3', title: approved ? 'Marieke Visser approved the draft' : 'Asked Marieke Visser to approve', detail: approved ? 'You recorded her approval. The log shows both.' : 'She approves before anything reaches the client.', when: approved ? 'Just now' : '24 Oct, 16:42', done: true },
         { n: '4', title: 'Prepared a reply to the client', detail: replySent ? 'Marked as sent.' : 'Waiting for you to open it and send.', when: replySent ? 'Done' : 'Ready', done: replySent },
       ]
       : [
@@ -585,7 +605,19 @@ class Component extends DCLogic {
       assistReason: reasons[assistance],
       bandBg: isAssisted ? '#ECE8F8' : '#ECEEF3',
       bandInk: isAssisted ? '#2E2556' : '#272B3F',
-      bandChip: isAssisted ? 'Awaiting Marieke’s approval' : 'Not assisted',
+      bandChip: isAssisted ? (approved ? 'Approved by Marieke, recorded by you' : 'Awaiting Marieke’s approval') : 'Not assisted',
+      canApprove: !approved,
+      approvalNote: approved
+        ? 'Approval recorded. The log shows that Marieke Visser approved and that you recorded it.'
+        : 'Marieke has no login, so you record her approval here. The log shows that she approved and that you recorded it.',
+      approved, recordApproval: () => this.setState({ approved: true }),
+      archiveIdle: archive === 'idle', archiveConfirm: archive === 'confirm',
+      archiveText: archive === 'idle'
+        ? 'Hide this project from the lists. You can bring it back from the Archived filter.'
+        : (archive === 'confirm' ? 'Archive “Pump station white paper”? Nothing is deleted.' : 'Archived. Find it under the Archived filter on Projects.'),
+      askArchive: () => this.setState({ archive: 'confirm' }),
+      cancelArchive: () => this.setState({ archive: 'idle' }),
+      confirmArchive: () => this.setState({ archive: 'done' }),
       checks,
       requested: !!requested,
       requestedText: requested ? requested + ' requested. It runs now, and the result will appear here for a named reviewer to approve.' : '',

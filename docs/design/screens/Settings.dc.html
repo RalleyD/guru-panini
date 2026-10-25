@@ -170,6 +170,40 @@ button,input,select,textarea{font-family:inherit}
         </div>
       </section>
 
+      <section id="followups" aria-labelledby="follow-h" class="card" style="display: flex; flex-direction: column; gap: 18px">
+        <div>
+          <h2 id="follow-h" class="h2">Follow-ups</h2>
+          <p style="margin: 4px 0 0; color: #5C6178">When a client has been quiet for this long, the project appears in Needs you with an email ready to open.</p>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+          <label for="days" style="font-size: 13px; font-weight: 500">Follow up after</label>
+          <input id="days" type="number" min="1" max="30" value="5" class="field" style="width: 84px">
+          <span style="font-size: 13px; color: #434A5E">days without a reply</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <h3 style="margin: 0; font-size: 14px; font-weight: 600">Reminder text</h3>
+          <p style="margin: 0; font-size: 13px; color: #5C6178">[contact name], [project] and [date] are filled in for you. Your sign-off is added at the end.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="t1" style="font-size: 13px; font-weight: 500">Draft waiting for feedback</label>
+          <textarea id="t1" rows="4" class="field" style="padding: 12px 14px; resize: vertical">Dear [contact name],
+
+I hope you are well. A gentle reminder that the draft of [project] was sent on [date]. When you have a moment, we would be glad to hear your comments.</textarea>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="t2" style="font-size: 13px; font-weight: 500">Quote not accepted</label>
+          <textarea id="t2" rows="4" class="field" style="padding: 12px 14px; resize: vertical">Dear [contact name],
+
+Thank you for your interest in a translation of [project]. I wanted to check whether the quote we sent on [date] suits you.</textarea>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="t3" style="font-size: 13px; font-weight: 500">Question waiting for the client</label>
+          <textarea id="t3" rows="4" class="field" style="padding: 12px 14px; resize: vertical">Dear [contact name],
+
+A question came up in [project] on [date]. Could you let us know your preference when you have a moment?</textarea>
+        </div>
+      </section>
+
       <sc-if value="{{coverUi}}" hint-placeholder-val="{{ true }}">
         <section id="cover" aria-labelledby="cover-h" class="card" style="display: flex; flex-direction: column; gap: 16px; background: #E2F3F1; border-color: #BFE3E0">
           <h2 id="cover-h" class="h2" style="color: #1E3F40">Cover mode</h2>
@@ -242,7 +276,7 @@ class Component extends DCLogic {
     const needs = p1 ? 3 : 4;
     const nav = [
       ['Overview', 'Main.dc.html', 'overview'],
-      ['Projects', 'Project.dc.html', 'projects'],
+      ['Projects', 'Projects.dc.html', 'projects'],
       ['Clients', 'Clients.dc.html', 'clients'],
       ['Translators', 'Resources.dc.html', 'translators'],
     ].map(([label, href, k]) => ({

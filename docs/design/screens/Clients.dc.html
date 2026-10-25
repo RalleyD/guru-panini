@@ -217,6 +217,8 @@ button,input,select,textarea{font-family:inherit}
             <span>Zoning correspondence</span><span style="font-size: 12px; color: #5C6178; white-space: nowrap">Delivered Aug</span>
           </a>
         </div>
+
+        <p style="margin: 0; padding-top: 16px; border-top: 1px solid #E3E5EE; font-size: 13px; color: #5C6178">To archive this client, finish or archive its 1 active project first. Archiving hides a client from the lists and keeps its history.</p>
       </aside>
     </div>
   </main>
@@ -251,7 +253,7 @@ class Component extends DCLogic {
     const needs = p1 ? 3 : 4;
     const nav = [
       ['Overview', 'Main.dc.html', 'overview'],
-      ['Projects', 'Project.dc.html', 'projects'],
+      ['Projects', 'Projects.dc.html', 'projects'],
       ['Clients', 'Clients.dc.html', 'clients'],
       ['Translators', 'Resources.dc.html', 'translators'],
     ].map(([label, href, k]) => ({

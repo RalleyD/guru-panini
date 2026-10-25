@@ -37,12 +37,14 @@ one job. Copy the block into `factory/backlog.md` when you are ready; nothing ha
 - [ ] Clients page: client list with search, one status chip (Follow-up due, otherwise none), the selected-client panel (contact, how they like it written, history), and the Add client form (required: name, contact name, contact email; optional: usual language pair, usual work type, notes). Match docs/design/screens/ClientsP1 and AddClient.
 - [ ] Translators page: people cards with languages, specialisms, availability and load, and the Add translator form (required: name, email; optional: language pairs, specialisms, availability). Match ResourcesP1 and AddTranslator. No allocation timeline yet.
 - [ ] New project form and project record: required client, title, document type, due date and language pair (default from the client's usual pair, with the hint text); optional source file uploaded to a private bucket with the word count read from .docx (PDF word count can wait), and optional translator. Match NewProject.
-- [ ] Project detail page, phase 1: header with chips, the "Now" card (stage tracker, next steps, needs attention), Who is on this, Details and Notes, and the sidebar section links and phone chips. Match ProjectP1 without the feedback log.
+- [ ] Project detail page, phase 1: header with chips, the "Now" card (stage tracker derived from completed steps, next steps with the milestone steps, needs attention), Who is on this, Details and Notes, and the sidebar section links and phone chips. Follow the "Rules the screens rely on" table in docs/design-handoff.md for stage and progress; neither the tracker nor the board is editable. Match ProjectP1 without the feedback log.
+- [ ] Projects list page: list sorted by due date with the Active, Delivered, Archived and All filters, search, stage chips derived from steps, and a Show more button after 25 rows. The sidebar's Projects link opens it. Match ProjectsP1.
+- [ ] Archiving: Archive project (inline confirm) on Project detail, Archive client on the selected-client panel (only when the client has no active projects, otherwise the explanatory line), and the same for translators with no active allocations. Archived records leave lists and pickers and return under the Archived filter. No delete button. Match the archive lines on ProjectP1 and ClientsP1.
 - [ ] Allocations: assign translators and reviewers to projects, and the two-week allocation timeline on the Translators page with dashed proposed bars. Match the Allocation section of ResourcesP1.
 - [ ] Feedback log on Project detail: filters All, Open and Applied, the add row (text, source Reviewer or Client, Log), and entries with version, tag and status. Needs-attention shows the open count. Match the Feedback log section of ProjectP1.
 - [ ] Overview, part 1: greeting, Projects at a glance (five stage columns, scrolling sideways on phones), Who is on what, and the first-run checklist that disappears once a client, a translator and a project exist. Match MainP1 and MainFirstRun, without the Needs-you list.
-- [ ] Needs you: follow-up items with a prepared email (mailto with subject and body, Copy text), the opened state and Mark as sent, stored in the database so they survive a reload, the empty message, and the count badge in the sidebar and tab bar. Match the Needs you section of MainP1.
-- [ ] Settings, phase 1: profile name and photo, email provider choice (default app, Gmail, Outlook) and sign-off used by every email, Open a test email, Export all data to Excel and zipped CSV (one sheet per area), and Support links. Match SettingsP1.
+- [ ] Needs you: follow-up items created by the follow-up due rule in docs/design-handoff.md (waiting on the client longer than the Follow-ups setting, default 5 days; three situations, three reminder texts), each with a prepared email (mailto with subject and body from the Settings template, Copy text), the opened state and Mark as sent (which restarts the clock), stored in the database so they survive a reload, the empty message, and the count badge in the sidebar and tab bar. Match the Needs you section of MainP1.
+- [ ] Settings, phase 1: profile name and photo, email provider choice (default app, Gmail, Outlook) and sign-off used by every email, Open a test email, the Follow-ups section (days setting with default 5 and three editable reminder texts), Export all data to Excel and zipped CSV (one sheet per area), and Support links. Match SettingsP1.
 - [ ] Empty and error states for every page and form, using the patterns on StatesP1, then a responsive pass at 1360 px and 390 px across all pages.
 ```
 
@@ -75,16 +77,22 @@ approval rows in Needs you. Spike PDF text extraction early (it is the least cer
 - Approval by a named reviewer is always required and is not a setting (phase 3).
 - Section lists in the sidebar exist on Project detail only.
 
-## Needs a human decision (the approver should escalate these, not guess)
+## Decided by the owner (see "Owner's answers" in design-handoff.md)
 
-1. **What makes a follow-up due.** The design shows examples (draft sent 5 days ago with no feedback,
-   a quote 3 days unanswered, client questions outstanding). The thresholds and rules are not set.
-2. **Who moves a project between stages**, and whether progress is typed by hand or derived.
-3. **A projects list page.** "Projects" currently opens a project; the Overview board is the list.
-4. **Word count with no file**, and whether it may be edited afterwards.
-5. **Deleting and archiving** clients, translators and projects: not designed.
-6. **Phase 1 reminder text**: where the template lives and how the owner edits it.
-7. **Approval without a login** (phase 3): the owner records it, or it waits for translator logins.
+- Follow-up due is one global setting, default 5 days; reminder texts are edited in Settings.
+- Stage and progress are derived from completed steps; the board and tracker are read-only.
+- There is a Projects list page (due date order, Show more after 25).
+- No word count without a source file; it is never typed in.
+- Clients, projects and translators are archived, not deleted; archive controls sit on the selected
+  client panel and on Project detail.
+- A reviewer's approval is recorded by the signed-in owner (phase 3).
+
+## Still needs a human decision (the approver should escalate these, not guess)
+
+1. Anything the handoff lists under "Open items" that a job turns out to need, for example the
+   wording of the milestone steps or the translator archive control.
+2. Whether the follow-up days apply per situation rather than globally, if the owner finds one number
+   too blunt after using it.
 
 ## Using the screens
 

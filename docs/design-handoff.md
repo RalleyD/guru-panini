@@ -41,7 +41,7 @@ Design canvas (private, the owner shares access): https://claude.ai/artifact/LgK
 
 | Phase | Contains | Canvas |
 | --- | --- | --- |
-| 1 (build waves 1 and 2) | Overview, Project detail, Clients, Translators, Settings (profile, email and sign-off, export, support), first-run checklist, new project, add client, add translator, empty and error states | Rows 1 and 2 |
+| 1 (build waves 1 and 2) | Overview, Projects list, Project detail, Clients, Translators, Settings (profile, email and sign-off, follow-ups, export, support), first-run checklist, new project, add client, add translator, empty and error states | Rows 1 and 2 |
 | 3 (target) | Everything in phase 1, plus cover mode: master switch, per-client cover choice, assisted drafts, approvals, cover activity, assistant request dialog, document-type policy | Row 3 |
 
 Phase 1 has **no** cover-mode UI at all: no master switch, no cover status in the sidebar, Overview,
@@ -65,8 +65,7 @@ Page names below are the source file names in `docs/design/screens/` (without `.
   Details, Notes; phase 3 adds Assisted draft and Cover activity). No other page has a section list.
 - Phone (below 900 px): the sidebar becomes a top bar (logo, Settings icon) plus a bottom tab bar of
   the four primary links with the badge; Project detail also shows its sections as a row of chips.
-- The sidebar is sticky on desktop. "Projects" opens Project detail: there is no projects list page;
-  the Overview board is the list (see open items).
+- The sidebar is sticky on desktop. "Projects" opens the Projects list; a row opens Project detail.
 
 ### Overview (`Main`, `MainP1`, `MainFirstRun`)
 
@@ -93,16 +92,27 @@ First run (`MainFirstRun`): the body is replaced by a "Getting started" checklis
 (Add a client, Add a translator, Create a project). Done steps show a tick. The list disappears once
 all three are done.
 
+### Projects list (`Projects`, `ProjectsP1`)
+
+A list, not a board, for finding any project. Sorted by **due date, soonest first** (not by creation
+date). Filters: Active (default), Delivered, Archived, All; a search box. Each row: title, client and
+language pair, a stage chip, document type, people, due date and a "Follow up" chip when relevant.
+Lists show 25 at a time with a **Show more** button; there are no numbered pages. The Overview board
+stays as the at-a-glance view; this page is for the full list.
+
 ### Project detail (`Project`, `ProjectP1`)
 
-1. Header: title, chips (stage, language pair, document type, words and due date), Message client.
+1. Header: title, chips (stage, language pair, document type, and words and due date; the word count
+   appears only when a source file was uploaded), Message client.
 2. **Now** card: stage tracker (Intake, Allocated, Draft, Review, Client feedback, Delivery), **Next
    steps** (checkboxes) and **Needs attention** (open feedback count; phase 3 adds "waiting for
    approval").
 3. Phase 3: **Assisted draft** section.
    - If assisted: how the draft was made (Drafted, Checked terminology, Checked subject matter,
      Checked wording, each with a result like "1 point left"), What was done, Strengths,
-     Limitations, "2 points left for a person to decide", Open draft, Send back to the translator.
+     Limitations, "2 points left for a person to decide", **Record Marieke’s approval**, Open draft,
+     Send back to the translator. The owner records the reviewer's approval on their behalf (the
+     reviewer has no login); the log shows who approved and that the owner recorded it.
    - If not assisted, one line says why: "Legal documents are never assisted." or "This client has not
      opted in to assisted drafts."
    - **Ask the assistant** opens a dialog: choose Translate, Review only or Terminology check, then
@@ -115,6 +125,8 @@ all three are done.
 5. **Feedback log**: filters All, Open, Applied; an add row (text, source, Log); entries with date,
    version, source (Reviewer, Client; phase 3 adds Assistant), tag and status.
 6. Three plain cards: Who is on this, Details, Notes.
+7. A quiet footer line with **Archive project**. It asks once inline ("Archive this project? Nothing is
+   deleted.") and then hides the project from the lists (see Archiving).
 
 ### Clients (`Clients`, `ClientsP1`)
 
@@ -125,6 +137,8 @@ all three are done.
   assisted drafts*, followed by a one-line reason (for example "Legal documents are never assisted, so
   no drafts will be started for this client") and the line "A named reviewer approves every draft
   before it reaches the client."; then contact, writing preferences and history.
+- At the foot of the panel, archiving: if the client has active projects, a plain line says to finish
+  or archive them first; otherwise an **Archive client** button (not drawn) appears in its place.
 
 ### Translators (`Resources`, `ResourcesP1`)
 
@@ -134,7 +148,10 @@ allocation timeline (working days, bars coloured by document type, a dashed bar 
 ### Settings (`Settings`, `SettingsP1`)
 
 Profile (photo, name). Email: open drafts in the default email app, Gmail in the browser or Outlook
-in the browser; a sign-off; an Open a test email button. Phase 3: **Cover mode** (master switch, the
+in the browser; a sign-off; an Open a test email button. **Follow-ups**: one global number, "Follow up
+after 5 days without a reply", and three editable reminder texts (draft waiting for feedback, quote
+not accepted, question waiting for the client) using `[contact name]`, `[project]` and `[date]`; the
+sign-off is added at the end. Phase 3: **Cover mode** (master switch, the
 document types that may be assisted, the approval line, a link to choose clients). Your data: Export
 to Excel (.xlsx) or CSV (.zip), one sheet per area. Support: Email support, Report a problem.
 
@@ -144,7 +161,8 @@ Shared by both phases. Required fields first, optional fields in a second card (
 added later").
 
 - New project: client, title, document type, due date, language pair (defaults to the client's usual
-  pair and says so). Optional: source file (word count is read from it, or added later), translator.
+  pair and says so). Optional: source file (the word count is read from it; without a file no word
+  count is shown and it is never typed in), translator.
 - Add client: client name, contact name, contact email. Optional: usual language pair, usual type of
   work, notes. Cover mode is not set here; it defaults to Off.
 - Add translator: name, email. Optional: language pairs, specialisms, availability.
@@ -156,6 +174,39 @@ failed, export failed, file could not be read, email app did not open, offline. 
 draft did not finish, cover mode paused. Pattern: say what happened, say nothing was lost, offer one
 next step.
 
+## Rules the screens rely on
+
+**Stage and progress are derived, never dragged or typed.** The tracker and the Overview board are
+read-only. A project moves only when its steps are completed, and un-completing a step moves it back.
+
+| Tracker stage | Complete when | Board column while it is the current stage |
+| --- | --- | --- |
+| Intake | the project is created | Intake (until a translator is assigned) |
+| Allocated | a translator is assigned (automatic) | In translation |
+| Draft | the owner completes "Draft finished" | In translation |
+| Review | the owner completes "Review finished" (phase 3: records the reviewer's approval) | In review |
+| Client feedback | the owner completes "Client feedback dealt with" | With client |
+| Delivery | the owner completes "Delivered" | Delivered |
+
+Progress is completed stages ÷ 6. The project's **Next steps** list holds these milestone steps plus
+any free-form steps; only milestone steps move the stage. (The wireframe shows two free-form examples.)
+
+**Follow-up due.** One global setting, "Follow up after N days without a reply", default **5**, range
+1 to 30, calendar days. A project becomes follow-up due when it has been waiting on the client for N
+days in one of three situations: a draft was sent and no client feedback has been logged since; a
+quote was sent and not accepted; a question to the client is unanswered. Each situation has its own
+reminder text in Settings. Marking a reminder as sent restarts the clock. The item leaves Needs you
+when the client replies or the owner marks the project as no longer waiting.
+
+**Archiving, not deleting.** Clients, projects and translators are archived, never deleted, from the
+UI. Archived records disappear from lists and pickers, keep their history, and come back from the
+Archived filter. A client can be archived only when it has no active projects; a translator only when
+it has no active allocations. Permanent deletion (for example a data-erasure request) is handled
+through support, not a button.
+
+**Approval (phase 3).** The owner records a reviewer's approval. The append-only log stores who
+approved (the reviewer), who recorded it (the owner) and when.
+
 ## Email behaviour
 
 "Open in email app" is a `mailto:` link with subject and body filled in. Settings can switch it to a
@@ -163,8 +214,8 @@ Gmail or Outlook compose URL. **Copy text** is always next to it as a fallback, 
 truncate long bodies and cannot attach files. Using the link marks the item "opened" and it stays in
 Needs you until the owner presses **Mark as sent**.
 
-In phase 1 the message text is a plain template with client and project filled in. In phase 3 cover
-mode prepares it.
+In phase 1 the message text is one of the three reminder templates from Settings, with client,
+project and date filled in. In phase 3 cover mode can prepare its own text; the templates remain.
 
 ## Copy rules
 
@@ -207,19 +258,24 @@ Vue; do not port these files. `docs/design/canvas.json` records which file is wh
 Sketch only; the schema is the build's job.
 
 - **Client:** name, contact name and email, usual language pair, usual work type, notes, writing
-  preferences, glossary flag, `cover_mode` (`off` | `replies` | `replies_and_drafts`, default `off`).
-- **Project:** client, title, source and target language, document type, word count (optional),
-  due date, stage, progress, translator(s), reviewer, notes, next steps, cover paused flag (phase 3).
-- **Translator:** name, email, language pairs, specialisms, availability note.
+  preferences, glossary flag, `archived_at`, `cover_mode` (`off` | `replies` | `replies_and_drafts`,
+  default `off`; phase 3).
+- **Project:** client, title, source and target language, document type, word count (set only from
+  an uploaded file), due date, translator(s), reviewer, notes, `archived_at`, cover paused flag
+  (phase 3). **Steps** (milestone and free-form, with completion times) are stored; stage and progress
+  are derived from them, not stored as typed values.
+- **Translator:** name, email, language pairs, specialisms, availability note, `archived_at`.
 - **Allocation:** translator, project, start and end, role (translator or reviewer), proposed flag.
 - **Feedback entry:** project, version, date, source (reviewer, client, assistant), person, tag, text,
   status (open or applied).
-- **Follow-up (Needs you item):** project, reason, subject and body, state (`ready` → `opened` with
-  time → `done`).
-- **Settings:** owner name and photo, email provider, sign-off, `cover_paused` (master), document types
-  that may be assisted. There is **no** approval setting: approval is always required.
+- **Follow-up (Needs you item):** project, reason (draft waiting, quote not accepted, question
+  waiting), subject and body, state (`ready` → `opened` with time → `done`).
+- **Settings:** owner name and photo, email provider, sign-off, `follow_up_after_days` (default 5),
+  three reminder templates, `cover_paused` (master, phase 3), document types that may be assisted
+  (phase 3). There is **no** approval setting: approval is always required.
 - **Assistant run (phase 3):** project, request type, checks and their results, summary, strengths,
-  limitations, points left, approval request and outcome.
+  limitations, points left.
+- **Approval (phase 3, append-only):** run, reviewer who approved, owner who recorded it, time.
 
 ## Decisions made in design review
 
@@ -231,15 +287,26 @@ Sketch only; the schema is the build's job.
 - Section lists in the sidebar exist on Project detail only.
 - Project-level pause is kept (owner's decision).
 
+### Owner's answers to the build questions
+
+- **Follow-up due:** a global setting with a sensible default (5 days). See the rules above.
+- **Stage and progress:** derived from completed steps; the board is read-only. (Recommendation,
+  adopted.)
+- **Projects list:** yes, a list page ahead of Project detail, sorted by due date, with a Show more
+  button instead of numbered pages. (Recommendation, adopted.)
+- **Word count:** omitted when there is no file.
+- **Archive or delete:** archive from the selected-client panel and from Project detail; no delete
+  button. (Recommendation, adopted.)
+- **Phase-1 reminder templates:** edited on the Settings page.
+- **Reviewer approval:** recorded by the signed-in owner on the reviewer's behalf.
+
 ## Open items
 
-1. **Projects list.** The nav item "Projects" opens a project. Decide whether the Overview board is
-   enough or a list page is needed.
-2. **Approval without a login.** Needs you shows "waiting for <reviewer> to approve" but reviewers
-   have no accounts. Either the owner records the reviewer's approval, or approvals wait for
-   translator logins.
-3. **Phase-1 reminders** are templates; where the text lives and how it is edited is undecided.
-4. **Dialog accessibility.** The assistant dialog is drawn, but focus handling (trap, return focus)
+1. **Dialog accessibility.** The assistant dialog is drawn, but focus handling (trap, return focus)
    must be built.
-5. **Not designed:** password and sign-in screens, editing existing records (edit screens reuse the
-   form layouts), notification emails, any Dutch interface.
+2. **Not drawn but implied:** the Archive client button when a client has no active projects; the same
+   archive pattern on a translator card; the "Show more" button; editing an existing record (reuse
+   the form layouts).
+3. **Next steps wording.** The wireframe shows two free-form steps; the real list also carries the
+   milestone steps (Draft finished, Review finished, Client feedback dealt with, Delivered).
+4. **Not designed:** sign-in screens, notification emails, any Dutch interface.
