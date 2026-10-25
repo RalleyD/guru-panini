@@ -218,3 +218,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Software factory runtime state (job folders)
+/factory/jobs/
