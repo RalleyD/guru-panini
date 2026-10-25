@@ -1,6 +1,7 @@
 # 0001: Tech stack
 
-Status: **Proposed** (proof of concept, single user). Revisit before real client data goes in.
+Status: **Frontend accepted (Vue 3 + TypeScript)**; hosting and package tooling still open. Proof of
+concept, single user. Revisit before real client data goes in.
 Inputs: [design handoff](../design-handoff.md) and its open questions.
 
 ## Context
