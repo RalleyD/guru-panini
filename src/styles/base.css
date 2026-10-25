@@ -1,0 +1,155 @@
+body {
+	margin: 0;
+	background: var(--color-ground);
+	color: var(--color-ink);
+	font-family: var(--font-body);
+	font-size: var(--text-body);
+	line-height: 1.5;
+}
+
+button,
+input,
+select,
+textarea {
+	font: inherit;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+:focus-visible {
+	outline: var(--focus-ring-width) solid var(--focus-ring-color);
+	outline-offset: 2px;
+}
+
+.h1,
+.h2,
+.h3 {
+	margin: 0;
+	font-family: var(--font-heading);
+	font-weight: 400;
+}
+
+.h1 {
+	font-size: var(--text-h1);
+	line-height: 1.15;
+	letter-spacing: -0.01em;
+}
+
+.h2 {
+	font-size: var(--text-h2);
+	line-height: 1.25;
+}
+
+.h3 {
+	font-size: var(--text-h3);
+	line-height: 1.25;
+}
+
+.card {
+	box-sizing: border-box;
+	padding: 28px;
+	border: 1px solid var(--color-line);
+	border-radius: var(--radius-card);
+	background: var(--color-surface);
+}
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	min-height: var(--touch-target);
+	padding: 0 20px;
+	border: 1px solid var(--color-control-border);
+	border-radius: var(--radius-button);
+	background: var(--color-surface);
+	color: var(--color-ink);
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+}
+
+.btn:hover {
+	background: var(--color-field-bg);
+}
+
+.btn-primary {
+	border-color: var(--color-primary);
+	background: var(--color-primary);
+	color: var(--color-surface);
+}
+
+.btn-primary:hover {
+	background: var(--color-primary-hover);
+}
+
+.chip {
+	display: inline-flex;
+	align-items: center;
+	padding: 3px 10px;
+	border-radius: var(--radius-chip);
+	background: var(--color-neutral-tint);
+	color: var(--color-nav-ink);
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.chip-lavender {
+	background: var(--color-lavender-tint-strong);
+	color: var(--color-lavender-ink);
+}
+
+.chip-duck {
+	background: var(--color-duck-tint);
+	color: var(--color-duck-ink);
+}
+
+.chip-blue {
+	background: var(--color-blue-tint-strong);
+	color: var(--color-blue-ink);
+}
+
+.chip-attention {
+	background: var(--color-attention-tint);
+	color: var(--color-attention-ink);
+}
+
+.field {
+	box-sizing: border-box;
+	min-height: var(--touch-target);
+	padding: 0 14px;
+	border: 1px solid var(--color-control-border);
+	border-radius: var(--radius-field);
+	background: var(--color-field-bg);
+	color: var(--color-ink);
+	font-size: 14px;
+}
+
+/* A textarea has no single line to centre, so it needs vertical padding. */
+textarea.field {
+	padding: 10px 14px;
+}
+
+.field-label {
+	font-size: 13px;
+	font-weight: 500;
+}
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+}
+
+@media (max-width: 899px) {
+	.card {
+		padding: 20px;
+	}
+}

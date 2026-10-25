@@ -1,0 +1,49 @@
+:root {
+	--color-ground: #f3f4f8;
+	--color-surface: #ffffff;
+	--color-line: #e3e5ee;
+	--color-ink: #272b3f;
+	--color-muted: #5c6178;
+	--color-primary: #5a4a99;
+	--color-primary-hover: #4a3b87;
+	--color-lavender-tint: #ece8f8;
+	--color-lavender-tint-strong: #e7e1f7;
+	--color-lavender-ink: #4a3b87;
+	--color-duck-tint: #e2f3f1;
+	--color-duck-border: #bfe3e0;
+	--color-duck-ink: #1f5654;
+	--color-blue-tint: #e4eefa;
+	--color-blue-tint-strong: #dae8f8;
+	--color-blue-ink: #284f7e;
+	--color-attention-tint: #fbeee6;
+	--color-attention-ink: #8f4a2a;
+
+	--color-control-border: #c9cdd8;
+	--color-field-bg: #f8f9fc;
+	--color-nav-ink: #434a5e;
+	--color-neutral-tint: #e6e8ee;
+
+	--font-heading: "Newsreader", Georgia, serif;
+	--font-body: "Inter", system-ui, sans-serif;
+	--text-h1: 40px;
+	--text-h2: 24px;
+	--text-h3: 20px;
+	--text-body: 14px;
+
+	--radius-card: 20px;
+	--radius-button: 12px;
+	--radius-field: 12px;
+	--radius-chip: 999px;
+	--touch-target: 44px;
+
+	--focus-ring-width: 2px;
+	--focus-ring-color: #5a4a99;
+}
+
+@media (max-width: 899px) {
+	:root {
+		--text-h1: 30px;
+		--text-h2: 22px;
+		--radius-card: 16px;
+	}
+}
