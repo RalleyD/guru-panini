@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Empty and error states</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit}
+:focus-visible{outline:2px solid #5A4A99;outline-offset:2px}
+.card{box-sizing:border-box;padding:28px;border-radius:20px;background:#FFFFFF;border:1px solid #E3E5EE}
+.h1{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:40px;line-height:1.15;letter-spacing:-0.01em}
+.h2{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:24px;line-height:1.25}
+.h3{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:20px;line-height:1.25}
+.btn{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #C9CDD8;background:#FFFFFF;color:#272B3F;font-size:14px;font-weight:500;cursor:pointer}
+.btn-primary{border-color:#5A4A99;background:#5A4A99;color:#FFFFFF}
+@media (max-width:899px){
+.card{padding:20px;border-radius:16px}
+.h1{font-size:30px}
+.h2{font-size:22px}
+}
+</style>
+</helmet>
+<div style="box-sizing: border-box; min-height: 100%; background: #F3F4F8; color: #272B3F; font-family: 'Inter', system-ui, sans-serif; font-size: 14px; line-height: 1.5; padding: 48px clamp(16px, 4vw, 56px) 64px; display: flex; flex-direction: column; gap: 40px">
+
+  <header style="max-width: 640px">
+    <h1 class="h1">Empty and error states</h1>
+    <p style="margin: 8px 0 0; font-size: 16px; color: #5C6178">{{intro}}</p>
+  </header>
+
+  <sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+    <section aria-label="{{g.title}}" style="display: flex; flex-direction: column; gap: 16px; max-width: 1180px">
+      <div>
+        <h2 class="h2">{{g.title}}</h2>
+        <p style="margin: 4px 0 0; font-size: 13px; color: #5C6178">{{g.note}}</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 20px">
+        <sc-for list="{{g.items}}" as="s" hint-placeholder-count="5">
+          <article class="card" style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 10px; align-items: flex-start">
+            <span style="font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 999px; background: {{g.chipBg}}; color: {{g.chipFg}}">{{s.where}}</span>
+            <h3 class="h3">{{s.title}}</h3>
+            <p style="margin: 0; color: #434A5E">{{s.text}}</p>
+            <sc-if value="{{s.hasActions}}" hint-placeholder-val="{{ true }}">
+              <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px">
+                <sc-for list="{{s.actions}}" as="a" hint-placeholder-count="1">
+                  <button class="btn {{a.cls}}">{{a.label}}</button>
+                </sc-for>
+              </div>
+            </sc-if>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+  </sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"phase":{"editor":"enum","options":["full","one"],"default":"full","section":"Variant"}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const p1 = (this.props.phase ?? 'full') === 'one';
+    const act = (label, primary) => ({ label, cls: primary ? 'btn-primary' : '' });
+    const item = (where, title, text, actions) => ({
+      where, title, text,
+      actions: actions || [],
+      hasActions: !!actions && actions.length > 0,
+    });
+
+    const empty = [
+      item('Overview', 'Nothing needs you right now.', 'Projects are moving, and anything new will appear here.'),
+      item('Projects', 'No projects yet', 'Create your first project and it will appear on the Overview.', [act('New project', true)]),
+      item('Clients', 'No clients yet', 'Add a client to start a project.', [act('Add client', true)]),
+      item('Translators', 'No translators yet', 'Add the people you work with so you can allocate them to projects.', [act('Add translator', true)]),
+      item('Feedback log', 'No feedback yet', 'Log comments from a draft here as they come in.'),
+      item('Search', 'No clients match “kade”', 'Check the spelling, or clear the search.', [act('Clear search')]),
+    ];
+    const problems = [
+      item('Saving', 'Your changes were not saved', 'Nothing was lost. Your edits are still on this page. Try again.', [act('Try again', true)]),
+      item('Export', 'The export did not finish', 'Nothing was lost. Try again, or write to support if it keeps happening.', [act('Try again', true), act('Email support')]),
+      item('File upload', 'That file could not be read', 'Word and PDF files work best. You can create the project now and add the file later.', [act('Choose another file', true)]),
+      item('Email link', 'Your email app did not open', 'Some devices block email links. Use Copy text, then paste it into your email.', [act('Copy text', true)]),
+      item('Connection', 'You seem to be offline', 'Changes cannot be saved until you are back online.'),
+    ];
+    const cover = [
+      item('Assisted draft', 'The assisted draft did not finish', 'Nothing was sent to anyone. Ask again, or give the project to a translator.', [act('Ask again', true)]),
+      item('Cover mode', 'Cover mode is paused', 'Nothing new will be prepared until you turn it back on.', [act('Turn on', true)]),
+    ];
+
+    const groups = [
+      { title: 'Nothing here yet', note: 'Short, calm, and one clear next step where there is one.', chipBg: '#E6E8EE', chipFg: '#434A5E', items: empty },
+      { title: 'Something went wrong', note: 'Say what happened, say nothing was lost, and offer the next step.', chipBg: '#FBEEE6', chipFg: '#8F4A2A', items: problems },
+    ];
+    if (!p1) {
+      groups.push({ title: 'Cover mode', note: 'Full version only.', chipBg: '#E2F3F1', chipFg: '#1F5654', items: cover });
+    }
+    return {
+      groups,
+      intro: p1
+        ? 'Small, calm messages for every page that can be empty, and for the things that can go wrong. Phase 1.'
+        : 'Phase 1 messages plus the two that only exist with cover mode.',
+    };
+  }
+}
+</script>
+</body>
+</html>

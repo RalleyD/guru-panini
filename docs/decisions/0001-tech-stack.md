@@ -116,8 +116,10 @@ claimed elsewhere). The design does not depend on either figure.
 
 1. Which LLM provider, and its EU data-processing terms (handoff question 4).
 2. How much of the unverified free-tier information (limits, pricing) still holds at build time.
-3. Not yet designed: intake, add-client and add-translator forms, notifications, empty and error
-   states.
+3. ~~Not yet designed: intake, add-client and add-translator forms, notifications, empty and error
+   states.~~ Now designed: see [design-handoff.md](../design-handoff.md). Notifications are the
+   "Needs you" list plus a count badge; there is no notification centre. The remaining open items
+   are listed at the end of that document.
 
 ## Sources
 

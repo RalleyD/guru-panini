@@ -1,109 +1,50 @@
 {
   "v": 3,
   "attachments": {},
-  "boards": {
-    "Clients.dc.html": {
-      "expand": "fill",
-      "h": 1500,
-      "title": "Clients",
-      "w": 1360,
-      "x": 4320,
-      "y": 0
-    },
-    "ClientsPhone.dc.html": {
-      "h": 3200,
-      "title": "Clients, phone",
-      "w": 390,
-      "x": 940,
-      "y": 3300
-    },
-    "Main.dc.html": {
-      "expand": "fill",
-      "h": 1900,
-      "is_interactive": true,
-      "title": "Overview",
-      "w": 1360,
-      "x": 0,
-      "y": 0
-    },
-    "MainPhone.dc.html": {
-      "h": 3300,
-      "is_interactive": true,
-      "title": "Overview, phone",
-      "w": 390,
-      "x": 0,
-      "y": 3300
-    },
-    "Project.dc.html": {
-      "expand": "fill",
-      "h": 2900,
-      "is_interactive": true,
-      "title": "Project detail",
-      "w": 1360,
-      "x": 1440,
-      "y": 0
-    },
-    "ProjectPhone.dc.html": {
-      "h": 5200,
-      "is_interactive": true,
-      "title": "Project, phone",
-      "w": 390,
-      "x": 470,
-      "y": 3300
-    },
-    "Resources.dc.html": {
-      "expand": "fill",
-      "h": 1500,
-      "title": "Translators",
-      "w": 1360,
-      "x": 2880,
-      "y": 0
-    },
-    "Settings.dc.html": {
-      "expand": "fill",
-      "h": 1700,
-      "title": "Settings",
-      "w": 1360,
-      "x": 5760,
-      "y": 0
-    }
-  },
-  "createdOnFiles": {
-    "at": "2026-10-25T10:00:00Z",
-    "v": 1
-  },
+  "createdOnFiles": { "at": "2026-10-25T10:00:00Z", "v": 1 },
   "designSystems": [],
-  "launch": {
-    "view": "canvas"
-  },
-  "notes": {
-    "intro": {
-      "kind": "title1",
-      "maxW": 7120,
-      "text": "Agency platform: desktop screens (sample data throughout)",
-      "w": 240,
-      "x": 0,
-      "y": -300
-    },
-    "phones": {
-      "kind": "title1",
-      "maxW": 1330,
-      "text": "The same screens at phone width (390 px)",
-      "w": 240,
-      "x": 0,
-      "y": 3000
-    }
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "title": "Translation Agency Platform",
+  "boards": {
+    "MainP1.dc.html": { "x": 0, "y": 0, "w": 1360, "h": 2100, "title": "Phase 1 · Overview", "expand": "fill", "is_interactive": true },
+    "ProjectP1.dc.html": { "x": 1440, "y": 0, "w": 1360, "h": 1900, "title": "Phase 1 · Project detail", "expand": "fill", "is_interactive": true },
+    "ResourcesP1.dc.html": { "x": 2880, "y": 0, "w": 1360, "h": 1300, "title": "Phase 1 · Translators", "expand": "fill" },
+    "ClientsP1.dc.html": { "x": 4320, "y": 0, "w": 1360, "h": 1500, "title": "Phase 1 · Clients", "expand": "fill", "is_interactive": true },
+    "SettingsP1.dc.html": { "x": 5760, "y": 0, "w": 1360, "h": 1350, "title": "Phase 1 · Settings", "expand": "fill" },
+
+    "MainFirstRun.dc.html": { "x": 0, "y": 2700, "w": 1360, "h": 800, "title": "Phase 1 · First run", "expand": "fill" },
+    "NewProject.dc.html": { "x": 1440, "y": 2700, "w": 1360, "h": 1500, "title": "Phase 1 · New project", "expand": "fill", "is_interactive": true },
+    "AddClient.dc.html": { "x": 2880, "y": 2700, "w": 1360, "h": 1200, "title": "Phase 1 · Add client", "expand": "fill" },
+    "AddTranslator.dc.html": { "x": 4320, "y": 2700, "w": 1360, "h": 1100, "title": "Phase 1 · Add translator", "expand": "fill" },
+    "StatesP1.dc.html": { "x": 5760, "y": 2700, "w": 1360, "h": 1500, "title": "Phase 1 · Empty and error states", "expand": "fill" },
+
+    "Main.dc.html": { "x": 0, "y": 4800, "w": 1360, "h": 2400, "title": "Phase 3 · Overview", "expand": "fill", "is_interactive": true },
+    "Project.dc.html": { "x": 1440, "y": 4800, "w": 1360, "h": 3300, "title": "Phase 3 · Project detail", "expand": "fill", "is_interactive": true },
+    "Resources.dc.html": { "x": 2880, "y": 4800, "w": 1360, "h": 1300, "title": "Phase 3 · Translators", "expand": "fill" },
+    "Clients.dc.html": { "x": 4320, "y": 4800, "w": 1360, "h": 1700, "title": "Phase 3 · Clients", "expand": "fill", "is_interactive": true },
+    "Settings.dc.html": { "x": 5760, "y": 4800, "w": 1360, "h": 1700, "title": "Phase 3 · Settings", "expand": "fill" },
+    "States.dc.html": { "x": 7200, "y": 4800, "w": 1360, "h": 1700, "title": "Phase 3 · Empty and error states", "expand": "fill" },
+
+    "MainP1Phone.dc.html": { "x": 0, "y": 8700, "w": 390, "h": 3000, "title": "Phase 1 · Overview, phone", "is_interactive": true },
+    "ProjectP1Phone.dc.html": { "x": 470, "y": 8700, "w": 390, "h": 3300, "title": "Phase 1 · Project, phone", "is_interactive": true },
+    "NewProjectPhone.dc.html": { "x": 940, "y": 8700, "w": 390, "h": 1900, "title": "Phase 1 · New project, phone", "is_interactive": true },
+    "MainPhone.dc.html": { "x": 1560, "y": 8700, "w": 390, "h": 3600, "title": "Phase 3 · Overview, phone", "is_interactive": true },
+    "ProjectPhone.dc.html": { "x": 2030, "y": 8700, "w": 390, "h": 5800, "title": "Phase 3 · Project, phone", "is_interactive": true },
+    "ClientsPhone.dc.html": { "x": 2500, "y": 8700, "w": 390, "h": 3400, "title": "Phase 3 · Clients, phone", "is_interactive": true }
   },
   "order": [
-    "Main.dc.html",
-    "Project.dc.html",
-    "Resources.dc.html",
-    "Clients.dc.html",
-    "Settings.dc.html",
-    "MainPhone.dc.html",
-    "ProjectPhone.dc.html",
-    "ClientsPhone.dc.html"
+    "MainP1.dc.html", "ProjectP1.dc.html", "ResourcesP1.dc.html", "ClientsP1.dc.html", "SettingsP1.dc.html",
+    "MainFirstRun.dc.html", "NewProject.dc.html", "AddClient.dc.html", "AddTranslator.dc.html", "StatesP1.dc.html",
+    "Main.dc.html", "Project.dc.html", "Resources.dc.html", "Clients.dc.html", "Settings.dc.html", "States.dc.html",
+    "MainP1Phone.dc.html", "ProjectP1Phone.dc.html", "NewProjectPhone.dc.html",
+    "MainPhone.dc.html", "ProjectPhone.dc.html", "ClientsPhone.dc.html"
   ],
-  "pages": [],
-  "title": "Translation Agency Platform"
+  "notes": {
+    "intro": { "kind": "title1", "maxW": 7120, "text": "Phase 1 (build waves 1 and 2): no cover mode", "w": 240, "x": 0, "y": -300 },
+    "phase1b": { "kind": "title1", "maxW": 7120, "text": "Phase 1: first run, new forms, empty and error states", "w": 240, "x": 0, "y": 2400 },
+    "phase3": { "kind": "title1", "maxW": 8560, "text": "Phase 3 target: full cover mode", "w": 240, "x": 0, "y": 4500 },
+    "phones1": { "kind": "title1", "maxW": 1330, "text": "Phase 1 on a phone (390 px)", "w": 240, "x": 0, "y": 8400 },
+    "phones3": { "kind": "title1", "maxW": 1330, "text": "Phase 3 on a phone (390 px)", "w": 240, "x": 1560, "y": 8400 }
+  }
 }

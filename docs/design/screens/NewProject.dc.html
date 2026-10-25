@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>New project</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+a:hover{color:#5A4A99}
+button,input,select,textarea{font-family:inherit}
+:focus-visible{outline:2px solid #5A4A99;outline-offset:2px}
+[id]{scroll-margin-top:24px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.app{display:flex;min-height:100%;background:#F3F4F8;color:#272B3F;font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.5}
+.side{flex:0 0 248px;background:#FFFFFF;border-right:1px solid #E3E5EE}
+.side-in{position:sticky;top:0;box-sizing:border-box;height:100vh;overflow-y:auto;padding:28px 16px;display:flex;flex-direction:column;gap:24px}
+.main{flex:1 1 0;min-width:0;box-sizing:border-box;padding:40px 56px 64px;display:flex;flex-direction:column;gap:32px}
+.nav-link{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:#434A5E;box-sizing:border-box;min-height:44px}
+.nav-link:hover{background:#F3F4F8;color:#272B3F}
+.nav-link[aria-current="page"]{background:#ECE8F8;color:#4A3B87;font-weight:500}
+.badge{margin-left:auto;min-width:20px;height:20px;padding:0 6px;box-sizing:border-box;border-radius:999px;background:#5A4A99;color:#FFFFFF;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center}
+.card{box-sizing:border-box;padding:28px;border-radius:20px;background:#FFFFFF;border:1px solid #E3E5EE}
+.h1{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:40px;line-height:1.15;letter-spacing:-0.01em}
+.h2{margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:24px;line-height:1.25}
+.btn{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:44px;padding:0 20px;border-radius:12px;border:1px solid #C9CDD8;background:#FFFFFF;color:#272B3F;font-size:14px;font-weight:500;cursor:pointer}
+.btn:hover{background:#F8F9FC;color:#272B3F}
+.btn-primary,.btn-primary:hover{border-color:#5A4A99;background:#5A4A99;color:#FFFFFF}
+.btn-primary:hover{background:#4A3B87}
+.field{box-sizing:border-box;min-height:44px;width:100%;padding:0 14px;border-radius:12px;border:1px solid #C9CDD8;background:#F8F9FC;color:#272B3F;font-size:14px}
+.topbar,.chips,.tabbar{display:none}
+@media (max-width:1100px){.main{padding:32px 32px 56px}}
+@media (max-width:899px){
+.app{flex-direction:column}
+.side{display:none}
+.main{padding:20px 16px 32px;gap:24px}
+.topbar{display:flex;position:sticky;top:0;z-index:20;box-sizing:border-box;min-height:56px;align-items:center;justify-content:space-between;padding:6px 8px 6px 16px;background:#FFFFFF;border-bottom:1px solid #E3E5EE}
+.tabbar{display:flex;position:sticky;bottom:0;z-index:20;gap:4px;padding:4px 8px;background:#FFFFFF;border-top:1px solid #E3E5EE}
+.tabbar a{flex:1 1 0;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;border-radius:12px;font-size:11px;font-weight:500;color:#434A5E}
+.tabbar a[aria-current="page"]{background:#ECE8F8;color:#4A3B87}
+.tabbar .badge{position:absolute;top:2px;left:calc(50% + 4px);margin:0}
+.card{padding:20px;border-radius:16px}
+.h1{font-size:30px}
+.h2{font-size:22px}
+[id]{scroll-margin-top:72px}
+}
+</style>
+</helmet>
+<div class="app">
+
+  <aside class="side">
+    <div class="side-in">
+      <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 0 8px">
+        <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="5" width="18" height="16" rx="6" fill="#B9A9E6"/><rect x="12" y="11" width="18" height="16" rx="6" fill="#BFE3E0" fill-opacity="0.9"/></svg>
+        <span style="font-family: 'Newsreader', Georgia, serif; font-size: 18px; font-weight: 500">[Agency name]</span>
+      </a>
+      <nav aria-label="Main" style="display: flex; flex-direction: column; gap: 2px">
+        <sc-for list="{{nav}}" as="n" hint-placeholder-count="4">
+          <a class="nav-link" href="{{n.href}}" aria-current="{{n.current}}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"/></svg>
+            {{n.label}}
+            <sc-if value="{{n.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="badge">{{n.badge}}<span class="sr"> need you</span></span></sc-if>
+          </a>
+        </sc-for>
+      </nav>
+      <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid #E3E5EE; display: flex; flex-direction: column; gap: 2px">
+        <a class="nav-link" href="Settings.dc.html">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9m4 0h3M4 17h3m4 0h9M15 4v6M9 14v6"/></svg>
+          Settings
+        </a>
+        <a class="nav-link" href="Settings.dc.html#support">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg>
+          Support
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <header class="topbar">
+    <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px">
+      <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="5" width="18" height="16" rx="6" fill="#B9A9E6"/><rect x="12" y="11" width="18" height="16" rx="6" fill="#BFE3E0" fill-opacity="0.9"/></svg>
+      <span style="font-family: 'Newsreader', Georgia, serif; font-size: 17px; font-weight: 500">[Agency name]</span>
+    </a>
+    <a href="Settings.dc.html" aria-label="Settings" style="display: inline-flex; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 12px; color: #434A5E">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9m4 0h3M4 17h3m4 0h9M15 4v6M9 14v6"/></svg>
+    </a>
+  </header>
+
+  <main class="main">
+
+    <header style="display: flex; flex-direction: column; gap: 8px">
+      <a href="Project.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; color: #5C6178">Back to projects</a>
+      <h1 class="h1">New project</h1>
+      <p style="margin: 0; font-size: 16px; color: #5C6178; max-width: 52ch">Five things to start. You can add everything else later.</p>
+    </header>
+
+    <div style="width: 100%; max-width: 680px; display: flex; flex-direction: column; gap: 24px">
+
+      <section aria-labelledby="req-h" class="card" style="display: flex; flex-direction: column; gap: 18px">
+        <h2 id="req-h" class="h2">To start</h2>
+
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="client" style="font-size: 13px; font-weight: 500">Client</label>
+          <select id="client" class="field" value="{{client}}" onChange="{{pickClient}}">
+            <sc-for list="{{clientOptions}}" as="c" hint-placeholder-count="7">
+              <option value="{{c.id}}">{{c.name}}</option>
+            </sc-for>
+          </select>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="title" style="font-size: 13px; font-weight: 500">Title</label>
+          <input id="title" class="field" placeholder="e.g. Annual report summary">
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 18px">
+          <div style="flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+            <label for="dtype" style="font-size: 13px; font-weight: 500">Document type</label>
+            <select id="dtype" class="field">
+              <option>Choose one</option>
+              <option>Legal</option>
+              <option>Real estate</option>
+              <option>Technical</option>
+              <option>Business</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div style="flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+            <label for="due" style="font-size: 13px; font-weight: 500">Due date</label>
+            <input id="due" type="date" class="field">
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="pair" style="font-size: 13px; font-weight: 500">Language pair</label>
+          <select id="pair" class="field" value="{{pair}}" onChange="{{pickPair}}">
+            <sc-for list="{{pairOptions}}" as="p" hint-placeholder-count="4">
+              <option value="{{p}}">{{p}}</option>
+            </sc-for>
+          </select>
+          <span style="font-size: 12px; color: #5C6178">{{pairHint}}</span>
+        </div>
+      </section>
+
+      <section aria-labelledby="opt-h" class="card" style="display: flex; flex-direction: column; gap: 18px">
+        <div>
+          <h2 id="opt-h" class="h2">Optional</h2>
+          <p style="margin: 4px 0 0; font-size: 13px; color: #5C6178">All of this can be added or changed afterwards.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="file" style="font-size: 13px; font-weight: 500">Source file</label>
+          <input id="file" type="file" class="field" style="padding: 9px 14px">
+          <span style="font-size: 12px; color: #5C6178">The word count is read from the file. Without one, you can add it later.</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="who" style="font-size: 13px; font-weight: 500">Translator</label>
+          <select id="who" class="field">
+            <option>Decide later</option>
+            <option>Marieke Visser</option>
+            <option>Jonas Bakker</option>
+            <option>Sofie Haas</option>
+            <option>Lucía Romero</option>
+          </select>
+        </div>
+      </section>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+        <button class="btn btn-primary">Create project</button>
+        <a class="btn" href="Main.dc.html">Cancel</a>
+      </div>
+    </div>
+  </main>
+
+  <nav class="tabbar" aria-label="Main">
+    <sc-for list="{{nav}}" as="n" hint-placeholder-count="4">
+      <a href="{{n.href}}" aria-current="{{n.current}}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"/></svg>
+        {{n.label}}
+        <sc-if value="{{n.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="badge">{{n.badge}}<span class="sr"> need you</span></span></sc-if>
+      </a>
+    </sc-for>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { client: 'linden', pair: 'EN → NL' };
+  }
+  renderVals() {
+    const { client, pair } = this.state;
+    const ICON = {
+      overview: 'M5 3h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM16 3h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM5 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2zM16 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2z',
+      projects: 'M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
+      clients: 'M9 11.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5.3a3.2 3.2 0 0 1 0 5.4M18 14.4c1.7.8 3 2.6 3 5.6',
+      translators: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z',
+    };
+    const nav = [
+      ['Overview', 'Main.dc.html', 'overview'],
+      ['Projects', 'Project.dc.html', 'projects'],
+      ['Clients', 'Clients.dc.html', 'clients'],
+      ['Translators', 'Resources.dc.html', 'translators'],
+    ].map(([label, href, k]) => ({
+      label, href, d: ICON[k],
+      current: label === 'Projects' ? 'page' : 'false',
+      hasBadge: label === 'Overview', badge: '3',
+    }));
+
+    const clients = [
+      { id: 'vdm', name: 'Van der Meer Notarissen', pair: 'NL → EN' },
+      { id: 'delta', name: 'Delta Hydraulics BV', pair: 'NL → EN' },
+      { id: 'linden', name: 'Linden & Co', pair: 'EN → NL' },
+      { id: 'casa', name: 'Casa Norte Imports', pair: 'EN → ES' },
+      { id: 'kade', name: 'Kade Architecten', pair: 'NL → EN' },
+      { id: 'oranje', name: 'Oranje Vastgoed', pair: 'NL → EN' },
+      { id: 'brink', name: 'Brink Mediation', pair: 'NL → EN' },
+    ];
+    const current = clients.find((c) => c.id === client);
+    const pairs = ['NL → EN', 'EN → NL', 'EN → ES', 'ES → EN'];
+    return {
+      nav, client, pair,
+      clientOptions: clients,
+      pairOptions: pairs,
+      pairHint: pair === current.pair
+        ? 'Set from ' + current.name + '. Change it if this project differs.'
+        : 'Different from ' + current.name + '’s usual pair (' + current.pair + ').',
+      pickClient: (e) => {
+        const c = clients.find((x) => x.id === e.target.value);
+        this.setState({ client: c.id, pair: c.pair });
+      },
+      pickPair: (e) => this.setState({ pair: e.target.value }),
+    };
+  }
+}
+</script>
+</body>
+</html>
