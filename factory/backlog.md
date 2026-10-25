@@ -2,7 +2,7 @@
 
 `/factory next` builds the first unchecked item and checks it off with its job id.
 
-This is phase 1 only (no cover-mode UI). Source of the item text: the suggested backlog in
+Waves 0 to 6 are phase 1 (no cover-mode UI). Wave 7 is the phase 3 cover-me demo. Source of the item text: the suggested backlog in
 [docs/factory-handoff.md](../docs/factory-handoff.md), adjusted for build order and job size (see
 "Changes from the handoff" at the end). Product spec: [docs/design-handoff.md](../docs/design-handoff.md).
 Stack: [docs/decisions/0001-tech-stack.md](../docs/decisions/0001-tech-stack.md).
@@ -63,25 +63,33 @@ How to read this file:
   Do this after Wave 3 so there is something to show.
 - Decide the LLM provider and its EU data terms before phase 3 (see the tech stack record).
 
-## Parallel track: assistant architecture (phase 3, not queued for the factory)
+## Wave 7: cover-me demo, rung 0 (after Wave 6 is merged and the provider is chosen)
 
 Design record: [docs/decisions/0002-assistant-architecture.md](../docs/decisions/0002-assistant-architecture.md).
-Focus is assisted drafts. This track runs alongside phases 1 and 2 and needs the owner's input. These
-lines have no checkbox on purpose, so `/factory next` does not claim them. Turn one into a
-checkbox item when its inputs exist.
+The goal is a working end-to-end demo with a single-prompt draft, no formal evaluation and no checks or
+loop yet. Screens are the non-`P1` boards in docs/design/screens/ (the phase 3 target). Every run is
+started by a person; automatic starts are not built. Do not use real client documents until the
+provider's EU data terms are settled. Jobs that edit Project detail run one at a time.
 
-- Owner task: supply the evaluation material (consented or anonymised eligible documents, a glossary,
-  reference translations or ratings) and agree what improvement justifies adding a stage.
-- Owner task: choose the model provider after reading its EU data terms.
-- Spike: build the evaluation set and the rung 0 baseline (single prompt with glossary and style notes),
-  and report results in docs/spikes/assistant-baseline.md.
-- Spike: prototype the run and step state machine with a stub model on Edge Functions and `pg_cron`,
-  and report time limits and findings in docs/spikes/assist-run-state-machine.md.
-- Spike: extract text from sample Word and PDF files and report what survives (headings, tables,
-  figures, layout) in docs/spikes/document-extraction.md.
-- Phase 3 build, after the spikes: run and step tables with eligibility and caps; the checks and loop
-  (each only if the evaluation shows a gain); then the Assisted draft section, Ask the assistant
-  dialog, approval rows (append-only), cover mode settings and project pause.
+- [ ] Cover mode settings and eligibility: the per-client choice (Off, Prepare replies only, Replies and assisted drafts) with its reason line on the selected-client panel, the master switch (Overview strip and Settings), the document types that may be assisted (technical white papers and internal business documents on, legal and real-estate brochures off), and the approval statement. Add a server-side eligibility function that returns a reason code for every refusal, with tests. Match Clients, Main and Settings (the non-P1 boards).
+- [ ] Assistant run and step tables with the minimal state machine: a run row with a stage, short idempotent steps, caps on steps and cost, Zod-validated step output, and a stub model for tests. Row-level security applies, and run rows record prompt version, model, tokens, cost and timings.
+- [ ] Rung 0 draft: a thin provider adapter, a versioned prompt file that translates with the client's glossary and style notes, source text read from the uploaded file, a draft stored with its run, and the flags list. Dutch to English and English to Dutch. The summary must state that no separate checks were run. Needs the provider chosen and a spending limit set.
+- [ ] Ask the assistant dialog and the Assisted draft section on Project detail: choose Translate, Review only or Terminology check, then an explicit Confirm and run. Show what was done, limitations, the flags as "points left for a person to decide", Open draft and the "why not assisted" line. Review only and Terminology check may be stubbed to the same single prompt at this rung. Match Project.
+- [ ] Reviewer approval: named reviewer of record, Record the reviewer's approval by the owner, an append-only approval row (reviewer, owner who recorded it, time) enforced in Postgres, Send back to the translator, and approval rows in Needs you. Nothing is deliverable without an approval row. Match Main and Project.
+- [ ] Feedback capture on assisted drafts: a rating (useful, needs work, not usable) and a note, the approved final text stored beside the draft, and the Assistant source in the feedback log. This item has no wireframe (**needs design**): keep it minimal and flag it for review.
+- [ ] Cover mode activity and Pause for this project on Project detail, showing what was done for the project. Match Project.
+
+## Assistant track: owner tasks and spikes
+
+- Owner task: choose the model provider after reading its EU data terms, and set a spending limit.
+- Owner task: use the demo with fake or consented documents and record experience-based ratings. Over
+  time curate annotated example documents with quality notes. They become the evaluation set that
+  decides whether checks and a loop are added.
+- Owner task: decide whether a client's opt-in counts as the confirmation for automatic starts.
+- Spike (optional, can run during phase 1): prototype the run and step state machine with a stub model on
+  Edge Functions and `pg_cron`; report time limits in docs/spikes/assist-run-state-machine.md.
+- Spike (optional): extract text from sample Word and PDF files and report what survives in
+  docs/spikes/document-extraction.md.
 
 ## Changes from the handoff
 

@@ -1,7 +1,7 @@
 # 0002: Assistant architecture ("cover me": assisted drafts)
 
-Status: **Proposed.** Applies to phase 3; nothing in phase 1 or 2 depends on it. Revisit when the
-evaluation in this record has results.
+Status: **Proposed, revised to demo-first.** Applies to phase 3; nothing in phase 1 or 2 depends on it.
+Revisit when the first annotated examples exist.
 Inputs: [design handoff](../design-handoff.md) (product principles, cover mode, assisted workflow),
 [0001 tech stack](0001-tech-stack.md).
 
@@ -80,13 +80,32 @@ the same evaluation set across a small and a large option, subject to the provid
 Text from client documents is data, not instructions. Prompts delimit it and tell the model to ignore
 instructions found inside it. The lack of side-effect tools bounds the damage if that fails.
 
+### Rung 0 output and feedback capture
+
+The single prompt returns the draft plus a short list of **flags**: passages the model is unsure about,
+glossary terms it could not apply, and anything it left out. Flags use the same point shape as above,
+so the "points left for a person to decide" wiring works from day one. The summary says plainly that
+the draft was made in one step and **no separate checks were run**. The phase 3 screens that show
+"Checked terminology" and so on appear only when those stages exist.
+
+Every assisted draft captures experience as data from the first run: the reviewer's rating (useful,
+needs work, not usable) and a note, and the **approved final text stored beside the draft**, so the size
+of the human edits can be measured later. This is how demo use becomes the evaluation set.
+
 ### Honest summaries
 
 The summary states what was checked, what was not, and what remains open, and it errs toward flagging.
 Plain language must not become vague (see the handoff's copy rules). A clean run is never presented as a
 quality guarantee.
 
-## Evaluation plan (this comes before the pipeline)
+## Evaluation plan (deferred for the demo, required before climbing a rung)
+
+**Owner decision:** to get a working "cover me" demo, start with the rung 0 baseline and no formal
+evaluation. That lets the phase 3 wiring run end to end, lets the owner and her friend judge real
+translations from experience against the measures below, and gives the friend time to curate annotated
+example documents with quality notes later without blocking delivery. The evaluation is deferred, not
+dropped: the demo must not claim measured quality, and no rung above 0 is added until this plan has
+been run on examples collected from the demo.
 
 1. **Test set.** About 20 to 30 excerpts or short documents of eligible types only (technical white
    papers, internal business documents), in both directions of Dutch and English, with the owner's own
@@ -106,13 +125,18 @@ quality guarantee.
 
 ## Sequencing
 
-1. Evaluation set and the rung 0 baseline (docs-only spike, no UI).
-2. Run and step tables, the eligibility function and the minimal state machine (still rung 0, with a
-   stub in tests).
-3. Add the checks (rung 1), then the loop (rung 2), each only if step 1's measures show a gain.
-4. The UI from the phase 3 screens: Assisted draft section, Ask the assistant dialog, approval rows,
-   cover activity and pause.
-5. Prepared replies by the same adapter, if wanted.
+1. Phase 1 and 2 first (clients, projects, Needs you, settings): the assistant needs them. A spike of
+   the run and step state machine with a stub model can run earlier.
+2. Cover mode data and settings, the eligibility function with reason codes, and the run and step
+   tables (tested with a stub model).
+3. The rung 0 draft: provider adapter, a versioned prompt, the source text from the uploaded file, the
+   draft stored with its run, and the cost cap.
+4. The phase 3 screens that use it: Ask the assistant dialog, Assisted draft section, approval rows,
+   and cover activity with project pause.
+5. Feedback capture on every assisted draft (see Decisions), so use of the demo produces data.
+6. Later: the friend's annotated examples become the evaluation set; run the plan above; add the
+   checks (rung 1) and the loop (rung 2) only where the measures show a gain.
+7. Prepared replies by the same adapter, if wanted.
 
 ## Risks
 
@@ -131,3 +155,8 @@ quality guarantee.
 3. Draft format: plain text beside the source, or a reconstructed Word document.
 4. How documents are segmented and how much context each segment gets.
 5. Whether Edge Function time limits suffice (verify in the state-machine spike) or a worker is needed.
+6. **Confirmation versus automatic runs.** The handoff says every assistant request is confirmed by a
+   person, yet cover mode is meant to run while the owner is away. Proposed for the demo: a person starts
+   every run with Ask the assistant. Automatic starts (a new project, an overdue follow-up) come later,
+   once the owner decides whether a client's opt-in counts as the confirmation.
+7. Demo data: use fake or consented documents only, and set a spending limit on the provider account.
