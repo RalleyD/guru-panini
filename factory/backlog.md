@@ -21,7 +21,7 @@ How to read this file:
 
 - [x] Scaffold the app: Vue 3 + TypeScript + Vite + Vue Router, Vitest, Biome and vue-tsc with pnpm, and a placeholder home page. Fill in the "Dev server" section of AGENTS.md and make the validation commands there work. → 001-scaffold-app
 - [x] Build the responsive app shell from docs/design-handoff.md (sidebar on desktop; top bar and bottom tab bar below 900 px; Overview, Projects, Clients, Translators, Settings, Support links; a count badge on Overview that takes a number). Add the design tokens as CSS variables and base styles for card, button, chip, field and focus ring. Pages are empty placeholders. → 002-app-shell
-- [ ] Supabase foundation: local stack with `supabase start`, row-level security on every table, generated TypeScript types, and a first migration for clients, translators, projects, allocations, feedback entries, follow-ups and settings, using the phase 1 columns in docs/design-handoff.md (no cover-mode columns).
+- [x] Supabase foundation: local stack with `supabase start`, row-level security on every table, generated TypeScript types, and a first migration for clients, translators, projects, allocations, feedback entries, follow-ups and settings, using the phase 1 columns in docs/design-handoff.md (no cover-mode columns). → 003-supabase-foundation
 - [ ] Single-owner sign-in: a minimal sign-in page, public sign-ups disabled, a route guard and sign-out. The sign-in screen is not in the wireframes (**needs design**): build it in the existing visual language and flag it for review.
 - [ ] Seed script with clearly fake demo data (separate from migrations), so pages can be developed and reviewed with the dev server.
 
