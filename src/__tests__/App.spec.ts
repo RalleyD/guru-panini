@@ -1,10 +1,12 @@
 import { mount } from "@vue/test-utils";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import App from "../App.vue";
 import router from "../router";
 
 describe("App", () => {
-	it("renders the home page at /", async () => {
+	it("renders the Overview page at /", async () => {
+		// jsdom does not implement scrolling, which the router's scrollBehavior calls.
+		vi.spyOn(window, "scrollTo").mockImplementation(() => {});
 		router.push("/");
 		await router.isReady();
 
@@ -14,6 +16,6 @@ describe("App", () => {
 			},
 		});
 
-		expect(wrapper.find("h1").text()).toBe("guru-panini");
+		expect(wrapper.find("h1").text()).toBe("Overview");
 	});
 });
