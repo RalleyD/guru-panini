@@ -38,7 +38,7 @@ How to read this file:
 
 - [ ] Project detail page, phase 1: header with chips, the "Now" card (stage tracker derived from completed steps, next steps with the milestone steps, needs attention), Who is on this, Details and Notes, and the sidebar section links and phone chips. Follow the "Rules the screens rely on" table in docs/design-handoff.md for stage and progress; neither the tracker nor the board is editable. Match ProjectP1 without the feedback log.
 - [ ] Projects list page: list sorted by due date with the Active, Delivered, Archived and All filters, search, stage chips derived from steps, and a Show more button after 25 rows. The sidebar's Projects link opens it. Match ProjectsP1.
-- [ ] Settings, phase 1: profile name and photo, email provider choice (default app, Gmail, Outlook) and sign-off used by every email, Open a test email, the Follow-ups section (days setting with default 5 and three editable reminder texts), and Support links. Match SettingsP1. Export is a later item.
+- [ ] Settings, phase 1: agency name (shown as the brand text in the sidebar and phone top bar in place of the temporary "guru-panini" in AppShell.vue; add the settings column if missing), profile name and photo, email provider choice (default app, Gmail, Outlook) and sign-off used by every email, Open a test email, the Follow-ups section (days setting with default 5 and three editable reminder texts), and Support links. Match SettingsP1. Export is a later item.
 
 ## Wave 4: things that edit Project detail (one at a time)
 
