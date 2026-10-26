@@ -71,6 +71,10 @@ in `src/styles/base.css`; pages should use them rather than raw colours.
 - The default privileges for tables in `public` are revoked for `anon` and `authenticated`
   (migration `revoke_default_privileges`), so a new table has no Data API access until its
   migration grants it.
+- A foreign key between `public` tables must include `owner_id`: the parent gets
+  `unique (id, owner_id)`, and the child uses
+  `foreign key (<x>_id, owner_id) references <parent> (id, owner_id)`, so a row can only reference
+  the same owner's rows. `supabase/tests/database/same_owner_foreign_keys.test.sql` checks this.
 - Clients, projects and translators are archived via `archived_at`, not deleted.
 - After every schema change, regenerate the types in `src/types/database.types.ts`:
 
