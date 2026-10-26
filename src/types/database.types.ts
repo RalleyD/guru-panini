@@ -72,17 +72,17 @@ export type Database = {
 				Relationships: [
 					{
 						foreignKeyName: "allocations_project_id_fkey";
-						columns: ["project_id"];
+						columns: ["project_id", "owner_id"];
 						isOneToOne: false;
 						referencedRelation: "projects";
-						referencedColumns: ["id"];
+						referencedColumns: ["id", "owner_id"];
 					},
 					{
 						foreignKeyName: "allocations_translator_id_fkey";
-						columns: ["translator_id"];
+						columns: ["translator_id", "owner_id"];
 						isOneToOne: false;
 						referencedRelation: "translators";
-						referencedColumns: ["id"];
+						referencedColumns: ["id", "owner_id"];
 					},
 				];
 			};
@@ -182,10 +182,10 @@ export type Database = {
 				Relationships: [
 					{
 						foreignKeyName: "feedback_entries_project_id_fkey";
-						columns: ["project_id"];
+						columns: ["project_id", "owner_id"];
 						isOneToOne: false;
 						referencedRelation: "projects";
-						referencedColumns: ["id"];
+						referencedColumns: ["id", "owner_id"];
 					},
 				];
 			};
@@ -230,10 +230,10 @@ export type Database = {
 				Relationships: [
 					{
 						foreignKeyName: "follow_ups_project_id_fkey";
-						columns: ["project_id"];
+						columns: ["project_id", "owner_id"];
 						isOneToOne: false;
 						referencedRelation: "projects";
-						referencedColumns: ["id"];
+						referencedColumns: ["id", "owner_id"];
 					},
 				];
 			};
@@ -284,10 +284,10 @@ export type Database = {
 				Relationships: [
 					{
 						foreignKeyName: "projects_client_id_fkey";
-						columns: ["client_id"];
+						columns: ["client_id", "owner_id"];
 						isOneToOne: false;
 						referencedRelation: "clients";
-						referencedColumns: ["id"];
+						referencedColumns: ["id", "owner_id"];
 					},
 				];
 			};
