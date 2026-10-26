@@ -68,6 +68,9 @@ in `src/styles/base.css`; pages should use them rather than raw colours.
 - Every table has `owner_id` defaulting to `auth.uid()`, row-level security enabled, and
   `to authenticated` policies on `owner_id`. Grant explicitly: `revoke all` from `anon` and
   `authenticated`, then grant `authenticated` only the commands the app needs.
+- The default privileges for tables in `public` are revoked for `anon` and `authenticated`
+  (migration `revoke_default_privileges`), so a new table has no Data API access until its
+  migration grants it.
 - Clients, projects and translators are archived via `archived_at`, not deleted.
 - After every schema change, regenerate the types in `src/types/database.types.ts`:
 
@@ -90,6 +93,8 @@ uv run pytest                  # Python tests (pytest assumed; TBD until chosen)
 - TypeScript tests: `pnpm exec vitest run`
 - Type-check: `pnpm exec vue-tsc --noEmit`
 - Build: `pnpm exec vite build`
+- Database tests: `pnpm exec supabase test db` (pgTAP files in `supabase/tests/`; needs the local
+  stack running)
 
 ## Conventions
 
