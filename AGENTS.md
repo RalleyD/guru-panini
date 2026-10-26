@@ -77,6 +77,15 @@ in `src/styles/base.css`; pages should use them rather than raw colours.
   `grant execute on function public.<name>(<args>)` to the roles that call it (through
   `/rest/v1/rpc` or from an RLS policy); trigger functions need no grant.
   `supabase/tests/database/default_privileges.test.sql` checks this.
+- New sequences in `public` get no privileges for `anon` or `authenticated` (migration
+  `revoke_default_sequence_privileges`). Identity columns need no sequence grant. A `serial`
+  column, or a `nextval()` call made as those roles, needs `grant usage on sequence public.<name>`.
+  `supabase/tests/database/default_privileges.test.sql` checks this.
+- Install extensions in the `extensions` schema, never in `public`. In a migration, use
+  `create extension if not exists <name> with schema extensions;`, because a bare
+  `create extension` lands in `public`. Choose `extensions` when enabling one from the dashboard
+  too. Extension objects are owned by `supabase_admin`, whose default privileges in `public` give
+  `anon` and `authenticated` full access, and a migration cannot change that role's defaults.
 - A foreign key between `public` tables must include `owner_id`: the parent gets
   `unique (id, owner_id)`, and the child uses
   `foreign key (<x>_id, owner_id) references <parent> (id, owner_id)`, so a row can only reference
