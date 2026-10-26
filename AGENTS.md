@@ -18,7 +18,8 @@ below is filled in, an agent that needs it should say so rather than guess.
   [oxlint](https://oxc.rs/docs/guide/usage/linter) is a lint-only alternative.
   Biome is configured in `biome.json`.
 - **Backend / database**: [Supabase](https://supabase.com/) (Postgres, Auth, Storage, Edge Functions),
-  EU region. Local development with `supabase start`.
+  EU region. The Supabase CLI is a pinned devDependency (`supabase` in `package.json`); run it as
+  `pnpm exec supabase ...`. Local development with `pnpm exec supabase start`.
 - **Package manager**: [pnpm](https://pnpm.io/). Commit `pnpm-lock.yaml`; pin the version with
   `"packageManager"` in `package.json`. Do not use npm or yarn to install.
 - **Frontend hosting**: Cloudflare (static SPA, free `workers.dev` / `pages.dev` subdomain).
@@ -33,7 +34,9 @@ uv sync          # creates .venv and installs deps (once pyproject.toml exists)
 
 - TypeScript deps: `pnpm install --frozen-lockfile`. Needs Node 22.12 or later (required by Vite and
   Vitest). Bun is not used as the bundler or test runner.
-- Backend: `supabase start` for the local stack (needs Docker and the Supabase CLI).
+- Backend: `pnpm install --frozen-lockfile` also installs the Supabase CLI; no separate CLI install.
+  Start the local stack with `pnpm exec supabase start` (needs Docker) and stop it with
+  `pnpm exec supabase stop`.
 - Always run Python through uv (`uv run ...`). Never use `pip install` or a
   hand-made venv.
 
@@ -56,6 +59,22 @@ the router from `src/router/index.ts`. `src/App.vue` wraps every page in
 Design tokens (CSS custom properties) are in `src/styles/tokens.css` and base classes (`.card`,
 `.btn`, `.btn-primary`, `.chip` and its variants, `.field`, `.field-label`, `.h1`–`.h3`, `.sr-only`)
 in `src/styles/base.css`; pages should use them rather than raw colours.
+
+## Database
+
+- Migrations live in `supabase/migrations/`. Create one with
+  `pnpm exec supabase migration new <name>` (from a non-interactive shell add `< /dev/null`, or it
+  waits for SQL on stdin). Apply them locally with `pnpm exec supabase db reset`.
+- Every table has `owner_id` defaulting to `auth.uid()`, row-level security enabled, and
+  `to authenticated` policies on `owner_id`. Grant explicitly: `revoke all` from `anon` and
+  `authenticated`, then grant `authenticated` only the commands the app needs.
+- Clients, projects and translators are archived via `archived_at`, not deleted.
+- After every schema change, regenerate the types in `src/types/database.types.ts`:
+
+  ```bash
+  pnpm exec supabase gen types typescript --local > src/types/database.types.ts
+  pnpm exec biome format --write src/types/database.types.ts
+  ```
 
 ## Validation
 
