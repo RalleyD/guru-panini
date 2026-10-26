@@ -71,6 +71,12 @@ in `src/styles/base.css`; pages should use them rather than raw colours.
 - The default privileges for tables in `public` are revoked for `anon` and `authenticated`
   (migration `revoke_default_privileges`), so a new table has no Data API access until its
   migration grants it.
+- New functions in `public` get no execute for `anon`, `authenticated` or `PUBLIC` (migration
+  `revoke_default_function_privileges`; the `PUBLIC` revoke is global, so it covers functions
+  `postgres` creates in any schema). A migration that adds a function must
+  `grant execute on function public.<name>(<args>)` to the roles that call it (through
+  `/rest/v1/rpc` or from an RLS policy); trigger functions need no grant.
+  `supabase/tests/database/default_privileges.test.sql` checks this.
 - A foreign key between `public` tables must include `owner_id`: the parent gets
   `unique (id, owner_id)`, and the child uses
   `foreign key (<x>_id, owner_id) references <parent> (id, owner_id)`, so a row can only reference
