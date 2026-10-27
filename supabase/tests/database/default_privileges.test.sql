@@ -1,10 +1,12 @@
 -- A table created in public without any grant statements has no Data API
--- access for anon or authenticated, and a function created in public without
--- any grant statements cannot be executed by anon, authenticated or PUBLIC,
--- because the default privileges are revoked.
+-- access for anon or authenticated, a function created in public without any
+-- grant statements cannot be executed by anon, authenticated or PUBLIC, and a
+-- sequence created in public without any grant statements cannot be used, read
+-- or updated by anon or authenticated, because the default privileges are
+-- revoked.
 
 begin;
-select plan(23);
+select plan(32);
 
 create table public.default_privileges_probe (id bigint primary key);
 
@@ -106,6 +108,49 @@ select throws_ok(
   '42501',
   null,
   'anon gets permission denied when it calls a new function.'
+);
+
+reset role;
+
+create sequence public.default_privileges_probe_sequence;
+
+select ok(not has_sequence_privilege('anon', 'public.default_privileges_probe_sequence', 'USAGE'), 'anon cannot use a new sequence.');
+select ok(not has_sequence_privilege('anon', 'public.default_privileges_probe_sequence', 'SELECT'), 'anon cannot read a new sequence.');
+select ok(not has_sequence_privilege('anon', 'public.default_privileges_probe_sequence', 'UPDATE'), 'anon cannot update a new sequence.');
+
+select ok(not has_sequence_privilege('authenticated', 'public.default_privileges_probe_sequence', 'USAGE'), 'authenticated cannot use a new sequence.');
+select ok(not has_sequence_privilege('authenticated', 'public.default_privileges_probe_sequence', 'SELECT'), 'authenticated cannot read a new sequence.');
+select ok(not has_sequence_privilege('authenticated', 'public.default_privileges_probe_sequence', 'UPDATE'), 'authenticated cannot update a new sequence.');
+
+select is_empty(
+  $$
+    select acl.grantee::regrole, acl.privilege_type
+    from pg_class c, aclexplode(c.relacl) acl
+    where c.oid = 'public.default_privileges_probe_sequence'::regclass
+      and acl.grantee in ('anon'::regrole, 'authenticated'::regrole)
+  $$,
+  'A new sequence has no grants for anon or authenticated.'
+);
+
+select is_empty(
+  $$
+    select acl.grantee::regrole, acl.privilege_type
+    from pg_default_acl d, aclexplode(d.defaclacl) acl
+    where d.defaclrole = 'postgres'::regrole
+      and d.defaclnamespace = 'public'::regnamespace
+      and d.defaclobjtype = 'S'
+      and acl.grantee in ('anon'::regrole, 'authenticated'::regrole)
+  $$,
+  'The postgres default privileges for sequences in public grant nothing to anon or authenticated.'
+);
+
+set local role anon;
+
+select throws_ok(
+  $$select nextval('public.default_privileges_probe_sequence')$$,
+  '42501',
+  null,
+  'anon gets permission denied when it calls nextval on a new sequence.'
 );
 
 reset role;
