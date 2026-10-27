@@ -101,14 +101,16 @@ in `src/styles/base.css`; pages should use them rather than raw colours.
 - Demo data: `supabase/seed.sql` holds clearly fake demo data, and `pnpm exec supabase db reset`
   loads it after the migrations. The local demo owner signs in as `demo-owner@example.com` /
   `local-demo-only`, and every demo row belongs to that account.
-  - It is local only: its first statement is a guard that aborts unless `app.settings.jwt_secret`
-    is the local CLI default. Never run `supabase db push --include-seed`, never run
-    `supabase db reset --linked`, and never load the seed with a `--db-url` that points at the
-    hosted project. The hosted owner account is created by hand in the Supabase dashboard.
-  - Adding rows: start names and titles with `Demo `, use `@example.com` emails, compute dates from
-    `current_date` or `now()`, set `owner_id` to the demo owner's id explicitly, use no wireframe
-    sample names (`docs/design-handoff.md` "Sample data"), and only insert (no schema objects,
-    grants or settings). Page jobs that need more demo rows add them here.
+  - It is local only: the file is one `do` block that starts with a guard, which aborts unless
+    `app.settings.jwt_secret` is the local CLI default, so a failed guard writes nothing in any
+    client. Never run `supabase db push --include-seed`, never run `supabase db reset --linked`,
+    and never load the seed with a `--db-url` that points at the hosted project. The hosted owner
+    account is created by hand in the Supabase dashboard.
+  - Adding rows: put the inserts inside the guarded `do` block, never after it. Start names and
+    titles with `Demo `, use `@example.com` emails, compute dates from `current_date` or `now()`,
+    set `owner_id` to the demo owner's id explicitly, use no wireframe sample names
+    (`docs/design-handoff.md` "Sample data"), and only insert (no schema objects, grants or
+    settings). Page jobs that need more demo rows add them here.
   - pgTAP tests must not depend on seed rows; they insert their own users and rows.
 
 ## Validation
