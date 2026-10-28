@@ -352,6 +352,7 @@ describe("ProjectDetailView", () => {
 		await flushPromises();
 
 		expect(review.attributes("disabled")).toBeUndefined();
+		expect(document.activeElement).toBe(review.element);
 		expect((review.element as HTMLInputElement).checked).toBe(true);
 		expect(stageChip(wrapper).text()).toBe("With client");
 		expect(stageChip(wrapper).classes()).toContain("chip-blue");
@@ -417,6 +418,7 @@ describe("ProjectDetailView", () => {
 
 		expect((review.element as HTMLInputElement).checked).toBe(false);
 		expect(review.attributes("disabled")).toBeUndefined();
+		expect(document.activeElement).toBe(review.element);
 		expect(wrapper.find('#now [role="alert"]').text()).toBe(
 			"Your changes were not saved. Nothing was lost. Try again.",
 		);

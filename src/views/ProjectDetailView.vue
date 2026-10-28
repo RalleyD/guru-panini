@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { QueryData } from "@supabase/supabase-js";
-import { computed, ref } from "vue";
+import { computed, nextTick, ref } from "vue";
 import { useRoute } from "vue-router";
 import { z } from "zod";
 import { longPairLabel, shortPairLabel } from "../lib/clients";
@@ -172,13 +172,16 @@ async function toggle(row: StepRow, event: Event) {
 	if (error || !project.value) {
 		input.checked = !checked;
 		saveFailed.value = true;
-		return;
+	} else {
+		saveFailed.value = false;
+		project.value.project_steps = [
+			...project.value.project_steps.filter((step) => step.id !== data.id),
+			data,
+		];
 	}
-	saveFailed.value = false;
-	project.value.project_steps = [
-		...project.value.project_steps.filter((step) => step.id !== data.id),
-		data,
-	];
+	// Disabling the box while it saved dropped its focus; give it back once it is enabled.
+	await nextTick();
+	input.focus();
 }
 </script>
 
