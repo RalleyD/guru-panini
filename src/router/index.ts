@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { supabase } from "../lib/supabase";
+import AddClientView from "../views/AddClientView.vue";
 import ClientsView from "../views/ClientsView.vue";
 import OverviewView from "../views/OverviewView.vue";
 import ProjectsView from "../views/ProjectsView.vue";
@@ -24,6 +25,11 @@ const router = createRouter({
 			path: "/clients",
 			name: "clients",
 			component: ClientsView,
+		},
+		{
+			path: "/clients/new",
+			name: "add-client",
+			component: AddClientView,
 		},
 		{
 			path: "/translators",

@@ -25,12 +25,15 @@ describe("router guard", () => {
 			});
 		});
 
-		it.each(["/", "/clients", "/settings#support", "/no-such-page"])(
-			"sends %s to /sign-in",
-			async (path) => {
-				expect(await navigate(path)).toBe("/sign-in");
-			},
-		);
+		it.each([
+			"/",
+			"/clients",
+			"/clients/new",
+			"/settings#support",
+			"/no-such-page",
+		])("sends %s to /sign-in", async (path) => {
+			expect(await navigate(path)).toBe("/sign-in");
+		});
 
 		it("allows /sign-in", async () => {
 			expect(await navigate("/sign-in")).toBe("/sign-in");
