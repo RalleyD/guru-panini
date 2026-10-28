@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { QueryData } from "@supabase/supabase-js";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { supabase } from "../lib/supabase";
 import {
 	activeProjectCount,
@@ -49,8 +49,6 @@ async function load() {
 
 load();
 
-const intro = computed(() => introLine(translators.value));
-
 const avatarColours = ["lavender", "duck", "blue", "neutral"];
 
 function avatarClass(index: number): string {
@@ -62,7 +60,7 @@ function avatarClass(index: number): string {
 	<header class="translators-header">
 		<div>
 			<h1 class="h1">Translators</h1>
-			<p v-if="translators.length > 0" class="translators-intro">{{ intro }}</p>
+			<p v-if="translators.length > 0" class="translators-intro">{{ introLine(translators) }}</p>
 		</div>
 		<RouterLink to="/translators/new" class="btn btn-primary">Add translator</RouterLink>
 	</header>

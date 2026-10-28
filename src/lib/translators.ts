@@ -10,10 +10,6 @@ export const languagePairOptions = [
 
 const languageNames = new Intl.DisplayNames(["en"], { type: "language" });
 
-function pairNames(pair: string): string[] {
-	return pair.split("-").map((code) => languageNames.of(code) ?? code);
-}
-
 export function pairsLabel(pairs: string[]): string | undefined {
 	const items: string[] = [];
 	const shown = new Set<string>();
@@ -24,7 +20,11 @@ export function pairsLabel(pairs: string[]): string | undefined {
 		const both = reverse !== pair && pairs.includes(reverse);
 		shown.add(pair);
 		if (both) shown.add(reverse);
-		items.push(pairNames(pair).join(both ? " ↔ " : " → "));
+		items.push(
+			[source, target]
+				.map((code) => languageNames.of(code) ?? code)
+				.join(both ? " ↔ " : " → "),
+		);
 	}
 	return items.length ? items.join(", ") : undefined;
 }
