@@ -132,6 +132,61 @@ describe("AppShell", () => {
 		).toBe("page");
 	});
 
+	it("links to the route's sections in the sidebar and the phone chips", async () => {
+		const wrapper = mountShell(0);
+		const path = "/projects/de000000-0000-4000-8000-000000000301";
+		await router.push(path);
+		await flushPromises();
+
+		const navs = wrapper.findAll('nav[aria-label="On this page"]');
+		expect(navs).toHaveLength(2);
+		expect(navs[0].element.closest("aside")).not.toBeNull();
+		expect(navs[0].find(".shell-sections-heading").text()).toBe("This project");
+		for (const nav of navs) {
+			const links = nav.findAll("a");
+			expect(links.map((a) => a.text())).toEqual([
+				"Who is on this",
+				"Details",
+				"Notes",
+			]);
+			expect(links.map((a) => a.attributes("href"))).toEqual([
+				`${path}#team`,
+				`${path}#details`,
+				`${path}#notes`,
+			]);
+			for (const link of links) {
+				expect(link.attributes("aria-current")).toBeUndefined();
+			}
+		}
+	});
+
+	it("scrolls to the section when a section link is clicked", async () => {
+		const wrapper = mountShell(0);
+		const path = "/projects/de000000-0000-4000-8000-000000000301";
+		await router.push(path);
+		await flushPromises();
+		const target = document.createElement("section");
+		target.id = "details";
+		document.body.append(target);
+		vi.mocked(window.scrollTo).mockClear();
+
+		await wrapper.find(`aside a[href="${path}#details"]`).trigger("click");
+		await flushPromises();
+
+		expect(router.currentRoute.value.fullPath).toBe(`${path}#details`);
+		expect(window.scrollTo).toHaveBeenCalledTimes(1);
+		target.remove();
+	});
+
+	it("renders no section links on a route without sections", async () => {
+		const wrapper = mountShell(0);
+		await router.push("/clients");
+		await flushPromises();
+
+		expect(wrapper.find('nav[aria-label="On this page"]').exists()).toBe(false);
+		expect(wrapper.text()).not.toContain("This project");
+	});
+
 	it("has a Sign out button in the sidebar foot after Support", () => {
 		const wrapper = mountShell(0);
 		const foot = [...wrapper.find(".shell-side-foot").element.children];

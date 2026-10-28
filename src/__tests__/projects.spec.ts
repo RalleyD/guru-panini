@@ -1,11 +1,17 @@
 import { describe, expect, it } from "vitest";
 import {
+	columnChipClasses,
+	documentTypeChipClasses,
 	documentTypeLabels,
+	formatDate,
+	type Milestone,
+	milestoneLabels,
 	type NewProjectForm,
 	newProjectSchema,
 	pairHint,
 	pairLabel,
 	pairOptions,
+	projectStage,
 	sourceFileKind,
 	usualPair,
 	wordCountLine,
@@ -182,5 +188,186 @@ describe("sourceFileKind", () => {
 		expect(sourceFileKind("demo.doc")).toBeUndefined();
 		expect(sourceFileKind("demo.docx.txt")).toBeUndefined();
 		expect(sourceFileKind("docx")).toBeUndefined();
+	});
+});
+
+describe("milestoneLabels", () => {
+	it("labels the four milestones in order", () => {
+		expect(Object.entries(milestoneLabels)).toEqual([
+			["draft", "Draft finished"],
+			["review", "Review finished"],
+			["client_feedback", "Client feedback dealt with"],
+			["delivery", "Delivered"],
+		]);
+	});
+});
+
+describe("projectStage", () => {
+	const translator = { role: "translator", is_proposed: false } as const;
+	const proposedTranslator = { role: "translator", is_proposed: true } as const;
+	const reviewer = { role: "reviewer", is_proposed: false } as const;
+
+	function ticked(...milestones: Milestone[]) {
+		return milestones.map((milestone) => ({
+			milestone,
+			completed_at: "2026-10-28T10:00:00Z",
+		}));
+	}
+
+	function summary(stage: ReturnType<typeof projectStage>) {
+		return {
+			done: stage.stages.filter((s) => s.done).map((s) => s.name),
+			current: stage.stages.filter((s) => s.current).map((s) => s.name),
+			doneCount: stage.doneCount,
+			column: stage.column,
+		};
+	}
+
+	it("returns the six stages in order", () => {
+		expect(projectStage([], []).stages.map((stage) => stage.name)).toEqual([
+			"Intake",
+			"Allocated",
+			"Draft",
+			"Review",
+			"Client feedback",
+			"Delivery",
+		]);
+	});
+
+	it("has only Intake done with no allocation, current Allocated", () => {
+		expect(summary(projectStage([], []))).toEqual({
+			done: ["Intake"],
+			current: ["Allocated"],
+			doneCount: 1,
+			column: "Intake",
+		});
+	});
+
+	it("does not count a proposed translator as allocated", () => {
+		expect(summary(projectStage([proposedTranslator], []))).toEqual({
+			done: ["Intake"],
+			current: ["Allocated"],
+			doneCount: 1,
+			column: "Intake",
+		});
+	});
+
+	it("does not count a reviewer only as allocated", () => {
+		expect(summary(projectStage([reviewer], []))).toMatchObject({
+			done: ["Intake"],
+			current: ["Allocated"],
+		});
+	});
+
+	it("is in translation once a translator is confirmed", () => {
+		expect(summary(projectStage([proposedTranslator, translator], []))).toEqual(
+			{
+				done: ["Intake", "Allocated"],
+				current: ["Draft"],
+				doneCount: 2,
+				column: "In translation",
+			},
+		);
+	});
+
+	it("is in review once the draft is finished", () => {
+		expect(summary(projectStage([translator], ticked("draft")))).toEqual({
+			done: ["Intake", "Allocated", "Draft"],
+			current: ["Review"],
+			doneCount: 3,
+			column: "In review",
+		});
+	});
+
+	it("is with the client while client feedback is open", () => {
+		expect(
+			summary(projectStage([translator], ticked("draft", "review"))),
+		).toMatchObject({ current: ["Client feedback"], column: "With client" });
+	});
+
+	it("stays with the client while Delivery is current", () => {
+		expect(
+			summary(
+				projectStage(
+					[translator],
+					ticked("draft", "review", "client_feedback"),
+				),
+			),
+		).toEqual({
+			done: ["Intake", "Allocated", "Draft", "Review", "Client feedback"],
+			current: ["Delivery"],
+			doneCount: 5,
+			column: "With client",
+		});
+	});
+
+	it("is delivered with no current stage when all six are done", () => {
+		const stage = projectStage(
+			[translator],
+			ticked("draft", "review", "client_feedback", "delivery"),
+		);
+		expect(summary(stage)).toEqual({
+			done: [
+				"Intake",
+				"Allocated",
+				"Draft",
+				"Review",
+				"Client feedback",
+				"Delivery",
+			],
+			current: [],
+			doneCount: 6,
+			column: "Delivered",
+		});
+	});
+
+	it("evaluates each stage on its own after an out-of-order tick", () => {
+		expect(summary(projectStage([translator], ticked("review")))).toEqual({
+			done: ["Intake", "Allocated", "Review"],
+			current: ["Draft"],
+			doneCount: 3,
+			column: "In translation",
+		});
+	});
+
+	it("ignores un-ticked milestones and free-form steps", () => {
+		const steps = [
+			{ milestone: "draft" as const, completed_at: null },
+			{ milestone: null, completed_at: "2026-10-28T10:00:00Z" },
+		];
+		expect(summary(projectStage([translator], steps))).toMatchObject({
+			current: ["Draft"],
+			doneCount: 2,
+		});
+	});
+});
+
+describe("chip classes", () => {
+	it("maps each board column to its chip classes", () => {
+		expect(columnChipClasses).toEqual({
+			Intake: "chip",
+			"In translation": "chip chip-lavender",
+			"In review": "chip chip-duck",
+			"With client": "chip chip-blue",
+			Delivered: "chip",
+		});
+	});
+
+	it("maps each document type to its chip classes", () => {
+		expect(documentTypeChipClasses).toEqual({
+			legal: "chip chip-lavender",
+			real_estate: "chip chip-blue",
+			technical: "chip chip-duck",
+			business: "chip",
+			other: "chip",
+		});
+	});
+});
+
+describe("formatDate", () => {
+	it("formats a date as day, short month and year", () => {
+		expect(formatDate("2026-11-04")).toBe("4 Nov 2026");
+		expect(formatDate("2027-09-30")).toBe("30 Sep 2027");
+		expect(formatDate("2026-01-01")).toBe("1 Jan 2026");
 	});
 });

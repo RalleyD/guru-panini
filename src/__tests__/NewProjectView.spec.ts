@@ -21,6 +21,7 @@ vi.mock("../lib/supabase", () => ({
 }));
 
 const userId = "de000000-0000-4000-8000-000000000001";
+const newProjectId = "de000000-0000-4000-8000-000000000399";
 
 const clients = [
 	{
@@ -156,7 +157,7 @@ describe("NewProjectView", () => {
 			clients: { data: clients, error: null },
 			translators: { data: translators, error: null },
 		});
-		db.rpc.mockReset().mockResolvedValue({ data: "new-project", error: null });
+		db.rpc.mockReset().mockResolvedValue({ data: newProjectId, error: null });
 		db.upload.mockReset().mockResolvedValue({ data: {}, error: null });
 		db.storageFrom.mockReset().mockReturnValue({ upload: db.upload });
 		await router.push("/projects/new");
@@ -319,7 +320,7 @@ describe("NewProjectView", () => {
 		expect(db.upload).not.toHaveBeenCalled();
 	});
 
-	it("creates a project without a file or translator and goes to Projects", async () => {
+	it("creates a project without a file or translator and goes to the new project", async () => {
 		wrapper = await mountForm();
 		await fillRequired(wrapper);
 
@@ -336,7 +337,7 @@ describe("NewProjectView", () => {
 		]) {
 			expect(args[key]).toBeUndefined();
 		}
-		expect(router.currentRoute.value.path).toBe("/projects");
+		expect(router.currentRoute.value.path).toBe(`/projects/${newProjectId}`);
 	});
 
 	it("reads the word count from a .docx, uploads it under the user's folder and saves both", async () => {
@@ -364,7 +365,7 @@ describe("NewProjectView", () => {
 			source_file_path: path,
 			source_file_name: "demo.docx",
 		});
-		expect(router.currentRoute.value.path).toBe("/projects");
+		expect(router.currentRoute.value.path).toBe(`/projects/${newProjectId}`);
 	});
 
 	it("uploads a .pdf with no word count", async () => {
@@ -422,7 +423,7 @@ describe("NewProjectView", () => {
 
 			expect(db.upload).not.toHaveBeenCalled();
 			expect(db.rpc).toHaveBeenCalledWith("create_project", requiredArgs);
-			expect(router.currentRoute.value.path).toBe("/projects");
+			expect(router.currentRoute.value.path).toBe(`/projects/${newProjectId}`);
 		},
 	);
 
@@ -473,7 +474,7 @@ describe("NewProjectView", () => {
 		}
 		expect(describedText(wrapper, "Source file")).toBe("2 words in this file.");
 
-		db.rpc.mockResolvedValue({ data: "new-project", error: null });
+		db.rpc.mockResolvedValue({ data: newProjectId, error: null });
 		await submit(wrapper);
 
 		expect(db.upload).toHaveBeenCalledTimes(1);
@@ -481,7 +482,7 @@ describe("NewProjectView", () => {
 		expect(db.rpc.mock.calls[1][1].source_file_path).toBe(
 			db.upload.mock.calls[0][0],
 		);
-		expect(router.currentRoute.value.path).toBe("/projects");
+		expect(router.currentRoute.value.path).toBe(`/projects/${newProjectId}`);
 	});
 
 	it("shows the save error when the upload fails and calls nothing else", async () => {

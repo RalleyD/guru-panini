@@ -171,28 +171,29 @@ async function createProject() {
 	}
 	errors.value = {};
 	pending.value = true;
-	const saved = await save(result.data);
+	const id = await save(result.data);
 	pending.value = false;
-	if (!saved) {
+	if (!id) {
 		saveFailed.value = true;
 		return;
 	}
-	await router.push("/projects");
+	await router.push({ name: "project", params: { id } });
 }
 
+// The new project's id, or undefined when it was not saved.
 async function save(
 	project: z.output<typeof newProjectSchema>,
-): Promise<boolean> {
+): Promise<string | undefined> {
 	const source = sourceFile.value;
 	const path = source && (await upload(source));
-	if (source && !path) return false;
-	const { error } = await supabase.rpc("create_project", {
+	if (source && !path) return undefined;
+	const { data, error } = await supabase.rpc("create_project", {
 		...project,
 		word_count: source?.wordCount,
 		source_file_path: path,
 		source_file_name: source?.file.name,
 	});
-	return !error;
+	return error ? undefined : data;
 }
 </script>
 

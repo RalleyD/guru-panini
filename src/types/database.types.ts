@@ -237,6 +237,48 @@ export type Database = {
 					},
 				];
 			};
+			project_steps: {
+				Row: {
+					completed_at: string | null;
+					created_at: string;
+					due_date: string | null;
+					id: string;
+					milestone: Database["public"]["Enums"]["project_milestone"] | null;
+					owner_id: string;
+					project_id: string;
+					title: string | null;
+				};
+				ComputedFields: never;
+				Insert: {
+					completed_at?: string | null;
+					created_at?: string;
+					due_date?: string | null;
+					id?: string;
+					milestone?: Database["public"]["Enums"]["project_milestone"] | null;
+					owner_id?: string;
+					project_id: string;
+					title?: string | null;
+				};
+				Update: {
+					completed_at?: string | null;
+					created_at?: string;
+					due_date?: string | null;
+					id?: string;
+					milestone?: Database["public"]["Enums"]["project_milestone"] | null;
+					owner_id?: string;
+					project_id?: string;
+					title?: string | null;
+				};
+				Relationships: [
+					{
+						foreignKeyName: "project_steps_project_id_owner_id_fkey";
+						columns: ["project_id", "owner_id"];
+						isOneToOne: false;
+						referencedRelation: "projects";
+						referencedColumns: ["id", "owner_id"];
+					},
+				];
+			};
 			projects: {
 				Row: {
 					archived_at: string | null;
@@ -420,6 +462,7 @@ export type Database = {
 				| "quote_not_accepted"
 				| "question_waiting";
 			follow_up_state: "ready" | "opened" | "done";
+			project_milestone: "draft" | "review" | "client_feedback" | "delivery";
 		};
 		CompositeTypes: {
 			[_ in never]: never;
@@ -571,6 +614,7 @@ export const Constants = {
 				"question_waiting",
 			],
 			follow_up_state: ["ready", "opened", "done"],
+			project_milestone: ["draft", "review", "client_feedback", "delivery"],
 		},
 	},
 } as const;
