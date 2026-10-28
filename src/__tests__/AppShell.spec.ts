@@ -6,9 +6,9 @@ import router from "../router";
 const auth = vi.hoisted(() => ({ getSession: vi.fn() }));
 vi.mock("../lib/supabase", () => ({ supabase: { auth } }));
 
-function mountShell(needsYouCount: number) {
+function mountShell(needsYouCount: number, agencyName = "Demo Agency") {
 	return mount(AppShell, {
-		props: { needsYouCount },
+		props: { agencyName, needsYouCount },
 		global: {
 			plugins: [router],
 		},
@@ -25,6 +25,19 @@ describe("AppShell", () => {
 		});
 		await router.push("/");
 		await router.isReady();
+	});
+
+	it("shows the agency name as the brand in the sidebar and the top bar", () => {
+		const wrapper = mountShell(0, "Demo Translation Agency");
+		const brands = wrapper.findAll(".shell-brand-name");
+
+		expect(brands).toHaveLength(2);
+		expect(brands[0].element.closest("aside")).not.toBeNull();
+		expect(brands[1].element.closest("header")).not.toBeNull();
+		for (const brand of brands) {
+			expect(brand.text()).toBe("Demo Translation Agency");
+		}
+		expect(wrapper.text()).not.toContain("guru-panini");
 	});
 
 	it("links the sidebar to the four primary pages, Settings and Support", () => {
