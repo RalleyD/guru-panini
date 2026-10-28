@@ -65,7 +65,8 @@ The app lives at the repo root: `index.html` loads `src/main.ts`, which mounts `
 the router from `src/router/index.ts` once the first route guard has run. `src/App.vue` renders
 `/sign-in` on its own and wraps every other page in `src/components/AppShell.vue` (sidebar on
 desktop, top bar and bottom tab bar below 900 px, the `needsYouCount` prop for the Overview badge,
-and a `sign-out` event that `App.vue` handles). Pages are in `src/views/`.
+and a `sign-out` event that `App.vue` handles). Pages are in `src/views/`; Project detail is
+`/projects/:id` (`src/views/ProjectDetailView.vue`).
 
 - The Supabase client is in `src/lib/supabase.ts`; import it from there rather than creating
   another.
@@ -77,6 +78,13 @@ and a `sign-out` event that `App.vue` handles). Pages are in `src/views/`.
   Clients page and the Add client form are in `src/lib/clients.ts`; translator rules shared by the
   Translators page and the Add translator form are in `src/lib/translators.ts`; the New project
   form's rules are in `src/lib/projects.ts`.
+- The project stage rules are in `src/lib/projects.ts`: `milestoneLabels`, `projectStage` (the six
+  stages, done count and board column from allocations and steps), `columnChipClasses`,
+  `documentTypeChipClasses` and `formatDate`. Pages that show a stage, column, progress or project
+  date reuse them rather than re-deriving the rules.
+- `AppShell.vue` renders a route's `meta.sections` (`{ label, hash }[]`, typed in
+  `src/router/index.ts`) as the sidebar "This project" links and, below 900 px, the phone chips
+  under the top bar. Routes without `sections` show neither.
 
 Design tokens (CSS custom properties) are in `src/styles/tokens.css` and base classes (`.card`,
 `.btn`, `.btn-primary`, `.chip` and its variants, `.field`, `.field-label`, `.h1`–`.h3`, `.sr-only`)
@@ -113,6 +121,11 @@ in `src/styles/base.css`; pages should use them rather than raw colours.
   `foreign key (<x>_id, owner_id) references <parent> (id, owner_id)`, so a row can only reference
   the same owner's rows. `supabase/tests/database/same_owner_foreign_keys.test.sql` checks this.
 - Clients, projects and translators are archived via `archived_at`, not deleted.
+- `project_steps` holds a project's milestone steps (`milestone` set, `title` null) and free-form
+  steps (`title` set, `milestone` null); `completed_at` null means not done. A milestone row is
+  created the first time it is ticked (upsert on `project_id, milestone`), so a missing row means
+  not done. Stage, board column and progress are derived from the steps and allocations, never
+  stored.
 - Projects are created through `public.create_project`, so the project and its translator
   allocation are saved together in one transaction. The `.docx` word count is read in the browser
   by `src/lib/docx.ts`.

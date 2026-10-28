@@ -130,6 +130,26 @@ stays as the at-a-glance view; this page is for the full list.
 7. A quiet footer line with **Archive project**. It asks once inline ("Archive this project? Nothing is
    deleted.") and then hides the project from the lists (see Archiving).
 
+Phase 1 as built (`/projects/:id`): the stage tracker and the stage chip are derived from the
+completed steps and are read-only. Intake is always done; Allocated is done when the project has a
+confirmed (not proposed) translator; Draft, Review, Client feedback and Delivery are done when their
+step is ticked, each on its own, so ticks may come in any order. The current stage is the first stage
+not done, and the stage chip follows the board column of the current stage (Allocated → Intake,
+Draft → In translation, Review → In review, Client feedback and Delivery → With client); it reads
+"Delivered" only once every stage is done, including the Delivered step. Next steps lists the four
+milestone steps "Draft finished", "Review finished", "Client feedback dealt with" and "Delivered",
+then any free-form steps (by due date, undated last) with a "By <date>" line; free-form steps are
+shown and can be ticked but there is no control to add, edit or delete them yet. Ticking saves at
+once; a failed save puts the checkbox back and says "Your changes were not saved. Nothing was lost.
+Try again." Needs attention shows "<n> open feedback point(s)" without a link until the Feedback log
+exists, otherwise "Nothing needs attention." Who is on this lists translators before reviewers
+("…, proposed" for a proposal), or "No translator yet.", then the client contact. Details shows
+Client, Languages, Document type, Words (only when a file gave a count), Glossary ("Supplied by
+client" or "None yet") and Deadline, in place of the wireframe's Subject and Formats. Notes shows the
+project's notes or "No notes yet." The section links (sidebar block and phone chips) are Who is on
+this, Details and Notes. There is no Feedback log section, Change allocation link or archive footer
+yet. An unknown or malformed id shows "Project not found" with a Back to projects link.
+
 ### Clients (`Clients`, `ClientsP1`)
 
 - List: client, work, last contact, and **one status chip** with priority "Follow-up due", then
@@ -185,7 +205,7 @@ added later").
   create the project now and add the file later." and the file is cleared. With no active clients,
   "No clients yet." and an Add client link sit under the Client select. The translator is saved as
   a confirmed allocation from today (or the due date if earlier) to the due date. After creating,
-  the owner lands on Projects until Project detail exists.
+  the owner lands on the new project's Project detail.
 - Add client: client name, contact name, contact email. Optional: usual language pair, usual type of
   work, notes. Cover mode is not set here; it defaults to Off.
 - Add translator: name, email. Optional: language pairs, specialisms, availability.
