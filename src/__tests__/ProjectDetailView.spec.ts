@@ -7,6 +7,7 @@ const db = vi.hoisted(() => ({
 	getSession: vi.fn(),
 	from: vi.fn(),
 	maybeSingle: vi.fn(),
+	settings: vi.fn(),
 	upsert: vi.fn(),
 	update: vi.fn(),
 	single: vi.fn(),
@@ -107,10 +108,12 @@ function project(overrides = {}) {
 }
 
 // One chain per table: projects is select().eq().maybeSingle(); project_steps is
-// upsert().select().single() or update().eq().select().single().
+// upsert().select().single() or update().eq().select().single(); settings is
+// select().maybeSingle(), resolved by db.settings.
 const chains = {
 	projects: {} as Record<string, ReturnType<typeof vi.fn>>,
 	project_steps: {} as Record<string, ReturnType<typeof vi.fn>>,
+	settings: {} as Record<string, ReturnType<typeof vi.fn>>,
 };
 
 function mockTables() {
@@ -118,7 +121,7 @@ function mockTables() {
 		const chain: Record<string, ReturnType<typeof vi.fn>> = {
 			select: vi.fn(() => chain),
 			eq: vi.fn(() => chain),
-			maybeSingle: db.maybeSingle,
+			maybeSingle: name === "settings" ? db.settings : db.maybeSingle,
 			upsert: db.upsert.mockImplementation(() => chain),
 			update: db.update.mockImplementation(() => chain),
 			single: db.single,
@@ -130,6 +133,10 @@ function mockTables() {
 
 function loads(result: Result) {
 	db.maybeSingle.mockResolvedValue(result);
+}
+
+function tablesLoaded() {
+	return db.from.mock.calls.map(([name]) => name);
 }
 
 async function mountProject(id = projectId) {
@@ -187,6 +194,10 @@ describe("ProjectDetailView", () => {
 			error: null,
 		});
 		db.maybeSingle.mockReset();
+		db.settings.mockReset().mockResolvedValue({
+			data: { email_provider: "default_app", sign_off: "Kind regards," },
+			error: null,
+		});
 		db.upsert.mockReset();
 		db.update.mockReset();
 		db.single.mockReset();
@@ -197,8 +208,7 @@ describe("ProjectDetailView", () => {
 	it("loads the project with its client, allocations, steps and feedback in one query", async () => {
 		await mountProject();
 
-		expect(db.from).toHaveBeenCalledTimes(1);
-		expect(db.from).toHaveBeenCalledWith("projects");
+		expect(tablesLoaded()).toEqual(["projects", "settings"]);
 		const columns = chains.projects.select.mock.calls[0][0];
 		for (const part of [
 			"client:clients (",
@@ -267,15 +277,67 @@ describe("ProjectDetailView", () => {
 		);
 	});
 
-	it("links Message client to the client contact with the title as subject", async () => {
-		const wrapper = await mountProject();
-		const message = wrapper
-			.findAll("a")
-			.find((a) => a.text() === "Message client");
+	function messageClient(wrapper: Wrapper) {
+		return wrapper.findAll("a").find((a) => a.text() === "Message client");
+	}
 
+	it("links Message client to the contact with the title as subject and the sign-off as body", async () => {
+		const wrapper = await mountProject();
+		const message = messageClient(wrapper);
+
+		expect(chains.settings.select).toHaveBeenCalledWith(
+			"email_provider, sign_off, owner_name, agency_name",
+		);
 		expect(message?.classes()).toContain("btn");
 		expect(message?.attributes("href")).toBe(
-			"mailto:contact-one@example.com?subject=Demo%20lease%20%26%20sale",
+			"mailto:contact-one@example.com?subject=Demo%20lease%20%26%20sale&body=Kind%20regards%2C",
+		);
+		expect(message?.attributes("target")).toBeUndefined();
+		expect(message?.attributes("rel")).toBeUndefined();
+	});
+
+	it("opens Message client in Outlook on the web in a new tab when that is the provider", async () => {
+		db.settings.mockResolvedValue({
+			data: { email_provider: "outlook", sign_off: "Kind regards," },
+			error: null,
+		});
+		const wrapper = await mountProject();
+		const message = messageClient(wrapper);
+
+		expect(message?.attributes("href")).toBe(
+			"https://outlook.office.com/mail/deeplink/compose?to=contact-one%40example.com&subject=Demo%20lease%20%26%20sale&body=Kind%20regards%2C",
+		);
+		expect(message?.attributes("target")).toBe("_blank");
+		expect(message?.attributes("rel")).toBe("noopener noreferrer");
+	});
+
+	it.each([
+		["the owner has no settings row", { data: null, error: null }],
+		["the settings fail to load", { data: null, error: { message: "down" } }],
+	])("uses the default provider and sign-off when %s", async (_, result) => {
+		db.settings.mockResolvedValue(result);
+		const wrapper = await mountProject();
+
+		expect(wrapper.find("h1").text()).toBe("Demo lease & sale");
+		expect(messageClient(wrapper)?.attributes("href")).toBe(
+			"mailto:contact-one@example.com?subject=Demo%20lease%20%26%20sale&body=Kind%20regards%2C",
+		);
+	});
+
+	it("uses the saved owner and agency names in the default sign-off", async () => {
+		db.settings.mockResolvedValue({
+			data: {
+				email_provider: null,
+				sign_off: null,
+				owner_name: "Demo Owner",
+				agency_name: "Demo Agency",
+			},
+			error: null,
+		});
+		const wrapper = await mountProject();
+
+		expect(messageClient(wrapper)?.attributes("href")).toBe(
+			`mailto:contact-one@example.com?subject=Demo%20lease%20%26%20sale&body=${encodeURIComponent("Kind regards,\nDemo Owner\nDemo Agency")}`,
 		);
 	});
 
@@ -559,7 +621,9 @@ describe("ProjectDetailView", () => {
 			.findAll("a")
 			.find((a) => a.text() === "Back to projects");
 		expect(back?.attributes("href")).toBe("/projects");
-		expect(db.from).toHaveBeenCalledTimes(id === projectId ? 1 : 0);
+		expect(tablesLoaded()).toEqual(
+			id === projectId ? ["projects", "settings"] : [],
+		);
 		expect(wrapper.find("#now").exists()).toBe(false);
 	});
 
