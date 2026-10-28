@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { supabase } from "../lib/supabase";
 import AddClientView from "../views/AddClientView.vue";
+import AddTranslatorView from "../views/AddTranslatorView.vue";
 import ClientsView from "../views/ClientsView.vue";
 import OverviewView from "../views/OverviewView.vue";
 import ProjectsView from "../views/ProjectsView.vue";
@@ -35,6 +36,11 @@ const router = createRouter({
 			path: "/translators",
 			name: "translators",
 			component: TranslatorsView,
+		},
+		{
+			path: "/translators/new",
+			name: "add-translator",
+			component: AddTranslatorView,
 		},
 		{
 			path: "/settings",

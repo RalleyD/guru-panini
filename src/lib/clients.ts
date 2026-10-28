@@ -81,7 +81,7 @@ export function searchClients<T extends { name: string; contact_name: string }>(
 	);
 }
 
-const optionalText = z
+export const optionalText = z
 	.string()
 	.trim()
 	.transform((value) => value || null);

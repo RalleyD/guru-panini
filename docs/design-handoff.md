@@ -151,6 +151,13 @@ stays as the at-a-glance view; this page is for the full list.
 People cards (languages, specialisms, availability, load), an Add translator card, and a two-week
 allocation timeline (working days, bars coloured by document type, a dashed bar is a proposal).
 
+- Phase 1 as built: each card shows the initials, name, pair line (`↔` when both directions are
+  stored), specialism chips, the availability note as written (it is a free-text note, so there is
+  no coloured status such as "Limited capacity"), and a load count of non-archived projects with a
+  confirmed allocation that has not ended. The intro has no "least room" sentence. The Add
+  translator form offers Dutch → English, English → Dutch and English → Spanish, with no "Other"
+  box yet. The allocation timeline arrives with the Allocations job.
+
 ### Settings (`Settings`, `SettingsP1`)
 
 Profile (photo, name). Email: open drafts in the default email app, Gmail in the browser or Outlook
