@@ -29,6 +29,7 @@ describe("router guard", () => {
 			"/",
 			"/clients",
 			"/clients/new",
+			"/translators/new",
 			"/settings#support",
 			"/no-such-page",
 		])("sends %s to /sign-in", async (path) => {
