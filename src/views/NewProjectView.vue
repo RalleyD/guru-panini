@@ -89,9 +89,15 @@ const hint = computed(() =>
 );
 
 // Choosing a client resets the pair to the client's usual pair, if it has one.
+// Otherwise a pair that is no longer listed (another client's usual pair) is cleared.
 watch(selectedClient, (client) => {
 	const usual = client && usualPair(client);
 	if (usual) form.value.language_pair = usual;
+	else if (
+		!pairs.value.some((pair) => pair.value === form.value.language_pair)
+	) {
+		form.value.language_pair = "";
+	}
 });
 
 function describedBy(
@@ -112,6 +118,8 @@ async function chooseFile(event: Event) {
 		return;
 	}
 	const wordCount = kind && (await readWordCount(file));
+	// Another file was chosen while this one was being read.
+	if (input.files?.[0] !== file) return;
 	if (!kind || wordCount === undefined) {
 		fileUnreadable.value = true;
 		input.value = "";
@@ -304,7 +312,7 @@ async function save(
 					:aria-describedby="describedBy('new-project-file-hint', fileUnreadable && 'new-project-file-error')"
 					@change="chooseFile"
 				/>
-				<p id="new-project-file-hint" class="new-project-hint">
+				<p id="new-project-file-hint" class="new-project-hint" aria-live="polite">
 					{{
 						sourceFile?.wordCount === undefined
 							? "The word count is read from the file. Without a file, no word count is shown."

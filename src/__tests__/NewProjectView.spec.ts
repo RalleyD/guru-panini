@@ -281,6 +281,24 @@ describe("NewProjectView", () => {
 		expect(describedText(wrapper, "Language pair")).toBe("");
 	});
 
+	it("clears another client's unlisted pair when the client has no usual pair", async () => {
+		wrapper = await mountForm();
+		await fillRequired(wrapper);
+
+		await fieldFor(wrapper, "Client").setValue("client-french");
+		expect(fieldValue(wrapper, "Language pair")).toBe("fr-en");
+		await fieldFor(wrapper, "Client").setValue("client-open");
+		expect(optionsOf(wrapper, "Language pair")).not.toContain("FR → EN");
+		expect(fieldValue(wrapper, "Language pair")).toBe("");
+
+		await submit(wrapper);
+
+		expect(describedText(wrapper, "Language pair")).toBe(
+			"Choose a language pair",
+		);
+		expect(db.rpc).not.toHaveBeenCalled();
+	});
+
 	it("shows the five messages on an empty submit, focuses the client and saves nothing", async () => {
 		wrapper = await mountForm();
 
