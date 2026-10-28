@@ -440,6 +440,11 @@ async function toggle(row: StepRow, event: Event) {
 	gap: 12px;
 }
 
+/* At the item's left edge, so the last item's hidden text cannot overflow the list by a pixel. */
+.project-stage .sr-only {
+	left: 0;
+}
+
 .project-stage:last-child {
 	flex: 0 0 auto;
 }
