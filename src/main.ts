@@ -13,4 +13,7 @@ const app = createApp(App);
 
 app.use(router);
 
-app.mount("#app");
+// Wait for the route guard, so a signed-out visitor never sees the shell.
+router.isReady().then(() => {
+	app.mount("#app");
+});

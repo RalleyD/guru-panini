@@ -58,13 +58,15 @@ Page names below are the source file names in `docs/design/screens/` (without `.
 ### Navigation (every screen)
 
 - Sidebar: logo and agency name; four primary links (Overview, Projects, Clients, Translators);
-  at the foot Settings and Support (phase 3 adds a Cover mode status link above them).
+  at the foot Settings, Support and a Sign out button (phase 3 adds a Cover mode status link above
+  them).
 - **Count badge** on Overview showing how many items are in "Needs you". This is the only
   notification surface.
 - Project detail only: a second block of links to its sections (phase 1: Feedback log, Who is on this,
   Details, Notes; phase 3 adds Assisted draft and Cover activity). No other page has a section list.
-- Phone (below 900 px): the sidebar becomes a top bar (logo, Settings icon) plus a bottom tab bar of
-  the four primary links with the badge; Project detail also shows its sections as a row of chips.
+- Phone (below 900 px): the sidebar becomes a top bar (logo; on the right a Settings icon and a
+  Sign out icon) plus a bottom tab bar of the four primary links with the badge; Project detail also
+  shows its sections as a row of chips.
 - The sidebar is sticky on desktop. "Projects" opens the Projects list; a row opens Project detail.
 
 ### Overview (`Main`, `MainP1`, `MainFirstRun`)
@@ -173,6 +175,20 @@ One sheet each. Empty: Overview, Projects, Clients, Translators, Feedback log, s
 failed, export failed, file could not be read, email app did not open, offline. Phase 3 adds: assisted
 draft did not finish, cover mode paused. Pattern: say what happened, say nothing was lost, offer one
 next step.
+
+### Sign in (not in the wireframes)
+
+Built in job 009 in the existing visual language, without a wireframe; it awaits the owner's review.
+`/sign-in` has no sidebar, top bar or tab bar. One white card, at most 400 px wide, sits centred
+across and about 15% of the screen height down, on the ground colour (16 px clear of the edges on
+phones), so it does not move when the error appears. Top to bottom: the brand text "guru-panini"
+(no logo mark), an Email field, a Password field and one primary **Sign in** button. A visually
+hidden "Sign in" heading serves screen readers. There is no sign-up, forgot-password or magic link.
+The button is disabled while the request is in flight. A wrong password or an unknown email shows
+"Email or password is incorrect" between the password field and the button, in the "Needs
+attention" colours; any other failure shows "Could not sign in. Try again in a moment." The typed
+values stay. Success, and opening `/sign-in` while signed in, go to Overview. Every other page sends
+a signed-out visitor here.
 
 ## Rules the screens rely on
 
@@ -309,4 +325,5 @@ Sketch only; the schema is the build's job.
    the form layouts).
 3. **Next steps wording.** The wireframe shows two free-form steps; the real list also carries the
    milestone steps (Draft finished, Review finished, Client feedback dealt with, Delivered).
-4. **Not designed:** sign-in screens, notification emails, any Dutch interface.
+4. **Not designed:** notification emails, any Dutch interface. The sign-in page was built without a
+   wireframe (job 009, "Sign in (not in the wireframes)" above); the owner should review it.
