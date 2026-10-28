@@ -129,7 +129,7 @@ export const milestoneLabels: Record<Milestone, string> = {
 	delivery: "Delivered",
 };
 
-export const stageNames = [
+const stageNames = [
 	"Intake",
 	"Allocated",
 	"Draft",
@@ -138,7 +138,7 @@ export const stageNames = [
 	"Delivery",
 ] as const;
 
-export type StageName = (typeof stageNames)[number];
+type StageName = (typeof stageNames)[number];
 
 export type BoardColumn =
 	| "Intake"

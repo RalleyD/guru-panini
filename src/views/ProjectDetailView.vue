@@ -29,7 +29,6 @@ function projectQuery(id: string) {
 }
 
 type Project = NonNullable<QueryData<ReturnType<typeof projectQuery>>>;
-type Step = Project["project_steps"][number];
 type StepRow = {
 	key: string;
 	label: string;
@@ -176,10 +175,9 @@ async function toggle(row: StepRow, event: Event) {
 		return;
 	}
 	saveFailed.value = false;
-	const saved: Step = data;
 	project.value.project_steps = [
-		...project.value.project_steps.filter((step) => step.id !== saved.id),
-		saved,
+		...project.value.project_steps.filter((step) => step.id !== data.id),
+		data,
 	];
 }
 </script>
