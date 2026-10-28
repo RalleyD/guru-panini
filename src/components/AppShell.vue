@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
 
-withDefaults(defineProps<{ needsYouCount?: number }>(), {
+withDefaults(defineProps<{ agencyName: string; needsYouCount?: number }>(), {
 	needsYouCount: 0,
 });
 
@@ -64,7 +64,7 @@ const signOutIcon =
 							<rect x="2" y="5" width="18" height="16" rx="6" fill="#B9A9E6" />
 							<rect x="12" y="11" width="18" height="16" rx="6" fill="#BFE3E0" fill-opacity="0.9" />
 						</svg>
-						<span class="shell-brand-name">guru-panini</span>
+						<span class="shell-brand-name">{{ agencyName }}</span>
 					</a>
 				</RouterLink>
 				<nav aria-label="Main" class="shell-side-nav">
@@ -163,7 +163,7 @@ const signOutIcon =
 						<rect x="2" y="5" width="18" height="16" rx="6" fill="#B9A9E6" />
 						<rect x="12" y="11" width="18" height="16" rx="6" fill="#BFE3E0" fill-opacity="0.9" />
 					</svg>
-					<span class="shell-brand-name">guru-panini</span>
+					<span class="shell-brand-name">{{ agencyName }}</span>
 				</a>
 			</RouterLink>
 			<div class="shell-topbar-actions">
@@ -271,7 +271,14 @@ const signOutIcon =
 	padding: 0 8px;
 }
 
+.shell-brand svg {
+	flex: none;
+}
+
+/* A long agency name wraps anywhere rather than widening the sidebar. */
 .shell-brand-name {
+	min-width: 0;
+	overflow-wrap: anywhere;
 	font-family: var(--font-heading);
 	font-size: 18px;
 	font-weight: 500;
@@ -419,14 +426,20 @@ const signOutIcon =
 	}
 
 	.shell-topbar-brand {
+		min-width: 0;
 		padding: 0;
 	}
 
+	/* One line, cut off with an ellipsis, so the icons beside it stay on screen. */
 	.shell-topbar-brand .shell-brand-name {
+		overflow: hidden;
 		font-size: 17px;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.shell-topbar-actions {
+		flex: none;
 		display: flex;
 		align-items: center;
 		gap: 4px;

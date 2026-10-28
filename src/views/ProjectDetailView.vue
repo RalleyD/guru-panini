@@ -4,6 +4,7 @@ import { computed, nextTick, ref } from "vue";
 import { useRoute } from "vue-router";
 import { z } from "zod";
 import { longPairLabel, shortPairLabel } from "../lib/clients";
+import { composeUrl, newTabAttrs } from "../lib/email";
 import {
 	columnChipClasses,
 	documentTypeChipClasses,
@@ -13,6 +14,7 @@ import {
 	milestoneLabels,
 	projectStage,
 } from "../lib/projects";
+import { resolveSettings } from "../lib/settings";
 import { supabase } from "../lib/supabase";
 import { initials } from "../lib/translators";
 
@@ -59,7 +61,21 @@ async function load() {
 	project.value = data;
 }
 
-if (validId) load();
+// Message client follows the email settings; without them it uses the defaults.
+const emailSettings = ref(resolveSettings(null));
+
+async function loadEmailSettings() {
+	const { data, error } = await supabase
+		.from("settings")
+		.select("email_provider, sign_off, owner_name, agency_name")
+		.maybeSingle();
+	if (!error) emailSettings.value = resolveSettings(data);
+}
+
+if (validId) {
+	load();
+	loadEmailSettings();
+}
 
 const notFound = computed(
 	() => !loading.value && !loadFailed.value && !project.value,
@@ -80,11 +96,19 @@ const wordsLine = computed(() => {
 		: `${count.toLocaleString("en-GB")} words · ${due}`;
 });
 
-const mailto = computed(() =>
-	project.value
-		? `mailto:${project.value.client.contact_email}?subject=${encodeURIComponent(project.value.title)}`
-		: "",
-);
+const messageClient = computed(() => {
+	const { email_provider, sign_off } = emailSettings.value;
+	return {
+		href: project.value
+			? composeUrl(email_provider, {
+					to: project.value.client.contact_email,
+					subject: project.value.title,
+					body: sign_off,
+				})
+			: "",
+		...newTabAttrs(email_provider),
+	};
+});
 
 // Milestones in label order, then free-form steps by due date (no date last), then creation.
 const stepRows = computed((): StepRow[] => {
@@ -228,7 +252,7 @@ async function toggle(row: StepRow, event: Event) {
 					<span class="project-words">{{ wordsLine }}</span>
 				</div>
 			</div>
-			<a class="btn" :href="mailto">Message client</a>
+			<a class="btn" v-bind="messageClient">Message client</a>
 		</header>
 
 		<section id="now" aria-label="Where this project is" class="card project-now">

@@ -65,7 +65,11 @@ The app lives at the repo root: `index.html` loads `src/main.ts`, which mounts `
 the router from `src/router/index.ts` once the first route guard has run. `src/App.vue` renders
 `/sign-in` on its own and wraps every other page in `src/components/AppShell.vue` (sidebar on
 desktop, top bar and bottom tab bar below 900 px, the `needsYouCount` prop for the Overview badge,
-and a `sign-out` event that `App.vue` handles). Pages are in `src/views/`; Project detail is
+the `agencyName` prop for the brand text, and a `sign-out` event that `App.vue` handles). The shell
+does not talk to Supabase: `App.vue` loads `agency_name` from the owner's settings row each time a
+signed-in route shows and passes it through the shared `agencyName` ref in `src/lib/settings.ts`
+(empty until the load ends, "guru-panini" when the name is empty or the load fails); the Settings
+page updates that ref after a save. Pages are in `src/views/`; Project detail is
 `/projects/:id` (`src/views/ProjectDetailView.vue`).
 
 - The Supabase client is in `src/lib/supabase.ts`; import it from there rather than creating
@@ -77,7 +81,14 @@ and a `sign-out` event that `App.vue` handles). Pages are in `src/views/`; Proje
 - Forms validate input with Zod (`zod`) before writing to Supabase. Client rules shared by the
   Clients page and the Add client form are in `src/lib/clients.ts`; translator rules shared by the
   Translators page and the Add translator form are in `src/lib/translators.ts`; the New project
-  form's rules are in `src/lib/projects.ts`.
+  form's rules are in `src/lib/projects.ts`; the Settings page's field rules
+  (`settingsFieldSchemas`), its defaults and the resolver `resolveSettings` (a settings row, or no
+  row, to the values every page uses) are in `src/lib/settings.ts`.
+- Every email link the app renders is built with `src/lib/email.ts` (`composeUrl`, `withSignOff`,
+  `opensInNewTab`), using the saved provider (`default_app`, `gmail`, `outlook`) and the resolved
+  sign-off; Gmail and Outlook links get `target="_blank"` and `rel="noopener noreferrer"` through
+  `newTabAttrs`. The
+  support address and subjects are constants there too. Never hand-build a `mailto:` link.
 - The project stage rules are in `src/lib/projects.ts`: `milestoneLabels`, `projectStage` (the six
   stages, done count and board column from allocations and steps), `columnChipClasses`,
   `documentTypeChipClasses` and `formatDate`. Pages that show a stage, column, progress or project
@@ -136,8 +147,10 @@ in `src/styles/base.css`; pages should use them rather than raw colours.
   created in a migration that inserts into `storage.buckets`, not in `config.toml`, so the bucket
   exists on the hosted project too. Object names start with the owner's id folder
   (`<owner id>/<uuid>.<ext>`), which the `to authenticated` insert and select policies on
-  `storage.objects` check; there is no update or delete policy and nothing for `anon`. A new bucket
-  follows the same pattern.
+  `storage.objects` check; there is no update or delete policy and nothing for `anon`. The private
+  `profile-photos` bucket (5 MiB, JPEG, PNG and WebP; migration `profile_photos`) follows the same
+  owner-folder pattern, with no update or delete policy; the Settings page shows a photo through a
+  signed URL. A new bucket follows the same pattern.
 - After every schema change, regenerate the types in `src/types/database.types.ts`:
 
   ```bash

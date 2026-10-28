@@ -68,6 +68,11 @@ Page names below are the source file names in `docs/design/screens/` (without `.
   Sign out icon) plus a bottom tab bar of the four primary links with the badge; Project detail also
   shows its sections as a row of chips.
 - The sidebar is sticky on desktop. "Projects" opens the Projects list; a row opens Project detail.
+- As built: the brand text in the sidebar and the phone top bar is the agency name from Settings,
+  trimmed. It is empty while it loads and reads "guru-panini" when no agency name is set or it cannot
+  be loaded. A long name wraps in the sidebar without widening it, and is cut off with an ellipsis in
+  the phone top bar so the Settings and Sign out icons stay on screen. The sign-in page always reads
+  "guru-panini".
 
 ### Overview (`Main`, `MainP1`, `MainFirstRun`)
 
@@ -209,6 +214,33 @@ sign-off is added at the end. Phase 3: **Cover mode** (master switch, the
 document types that may be assisted, the approval line, a link to choose clients). Your data: Export
 to Excel (.xlsx) or CSV (.zip), one sheet per area. Support: Email support, Report a problem.
 
+Phase 1 as built (`/settings`): the header "Settings" / "Just the essentials." sits above four cards
+in a column at most 760 px wide: Profile, Email, Follow-ups and Support. There is no Your data card
+yet (Export is a later item) and no Cover mode card. Nothing below the header shows until the
+settings load ends; a failed load shows "Settings could not be loaded. Nothing was lost." with Try
+again, and a page opened with a hash (the sidebar's Support link opens `/settings#support`) scrolls
+to that card. With no saved settings the fields show the defaults: 5 days, My default email app,
+the sign-off "Kind regards," then the owner name and the agency name on their own lines, and the
+three wireframe reminder texts. **Profile**: a 72 px avatar with the photo, or the initials of Your
+name on the lavender tint, then a Profile photo file input, Your name, and **Agency name** ("Shown at
+the top of every page."), which the wireframe does not draw. A photo must be a JPEG, PNG or WebP
+image (checked from the file's contents) up to 5 MB, or "Choose a JPG, PNG or WebP image up to 5 MB."
+shows and nothing is uploaded; photos are private and there is no Remove photo control.
+**Email**: the intro, the three "Open drafts in" options with the wireframe titles and lines (the
+chosen one tinted lavender), a 3-row "Sign-off for emails", and **Open a test email**, which uses the
+values on the page ("Test email from <agency name>", body "This is how an email will open." plus the
+sign-off), with the note about attachments and long emails. An empty sign-off means no sign-off.
+**Follow-ups**: "Follow up after [1–30] days without a reply", then "Reminder text" with three 4-row
+texts (Draft waiting for feedback, Quote not accepted, Question waiting for the client); a reminder
+cannot be empty ("Enter the reminder text") and days outside 1 to 30 or not whole show "Enter a whole
+number from 1 to 30". **Support**: Email support (primary) and Report a problem, with the subjects
+"Support request" and "Something looks wrong" and no recipient address yet (the owner supplies it).
+There is no Save button: each text field saves when it loses focus after an edit, and a radio or a
+photo when it is chosen. An invalid value is not saved and its message shows under the field. A
+successful save shows "Saved." in that card, and a saved agency name changes the brand at once; a
+failed save shows "Your changes were not saved" / "Nothing was lost. Your edits are still on this
+page. Try again." with Try again, and the typed value stays.
+
 ### Forms (`NewProject`, `AddClient`, `AddTranslator`)
 
 Shared by both phases. Required fields first, optional fields in a second card ("all of this can be
@@ -291,6 +323,12 @@ approved (the reviewer), who recorded it (the owner) and when.
 Gmail or Outlook compose URL. **Copy text** is always next to it as a fallback, because `mailto:` can
 truncate long bodies and cannot attach files. Using the link marks the item "opened" and it stays in
 Needs you until the owner presses **Mark as sent**.
+
+As built: every email link the app opens, Message client on Project detail and the Settings page's
+Open a test email, Email support and Report a problem included, follows the provider setting and ends
+with the sign-off. Gmail and Outlook open in a new tab; the default email app does not. If the
+settings cannot be loaded, Message client uses the defaults (default email app and the default
+sign-off).
 
 In phase 1 the message text is one of the three reminder templates from Settings, with client,
 project and date filled in. In phase 3 cover mode can prepare its own text; the templates remain.
