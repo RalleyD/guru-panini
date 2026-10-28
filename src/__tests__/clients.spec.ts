@@ -4,6 +4,7 @@ import {
 	activeProjectCount,
 	addClientSchema,
 	isFollowUpDue,
+	isProjectFollowUpDue,
 	languagePairOptions,
 	longPairLabel,
 	searchClients,
@@ -113,6 +114,21 @@ describe("isFollowUpDue", () => {
 	it("is false with no projects or no follow-ups", () => {
 		expect(isFollowUpDue({ projects: [] })).toBe(false);
 		expect(isFollowUpDue({ projects: [project(null)] })).toBe(false);
+	});
+});
+
+describe("isProjectFollowUpDue", () => {
+	it("is true for a ready or opened follow-up on a project that is not archived", () => {
+		expect(isProjectFollowUpDue(project(null, "ready"))).toBe(true);
+		expect(isProjectFollowUpDue(project(null, "done", "opened"))).toBe(true);
+	});
+
+	it("is false with only done follow-ups, none, or on an archived project", () => {
+		expect(isProjectFollowUpDue(project(null, "done"))).toBe(false);
+		expect(isProjectFollowUpDue(project(null))).toBe(false);
+		expect(
+			isProjectFollowUpDue(project("2026-10-01T00:00:00Z", "opened")),
+		).toBe(false);
 	});
 });
 

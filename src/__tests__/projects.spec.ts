@@ -11,7 +11,10 @@ import {
 	pairHint,
 	pairLabel,
 	pairOptions,
+	projectFilterLabels,
+	projectGroup,
 	projectStage,
+	searchProjects,
 	sourceFileKind,
 	usualPair,
 	wordCountLine,
@@ -369,5 +372,63 @@ describe("formatDate", () => {
 		expect(formatDate("2026-11-04")).toBe("4 Nov 2026");
 		expect(formatDate("2027-09-30")).toBe("30 Sep 2027");
 		expect(formatDate("2026-01-01")).toBe("1 Jan 2026");
+	});
+});
+
+describe("projectGroup", () => {
+	it("puts an archived project under Archived whatever its stage", () => {
+		expect(projectGroup("2026-10-01T00:00:00Z", "Delivered")).toBe("archived");
+		expect(projectGroup("2026-10-01T00:00:00Z", "Intake")).toBe("archived");
+	});
+
+	it("puts a delivered project that is not archived under Delivered", () => {
+		expect(projectGroup(null, "Delivered")).toBe("delivered");
+	});
+
+	it("puts every other project that is not archived under Active", () => {
+		for (const column of [
+			"Intake",
+			"In translation",
+			"In review",
+			"With client",
+		] as const) {
+			expect(projectGroup(null, column)).toBe("active");
+		}
+	});
+
+	it("labels the four filters in order", () => {
+		expect(Object.values(projectFilterLabels)).toEqual([
+			"Active",
+			"Delivered",
+			"Archived",
+			"All",
+		]);
+	});
+});
+
+describe("searchProjects", () => {
+	const projects = [
+		{ title: "Demo lease agreement", client: { name: "Demo Legal Client" } },
+		{
+			title: "Demo property listing",
+			client: { name: "Demo Property Client" },
+		},
+	];
+
+	it("matches the title, ignoring case and surrounding spaces", () => {
+		expect(searchProjects(projects, "  LEASE ")).toEqual([projects[0]]);
+	});
+
+	it("matches the client name", () => {
+		expect(searchProjects(projects, "property client")).toEqual([projects[1]]);
+	});
+
+	it("matches every project for an empty query", () => {
+		expect(searchProjects(projects, "")).toEqual(projects);
+		expect(searchProjects(projects, "   ")).toEqual(projects);
+	});
+
+	it("matches nothing for an unknown query", () => {
+		expect(searchProjects(projects, "zzz")).toEqual([]);
 	});
 });

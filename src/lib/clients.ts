@@ -52,14 +52,16 @@ type ProjectSummary = {
 	follow_ups: { state: Enums<"follow_up_state"> }[];
 };
 
-export function isFollowUpDue(client: { projects: ProjectSummary[] }): boolean {
-	return client.projects.some(
-		(project) =>
-			project.archived_at === null &&
-			project.follow_ups.some(
-				(f) => f.state === "ready" || f.state === "opened",
-			),
+// A project waits on the owner while it is not archived and a follow-up is ready or opened.
+export function isProjectFollowUpDue(project: ProjectSummary): boolean {
+	return (
+		project.archived_at === null &&
+		project.follow_ups.some((f) => f.state === "ready" || f.state === "opened")
 	);
+}
+
+export function isFollowUpDue(client: { projects: ProjectSummary[] }): boolean {
+	return client.projects.some(isProjectFollowUpDue);
 }
 
 export function activeProjectCount(client: {
