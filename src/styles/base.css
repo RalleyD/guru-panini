@@ -72,8 +72,13 @@ a {
 	cursor: pointer;
 }
 
-.btn:hover {
+.btn:hover:not(:disabled) {
 	background: var(--color-field-bg);
+}
+
+.btn:disabled {
+	opacity: 0.6;
+	cursor: default;
 }
 
 .btn-primary {
@@ -82,7 +87,7 @@ a {
 	color: var(--color-surface);
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
 	background: var(--color-primary-hover);
 }
 

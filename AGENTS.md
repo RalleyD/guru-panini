@@ -56,8 +56,8 @@ Vite fail if the port is taken instead of silently moving to another port.
 - `.env.development` holds `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` for the local
   stack. They are the local CLI defaults and safe to commit; never put hosted values or a secret or
   service-role key in it. Only the dev server reads it, not `vite build`. `.env.local`,
-  `.env.*.local` and `.env.production*` are gitignored, so a real key in one of them will not be
-  committed by accident.
+  `.env.*.local`, `.env.production*`, `.env.staging*`, `.env.test*` and `.env.keys` are gitignored,
+  so a real key in one of them will not be committed by accident.
 - Every route except `/sign-in` needs a session, so a signed-out visit goes to `/sign-in`. Sign in
   with the demo owner (`demo-owner@example.com` / `local-demo-only`, see "Demo data").
 

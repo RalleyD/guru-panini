@@ -179,8 +179,9 @@ next step.
 ### Sign in (not in the wireframes)
 
 Built in job 009 in the existing visual language, without a wireframe; it awaits the owner's review.
-`/sign-in` has no sidebar, top bar or tab bar. One white card, at most 400 px wide, sits centred on
-the ground colour (16 px clear of the edges on phones). Top to bottom: the brand text "guru-panini"
+`/sign-in` has no sidebar, top bar or tab bar. One white card, at most 400 px wide, sits centred
+across and about 15% of the screen height down, on the ground colour (16 px clear of the edges on
+phones), so it does not move when the error appears. Top to bottom: the brand text "guru-panini"
 (no logo mark), an Email field, a Password field and one primary **Sign in** button. A visually
 hidden "Sign in" heading serves screen readers. There is no sign-up, forgot-password or magic link.
 The button is disabled while the request is in flight. A wrong password or an unknown email shows

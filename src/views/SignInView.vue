@@ -70,16 +70,18 @@ async function signIn() {
 .sign-in {
 	box-sizing: border-box;
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: center;
-	min-height: 100vh;
+	min-height: 100dvh;
 	padding: 16px;
 	background: var(--color-ground);
 }
 
+/* Near the top, not centred, so the card does not move when the error appears. */
 .sign-in-card {
 	width: 100%;
 	max-width: 400px;
+	margin-top: clamp(0px, 15dvh, 160px);
 }
 
 .sign-in-brand {
