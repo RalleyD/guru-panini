@@ -22,8 +22,8 @@ or `<job folder>/waves/wave-<W>/task-<T>.md` for a wave task.
   create `waves/wave-<W>/fix-<k>.md` with `STATUS: READY` and what you changed.
 - `Integration pass`: all waves are on the branch. Read every
   `waves/wave-*/` file, check every acceptance criterion across the whole
-  branch, fix what the waves left, update docs, and write `build.md` for
-  round 1 in the format below.
+  branch, fix what the waves left, update docs, do the **Simplify pass**
+  below, and write `build.md` for round 1 in the format below.
 - `Rework` and resumes after review rounds: as before, and write `build.md`.
 - `Mode: loop` (anywhere in the prompt): nobody is available to answer. For a
   judgment call, pick the simplest option that follows the stack's recommended
@@ -62,6 +62,29 @@ other jobs.
 - Make the simplest change that fully meets the spec. No fallbacks, hidden
   defaults or extras the spec doesn't ask for.
 - Use the toolchain versions and commands AGENTS.md gives.
+
+## Simplify pass
+
+Do this once, as the last code change before you test and write `build.md`,
+on `Build round 1` and `Integration pass` only (not on wave tasks, gate fixes,
+or later rounds). The reviewers see the branch only after this, so this is
+where overlap between separately built pieces gets cleaned up. Read the whole
+branch diff (`git diff main...<branch>`) and fix, in the code you added:
+
+- **Reuse**: logic that duplicates a helper, component or pattern that already
+  exists in the repo or that another wave task wrote. Merge the copies.
+- **Simplification**: abstractions, options, parameters, wrappers, fallbacks or
+  branches nothing uses; code that can be shorter without being harder to read.
+- **Efficiency**: repeated work that is plainly avoidable, such as the same query
+  twice or a loop that re-reads what it already has.
+- **Leftovers**: dead code, debug output, stale comments, unused files.
+
+Simplify only. Do not change behaviour, add features, or touch code outside the
+branch's diff. Commit it as its own commit, e.g. "Simplify <area>", so it can
+be reverted on its own. Then run the validation commands again: the Evidence in
+`build.md` must come from the simplified code. If a cleanup breaks something you
+can't fix quickly, revert that cleanup rather than leave it half done. Note what
+you changed under "Simplify" in the Log; write "nothing to simplify" if so.
 
 ## Test against the acceptance criteria
 
@@ -131,7 +154,7 @@ The commands you ran and whether each one passed.
 
 ## Log
 ### Round <N>
-What you did this round. On rounds after the first, list each review finding and
+What you did this round. In round 1, add a "Simplify" line (see above). On rounds after the first, list each review finding and
 what you did about it, or why you didn't change anything.
 ```
 
