@@ -53,7 +53,8 @@ begin
     ('de000000-0000-4000-8000-000000000203', 'de000000-0000-4000-8000-000000000001', now() - interval '80 days', 'Demo Translator Three', 'translator-three@example.com', '{es-en,fr-en}', '{technical}', 'Placeholder availability: part time.', null),
     ('de000000-0000-4000-8000-000000000204', 'de000000-0000-4000-8000-000000000001', now() - interval '300 days', 'Demo Translator Four', 'translator-four@example.com', '{de-en,fr-en}', '{legal}', 'Placeholder availability: not taking work.', now() - interval '25 days');
 
-  -- Projects: six active over the active clients, one archived for the archived client.
+  -- Projects: six active and one delivered over the active clients, one archived
+  -- for the archived client.
 
   insert into public.projects (id, owner_id, created_at, client_id, title, source_language, target_language, document_type, word_count, due_date, notes, archived_at) values
     ('de000000-0000-4000-8000-000000000301', 'de000000-0000-4000-8000-000000000001', now() - interval '12 days', 'de000000-0000-4000-8000-000000000101', 'Demo lease agreement', 'nl', 'en', 'legal', 4200, current_date + 3, 'Placeholder note for a demo project.', null),
@@ -62,9 +63,18 @@ begin
     ('de000000-0000-4000-8000-000000000304', 'de000000-0000-4000-8000-000000000001', now() - interval '9 days', 'de000000-0000-4000-8000-000000000104', 'Demo quarterly report', 'nl', 'en', 'business', 3100, current_date + 14, null, null),
     ('de000000-0000-4000-8000-000000000305', 'de000000-0000-4000-8000-000000000001', now() - interval '1 day', 'de000000-0000-4000-8000-000000000104', 'Demo website FAQ', 'en', 'nl', 'other', null, current_date + 21, 'Placeholder note: not allocated yet.', null),
     ('de000000-0000-4000-8000-000000000306', 'de000000-0000-4000-8000-000000000001', now() - interval '3 days', 'de000000-0000-4000-8000-000000000101', 'Demo supplier contract', 'nl', 'en', 'legal', 6500, current_date + 35, null, null),
-    ('de000000-0000-4000-8000-000000000307', 'de000000-0000-4000-8000-000000000001', now() - interval '60 days', 'de000000-0000-4000-8000-000000000105', 'Demo price list', 'fr', 'en', 'business', 900, current_date - 30, null, now() - interval '20 days');
+    ('de000000-0000-4000-8000-000000000307', 'de000000-0000-4000-8000-000000000001', now() - interval '60 days', 'de000000-0000-4000-8000-000000000105', 'Demo price list', 'fr', 'en', 'business', 900, current_date - 30, null, now() - interval '20 days'),
+    ('de000000-0000-4000-8000-000000000308', 'de000000-0000-4000-8000-000000000001', now() - interval '25 days', 'de000000-0000-4000-8000-000000000102', 'Demo delivered brochure', 'en', 'nl', 'real_estate', 1200, current_date - 5, null, null);
 
-  -- Allocations. Demo website FAQ has none, so it sits in Intake.
+  -- Twenty more archived projects for the archived client, so the Projects
+  -- list has more than 25 rows under All. No allocations or steps.
+
+  insert into public.projects (owner_id, created_at, client_id, title, source_language, target_language, document_type, due_date, archived_at)
+  select 'de000000-0000-4000-8000-000000000001', now() - interval '90 days', 'de000000-0000-4000-8000-000000000105', 'Demo archived job ' || lpad(n::text, 2, '0'), 'fr', 'en', 'business', current_date - 40 - n, now() - interval '20 days'
+  from generate_series(1, 20) as n;
+
+  -- Allocations. Demo website FAQ has none, so it sits in Intake. Demo delivered
+  -- brochure's allocation has ended, so it adds no translator load.
 
   insert into public.allocations (owner_id, project_id, translator_id, role, start_date, end_date, is_proposed) values
     ('de000000-0000-4000-8000-000000000001', 'de000000-0000-4000-8000-000000000301', 'de000000-0000-4000-8000-000000000201', 'translator', current_date - 2, current_date + 1, false),
@@ -74,7 +84,8 @@ begin
     ('de000000-0000-4000-8000-000000000001', 'de000000-0000-4000-8000-000000000303', 'de000000-0000-4000-8000-000000000203', 'translator', current_date + 1, current_date + 8, false),
     ('de000000-0000-4000-8000-000000000001', 'de000000-0000-4000-8000-000000000304', 'de000000-0000-4000-8000-000000000201', 'translator', current_date + 4, current_date + 11, true),
     ('de000000-0000-4000-8000-000000000001', 'de000000-0000-4000-8000-000000000306', 'de000000-0000-4000-8000-000000000201', 'translator', current_date + 16, current_date + 30, true),
-    ('de000000-0000-4000-8000-000000000001', 'de000000-0000-4000-8000-000000000307', 'de000000-0000-4000-8000-000000000204', 'translator', current_date - 45, current_date - 32, false);
+    ('de000000-0000-4000-8000-000000000001', 'de000000-0000-4000-8000-000000000307', 'de000000-0000-4000-8000-000000000204', 'translator', current_date - 45, current_date - 32, false),
+    ('de000000-0000-4000-8000-000000000001', 'de000000-0000-4000-8000-000000000308', 'de000000-0000-4000-8000-000000000202', 'translator', current_date - 20, current_date - 6, false);
 
   -- Feedback entries: every source and status.
 
@@ -86,8 +97,9 @@ begin
     ('de000000-0000-4000-8000-000000000001', now() - interval '4 days', 'de000000-0000-4000-8000-000000000304', null, 'client', null, null, 'Placeholder client feedback without a version, person or tag.', 'open');
 
   -- Project steps. Demo lease agreement: draft done and two free-form steps.
-  -- Demo property listing: draft and review done. Demo price list (archived):
-  -- every milestone done. The other projects have no steps yet.
+  -- Demo property listing: draft and review done. Demo price list (archived) and
+  -- Demo delivered brochure: every milestone done. The other projects have no
+  -- steps yet.
 
   insert into public.project_steps (owner_id, created_at, project_id, milestone, title, due_date, completed_at) values
     ('de000000-0000-4000-8000-000000000001', now() - interval '6 days', 'de000000-0000-4000-8000-000000000301', 'draft', null, null, now() - interval '1 day'),
@@ -98,7 +110,11 @@ begin
     ('de000000-0000-4000-8000-000000000001', now() - interval '45 days', 'de000000-0000-4000-8000-000000000307', 'draft', null, null, now() - interval '40 days'),
     ('de000000-0000-4000-8000-000000000001', now() - interval '40 days', 'de000000-0000-4000-8000-000000000307', 'review', null, null, now() - interval '35 days'),
     ('de000000-0000-4000-8000-000000000001', now() - interval '35 days', 'de000000-0000-4000-8000-000000000307', 'client_feedback', null, null, now() - interval '32 days'),
-    ('de000000-0000-4000-8000-000000000001', now() - interval '32 days', 'de000000-0000-4000-8000-000000000307', 'delivery', null, null, now() - interval '30 days');
+    ('de000000-0000-4000-8000-000000000001', now() - interval '32 days', 'de000000-0000-4000-8000-000000000307', 'delivery', null, null, now() - interval '30 days'),
+    ('de000000-0000-4000-8000-000000000001', now() - interval '20 days', 'de000000-0000-4000-8000-000000000308', 'draft', null, null, now() - interval '12 days'),
+    ('de000000-0000-4000-8000-000000000001', now() - interval '12 days', 'de000000-0000-4000-8000-000000000308', 'review', null, null, now() - interval '9 days'),
+    ('de000000-0000-4000-8000-000000000001', now() - interval '9 days', 'de000000-0000-4000-8000-000000000308', 'client_feedback', null, null, now() - interval '7 days'),
+    ('de000000-0000-4000-8000-000000000001', now() - interval '7 days', 'de000000-0000-4000-8000-000000000308', 'delivery', null, null, now() - interval '5 days');
 
   -- Follow-ups on active projects: every reason and state.
 
