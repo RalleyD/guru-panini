@@ -184,7 +184,7 @@ serial or parallel inside. `/factory loop` (or `factory/loop.sh`, one fresh sess
 whole backlog, or one `## Wave N` group with `--wave N`, with no human in the loop: the approver auto-approves escalations that add no
 unnecessary complexity, follow recommended practice and are worth their cost, and the loop stops on
 any real failure. Job folders in `factory/jobs/` and `factory/loop/` are runtime state and
-gitignored. Backlog: `factory/backlog.md`. Dashboard:
+gitignored. One-page summary: [factory/cheatsheet.md](factory/cheatsheet.md). Backlog: `factory/backlog.md`. Dashboard:
 `cd factory && python3 -m http.server`, then open
 <http://localhost:8000/dashboard.html>.
 
