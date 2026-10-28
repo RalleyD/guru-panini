@@ -62,7 +62,10 @@ item yourself. Auto-approve an item only if **all three** hold:
 1. **No unnecessary complexity.** It is the smallest way to meet the spec: no
    extra abstraction, option, dependency or code path the spec does not need.
    A new dependency needs a reason the platform, the stack's existing tools
-   and a few lines of code cannot meet.
+   and a few lines of code cannot meet. Sanity-check the size: compare
+   `git diff --stat main...<branch>` with what the spec's requirements need. A
+   diff far bigger than the requirements explain (extra files, layers or
+   helpers nobody asked for) fails this test, even if each piece looks fine.
 2. **Follows recommended best practice** for this stack and the repo's own
    conventions (AGENTS.md, `docs/decisions/`). Check against the real thing,
    for example Supabase's row-level security and explicit-grant guidance for a

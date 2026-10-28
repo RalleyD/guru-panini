@@ -137,7 +137,8 @@ In loop mode every prompt to a `builder` or the `approver` ends with
 4. **Build.** Set `stage: "build"`. Read `## Waves` in `spec.md`. With no
    Waves section, or one wave holding one task, spawn `builder` **with the name
    `builder-<job-id>`** and the prompt `<paths> Build round 1. Port: <port>.`,
-   wait for it to finish, then go to **Build check**. Otherwise go to
+   wait for it to finish, then go to **Build check**. (This builder also does
+   the simplify pass before it writes `build.md`.) Otherwise go to
    **Build waves**.
 
 ### Build waves
@@ -184,7 +185,9 @@ tell the user one line per wave. For each wave W, in order:
 After the last wave, resume the integration with `builder` named
 `builder-<job-id>`, prompt `<paths> Integration pass. Port: <port>.` It reads
 the wave files, checks every acceptance criterion across the whole branch,
-fixes what the waves left over and writes `build.md` for round 1. Wait for it,
+fixes what the waves left over, runs its simplify pass over the whole branch
+diff (reuse, simplification, dead code; no behaviour change) and writes
+`build.md` for round 1. Wait for it,
 then go to **Build check**. Review rounds resume this same builder.
 
 ### Build check
