@@ -176,6 +176,16 @@ added later").
 - New project: client, title, document type, due date, language pair (defaults to the client's usual
   pair and says so). Optional: source file (the word count is read from it; without a file no word
   count is shown and it is never typed in), translator.
+- New project as built: the Client select starts at "Choose a client" rather than a preselected
+  client, and the Language pair at "Choose one". A client with no usual pair leaves the pair as it
+  is and shows no hint; a client whose usual pair is not one of the four (for example `FR → EN`)
+  gets it added to the list. After reading a `.docx` the hint becomes "<n> words in this file.".
+  Only `.docx` and `.pdf` are accepted (PDFs get no word count yet); any other file, or a `.docx`
+  that cannot be read, shows "That file could not be read" / "Word and PDF files work best. You can
+  create the project now and add the file later." and the file is cleared. With no active clients,
+  "No clients yet." and an Add client link sit under the Client select. The translator is saved as
+  a confirmed allocation from today (or the due date if earlier) to the due date. After creating,
+  the owner lands on Projects until Project detail exists.
 - Add client: client name, contact name, contact email. Optional: usual language pair, usual type of
   work, notes. Cover mode is not set here; it defaults to Off.
 - Add translator: name, email. Optional: language pairs, specialisms, availability.

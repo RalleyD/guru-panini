@@ -29,6 +29,7 @@ describe("router guard", () => {
 			"/",
 			"/clients",
 			"/clients/new",
+			"/projects/new",
 			"/translators/new",
 			"/settings#support",
 			"/no-such-page",

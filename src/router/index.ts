@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase";
 import AddClientView from "../views/AddClientView.vue";
 import AddTranslatorView from "../views/AddTranslatorView.vue";
 import ClientsView from "../views/ClientsView.vue";
+import NewProjectView from "../views/NewProjectView.vue";
 import OverviewView from "../views/OverviewView.vue";
 import ProjectsView from "../views/ProjectsView.vue";
 import SettingsView from "../views/SettingsView.vue";
@@ -21,6 +22,11 @@ const router = createRouter({
 			path: "/projects",
 			name: "projects",
 			component: ProjectsView,
+		},
+		{
+			path: "/projects/new",
+			name: "new-project",
+			component: NewProjectView,
 		},
 		{
 			path: "/clients",

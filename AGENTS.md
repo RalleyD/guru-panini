@@ -75,7 +75,8 @@ and a `sign-out` event that `App.vue` handles). Pages are in `src/views/`.
   `vi.mock("../lib/supabase", ...)`, so no test makes a network call.
 - Forms validate input with Zod (`zod`) before writing to Supabase. Client rules shared by the
   Clients page and the Add client form are in `src/lib/clients.ts`; translator rules shared by the
-  Translators page and the Add translator form are in `src/lib/translators.ts`.
+  Translators page and the Add translator form are in `src/lib/translators.ts`; the New project
+  form's rules are in `src/lib/projects.ts`.
 
 Design tokens (CSS custom properties) are in `src/styles/tokens.css` and base classes (`.card`,
 `.btn`, `.btn-primary`, `.chip` and its variants, `.field`, `.field-label`, `.h1`–`.h3`, `.sr-only`)
@@ -112,6 +113,15 @@ in `src/styles/base.css`; pages should use them rather than raw colours.
   `foreign key (<x>_id, owner_id) references <parent> (id, owner_id)`, so a row can only reference
   the same owner's rows. `supabase/tests/database/same_owner_foreign_keys.test.sql` checks this.
 - Clients, projects and translators are archived via `archived_at`, not deleted.
+- Projects are created through `public.create_project`, so the project and its translator
+  allocation are saved together in one transaction. The `.docx` word count is read in the browser
+  by `src/lib/docx.ts`.
+- Storage: the private `source-files` bucket and its limits (50 MiB, `.docx` and PDF MIME types) are
+  created in a migration that inserts into `storage.buckets`, not in `config.toml`, so the bucket
+  exists on the hosted project too. Object names start with the owner's id folder
+  (`<owner id>/<uuid>.<ext>`), which the `to authenticated` insert and select policies on
+  `storage.objects` check; there is no update or delete policy and nothing for `anon`. A new bucket
+  follows the same pattern.
 - After every schema change, regenerate the types in `src/types/database.types.ts`:
 
   ```bash

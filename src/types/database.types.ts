@@ -247,6 +247,8 @@ export type Database = {
 					id: string;
 					notes: string | null;
 					owner_id: string;
+					source_file_name: string | null;
+					source_file_path: string | null;
 					source_language: string;
 					target_language: string;
 					title: string;
@@ -262,6 +264,8 @@ export type Database = {
 					id?: string;
 					notes?: string | null;
 					owner_id?: string;
+					source_file_name?: string | null;
+					source_file_path?: string | null;
 					source_language: string;
 					target_language: string;
 					title: string;
@@ -276,6 +280,8 @@ export type Database = {
 					id?: string;
 					notes?: string | null;
 					owner_id?: string;
+					source_file_name?: string | null;
+					source_file_path?: string | null;
 					source_language?: string;
 					target_language?: string;
 					title?: string;
@@ -376,7 +382,21 @@ export type Database = {
 			[_ in never]: never;
 		};
 		Functions: {
-			[_ in never]: never;
+			create_project: {
+				Args: {
+					client_id: string;
+					document_type: Database["public"]["Enums"]["document_type"];
+					due_date: string;
+					source_file_name?: string;
+					source_file_path?: string;
+					source_language: string;
+					target_language: string;
+					title: string;
+					translator_id?: string;
+					word_count?: number;
+				};
+				Returns: string;
+			};
 		};
 		Enums: {
 			allocation_role: "translator" | "reviewer";
