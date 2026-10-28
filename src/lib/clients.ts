@@ -11,7 +11,7 @@ export const workTypeLabels: Record<ClientWorkType, string> = {
 	mixed: "Mixed",
 };
 
-const notSureYet = "Not sure yet";
+export const notSureYet = "Not sure yet";
 
 // The form's select values are the option labels.
 export const languagePairOptions = [

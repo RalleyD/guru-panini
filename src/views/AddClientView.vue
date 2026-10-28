@@ -5,6 +5,7 @@ import {
 	type AddClientForm,
 	addClientSchema,
 	languagePairOptions,
+	notSureYet,
 	workTypeOptions,
 } from "../lib/clients";
 import { supabase } from "../lib/supabase";
@@ -16,8 +17,8 @@ const form = ref<AddClientForm>({
 	name: "",
 	contact_name: "",
 	contact_email: "",
-	language_pair: "Not sure yet",
-	work_type: "Not sure yet",
+	language_pair: notSureYet,
+	work_type: notSureYet,
 	notes: "",
 });
 const errors = ref<Partial<Record<RequiredField, string>>>({});
