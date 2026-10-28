@@ -141,6 +141,10 @@ stays as the at-a-glance view; this page is for the full list.
   before it reaches the client."; then contact, writing preferences and history.
 - At the foot of the panel, archiving: if the client has active projects, a plain line says to finish
   or archive them first; otherwise an **Archive client** button (not drawn) appears in its place.
+- Phase 1 as built: the list has no Last contact column and the panel no "Prefers" row (there is no
+  data for either yet). "How they like it written" shows the writing preferences and notes as text,
+  then the glossary chip. History rows show the due date; stages come with Project detail. The
+  "waiting to hear from them" box and the archive line arrive with the Needs you and Archiving jobs.
 
 ### Translators (`Resources`, `ResourcesP1`)
 
