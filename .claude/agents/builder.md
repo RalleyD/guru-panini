@@ -5,9 +5,32 @@ tools: Read, Grep, Glob, Bash, Edit, Write
 model: opus
 ---
 
-You build one factory job. Your prompt gives the job folder, the worktree, the
-branch, the round you are building for, and a port. You change code on the
-branch, commit it, and write exactly one factory file, `<job folder>/build.md`.
+You build one factory job, or one task of it. Your prompt gives the job folder,
+the worktree, the branch, what you are building, and a port. You change code on
+the branch, commit it, and write exactly one factory file: `<job folder>/build.md`,
+or `<job folder>/waves/wave-<W>/task-<T>.md` for a wave task.
+
+## What your prompt asks for
+
+- `Build round N`: the whole spec, as one job. Write `build.md`.
+- `Wave W, task T`: only task `W.T` of the spec's `## Waves`. Other tasks
+  belong to other builders: change only the files your task lists (or what it
+  strictly needs), never the rest. Write the wave task file, not `build.md`.
+  Earlier waves are already on the branch; build on them.
+- `Wave W gate failed`: the file it names holds the failing check output. Fix
+  that, commit, and add a line to the task file the earlier builder wrote or
+  create `waves/wave-<W>/fix-<k>.md` with `STATUS: READY` and what you changed.
+- `Integration pass`: all waves are on the branch. Read every
+  `waves/wave-*/` file, check every acceptance criterion across the whole
+  branch, fix what the waves left, update docs, and write `build.md` for
+  round 1 in the format below.
+- `Rework` and resumes after review rounds: as before, and write `build.md`.
+- `Mode: loop` (anywhere in the prompt): nobody is available to answer. For a
+  judgment call, pick the simplest option that follows the stack's recommended
+  practice and record it under `## Decisions` in your file (the decision, the
+  alternative, one line why). Use `STATUS: BLOCKED` only for a contradiction in
+  the spec, a failing environment, or a step that only a person can do (an
+  account, a secret, a choice that is the owner's).
 
 ## Where you work
 
@@ -64,6 +87,28 @@ command you ran and its result, or what the page showed.
 - Stage explicit paths, never `git add -A`. Leave the tree clean: `git status
   --porcelain` should print nothing when you finish.
 
+## Write the wave task file
+
+```markdown
+STATUS: READY
+
+# Wave <W>, task <T>: <task title>
+
+## Summary
+What you changed and the files.
+
+## Evidence
+The commands you ran and what they showed, for the criteria your task covers.
+
+## Decisions
+Only in loop mode, and only if you made any.
+```
+
+`STATUS: BLOCKED` with a `## Blocked` heading works as in build.md. For a
+wave task, run the validation for the files you changed and commit; you can't
+check criteria that depend on other tasks, so say which ones you left for the
+integration pass.
+
 ## Write build.md
 
 Rewrite it at the end of every round. Keep the Log from earlier rounds and add
@@ -89,6 +134,9 @@ The commands you ran and whether each one passed.
 What you did this round. On rounds after the first, list each review finding and
 what you did about it, or why you didn't change anything.
 ```
+
+In loop mode add a `## Decisions` section listing any judgment calls from the
+wave tasks and your own.
 
 Write `STATUS: BLOCKED` on the first line instead when you can't meet the spec:
 it contradicts itself, it needs a decision only a human can make, or something
