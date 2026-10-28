@@ -1,10 +1,15 @@
 <script setup lang="ts">
+import { useRoute } from "vue-router";
+
 withDefaults(defineProps<{ needsYouCount?: number }>(), {
 	needsYouCount: 0,
 });
 
 // The shell does not talk to Supabase; App.vue handles sign-out.
 const emit = defineEmits<{ "sign-out": [] }>();
+
+// Section links for the sidebar and the phone chips, from the route's meta.
+const route = useRoute();
 
 interface PrimaryLink {
 	label: string;
@@ -81,6 +86,19 @@ const signOutIcon =
 						<span v-if="link.hasBadge && needsYouCount > 0" class="shell-badge">
 							{{ needsYouCount }}<span class="sr-only"> need you</span>
 						</span>
+					</RouterLink>
+				</nav>
+				<!-- Section links are custom too: a hash link resolves to the current route. -->
+				<nav v-if="route.meta.sections" aria-label="On this page" class="shell-side-sections">
+					<span class="shell-sections-heading">This project</span>
+					<RouterLink
+						v-for="section in route.meta.sections"
+						:key="section.hash"
+						v-slot="{ href, navigate }"
+						:to="route.path + section.hash"
+						custom
+					>
+						<a :href="href" class="shell-section-link" @click="navigate">{{ section.label }}</a>
 					</RouterLink>
 				</nav>
 				<div class="shell-side-foot">
@@ -181,6 +199,17 @@ const signOutIcon =
 				</button>
 			</div>
 		</header>
+		<nav v-if="route.meta.sections" aria-label="On this page" class="shell-chips">
+			<RouterLink
+				v-for="section in route.meta.sections"
+				:key="section.hash"
+				v-slot="{ href, navigate }"
+				:to="route.path + section.hash"
+				custom
+			>
+				<a :href="href" class="shell-chip" @click="navigate">{{ section.label }}</a>
+			</RouterLink>
+		</nav>
 
 		<main class="shell-main">
 			<slot />
@@ -255,6 +284,39 @@ const signOutIcon =
 	gap: 2px;
 }
 
+.shell-side-sections {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding-top: 16px;
+	border-top: 1px solid var(--color-line);
+}
+
+.shell-sections-heading {
+	padding: 0 12px 6px;
+	color: var(--color-muted);
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.shell-section-link {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	min-height: var(--touch-target);
+	padding: 0 12px;
+	border-radius: 8px;
+	color: var(--color-muted);
+	font-size: 13px;
+}
+
+.shell-section-link:hover {
+	background: var(--color-ground);
+	color: var(--color-ink);
+}
+
 .shell-side-foot {
 	margin-top: auto;
 	padding-top: 16px;
@@ -322,6 +384,7 @@ const signOutIcon =
 }
 
 .shell-topbar,
+.shell-chips,
 .shell-tabbar {
 	display: none;
 }
@@ -377,6 +440,30 @@ const signOutIcon =
 		height: var(--touch-target);
 		border-radius: 12px;
 		color: var(--color-nav-ink);
+	}
+
+	/* Scrolls sideways on its own, so a long section list never widens the page. */
+	.shell-chips {
+		display: flex;
+		gap: 8px;
+		overflow-x: auto;
+		padding: 12px 16px 0;
+	}
+
+	.shell-chip {
+		flex: none;
+		display: inline-flex;
+		align-items: center;
+		box-sizing: border-box;
+		min-height: var(--touch-target);
+		padding: 0 16px;
+		border: 1px solid var(--color-control-border);
+		border-radius: var(--radius-chip);
+		background: var(--color-surface);
+		color: var(--color-nav-ink);
+		font-size: 13px;
+		font-weight: 500;
+		white-space: nowrap;
 	}
 
 	.shell-main {
