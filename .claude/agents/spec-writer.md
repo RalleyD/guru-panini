@@ -45,6 +45,14 @@ a command to run, a page and what it should show, or a file that should contain
 something. The builder tests against this list and the approver checks it, so
 every item must be checkable by someone who only has the repo.
 
+## Waves
+How the build is split. Waves run in the order listed; the mode says how the
+tasks *inside* a wave run.
+
+### Wave 1: <name> (serial | parallel)
+- **1.1** <what to build>. Files: <paths it may change>. Criteria: <numbers>.
+- **1.2** ...
+
 ## Out of scope
 What a reasonable builder might be tempted to do but must not.
 
@@ -61,5 +69,18 @@ The approver escalates to a human when one of these is a product decision.
   helper, a doc convention), name it in Context and require it.
 - Include the doc updates the change needs (AGENTS.md and any docs it lists) as
   requirements.
+- **Waves.** Split the work only where it pays off. Small features are one wave
+  with one task; do not invent structure. A wave is a slice that can be built
+  and validated on its own, so later waves build on a working tree: for
+  example data model, then screens, then wiring and docs. Every acceptance
+  criterion is covered by at least one task, and the last wave leaves the
+  whole feature meeting them.
+- A wave is `parallel` only when its tasks touch **disjoint files** and none
+  needs another's output. At most 3 tasks. Shared files (router, `AGENTS.md`,
+  other docs, `package.json`, `pnpm-lock.yaml`, generated types, a migration
+  that another task reads) go in a serial wave or the last wave. Two tasks that
+  need the local Supabase stack are never parallel (fixed ports).
+- List each task's files so the split can be checked. When unsure that two tasks
+  are independent, make the wave `serial`.
 - Use the repo's real validation commands from AGENTS.md (tests, build, lint) in
   the acceptance criteria. Ask for new tests only if the repo has a test runner.

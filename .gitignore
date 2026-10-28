@@ -221,6 +221,7 @@ __marimo__/
 
 # Software factory runtime state (job folders)
 /factory/jobs/
+/factory/loop/
 
 # Node
 node_modules/

@@ -1,6 +1,6 @@
 ---
 name: factory
-description: Run the software factory. Use when the user types /factory <feature>, /factory next, /factory approve <job-id>, or /factory rework <job-id> <note>. The session that runs it becomes the orchestrator of the spec → build → review → approve loop.
+description: Run the software factory. Use when the user types /factory <feature>, /factory next, /factory loop, /factory approve <job-id>, or /factory rework <job-id> <note>. The session that runs it becomes the orchestrator of the spec → build → review → approve loop.
 ---
 
 # Factory
@@ -13,17 +13,20 @@ move the job along and keep `job.json` current.
 ## The loop
 
 ```
-feature → spec-writer → builder → [security, ux, ui, code] → WAIT FOR ALL
-                           ▲                                      │
-                           └──── any CHANGES: resume builder ◄────┤
-                                                                  ▼ all PASS
+feature → spec-writer → build waves → [security, ux, ui, code] → WAIT FOR ALL
+                        (1..n, each        ▲                          │
+                        serial|parallel)   └─ any CHANGES: resume ◄───┤
+                                              the builder             ▼ all PASS
                                      merge to main ◄─ APPROVE ─ approver ─ ESCALATE → needs-human
 ```
+
+`/factory loop` runs this for every backlog item in turn with no human in the
+loop: see **Loop mode**.
 
 | Step         | Agent (`subagent_type`) | Writes                                      |
 | ------------ | ----------------------- | ------------------------------------------- |
 | spec         | `spec-writer`           | `spec.md`                                   |
-| build        | `builder`               | `build.md` + commits on `factory/<job-id>`  |
+| build        | `builder` (one per wave task) | `waves/wave-W/task-T.md`, then `build.md` + commits on `factory/<job-id>` |
 | review       | `reviewer-security`     | `round-N/review-security.md`                |
 |              | `reviewer-ux`           | `round-N/review-ux.md`                      |
 |              | `reviewer-ui`           | `round-N/review-ui.md`                      |
@@ -63,12 +66,19 @@ state that never lands in a commit.
 <repo>/factory/backlog.md                      queue for /factory next
 <repo>/factory/jobs/<job-id>/job.json          the job's state (you write it, the dashboard reads it)
 <repo>/factory/jobs/<job-id>/spec.md
+<repo>/factory/jobs/<job-id>/waves/wave-<W>/task-<T>.md   one per wave task, written by its builder
+<repo>/factory/jobs/<job-id>/waves/wave-<W>/gate-<k>.md   output of a failed wave gate, written by you
 <repo>/factory/jobs/<job-id>/build.md
 <repo>/factory/jobs/<job-id>/rework-<k>.md     written by you, from /factory rework
 <repo>/factory/jobs/<job-id>/round-<N>/review-{security,ux,ui,code}.md
 <repo>/factory/jobs/<job-id>/decision.md
 <repo>/../<name>-factory/<job-id>/             the job's worktree, on factory/<job-id>
+<repo>/../<name>-factory/<job-id>-w<W>t<T>/    short-lived worktree of one parallel wave task
+<repo>/factory/loop/state.json                 loop mode: what the last iteration ended with
+<repo>/factory/loop/ledger.md                  loop mode: one entry per finished item
 ```
+
+`factory/loop/` is gitignored runtime state, like `factory/jobs/`.
 
 ### job.json
 
@@ -76,13 +86,15 @@ state that never lands in a commit.
 { "id": "003-rate-limiting", "feature": "Rate limit the signup form",
   "branch": "factory/003-rate-limiting",
   "worktree": "/Users/you/code/my-app-factory/003-rate-limiting",
-  "stage": "review", "round": 2,
+  "stage": "review", "round": 2, "waves": { "total": 3, "current": 3 },
   "reviews": { "security": "CHANGES", "ux": "PASS", "ui": "pending", "code": "PASS" } }
 ```
 
 - `stage` is one of `spec`, `build`, `review`, `approve`, `merged`,
   `needs-human`. Worktree setup counts as `spec`.
 - `round` is the current review round (0 until the first round starts).
+- `waves` is optional: present once the build has started, `current` is the wave being built
+  (`total` and `current` are both 1 for a job built as one task).
 - `reviews` holds the current round only. Each value is `pending`, `PASS` or
   `CHANGES`. Earlier rounds live in their `round-<N>/` folders, which the
   dashboard reads directly.
@@ -96,7 +108,11 @@ Below, `<paths>` stands for that sentence.
 
 Agents that open pages also get a port. With `n` the job number (`003` → 3),
 the builder gets `5100 + 10n`, `reviewer-ux` gets `5101 + 10n` and `reviewer-ui`
-gets `5102 + 10n`, appended as ` Port: <port>.`
+gets `5102 + 10n`, appended as ` Port: <port>.` Parallel wave tasks use
+`5103 + 10n + i`, up to `5105 + 10n`.
+
+In loop mode every prompt to a `builder` or the `approver` ends with
+` Mode: loop.` (spec-writer and reviewers are not affected).
 
 ## /factory <feature>
 
@@ -118,9 +134,58 @@ gets `5102 + 10n`, appended as ` Port: <port>.`
 3. **Spec.** Spawn `spec-writer` with the prompt
    `<paths> Feature: <feature, verbatim>`.
    Wait for it to finish, then check that `spec.md` exists.
-4. **Build.** Set `stage: "build"`. Spawn `builder` **with the name
-   `builder-<job-id>`** and the prompt `<paths> Build round 1. Port: <port>.`
-   Wait for it to finish, then go to **Build check**.
+4. **Build.** Set `stage: "build"`. Read `## Waves` in `spec.md`. With no
+   Waves section, or one wave holding one task, spawn `builder` **with the name
+   `builder-<job-id>`** and the prompt `<paths> Build round 1. Port: <port>.`,
+   wait for it to finish, then go to **Build check**. Otherwise go to
+   **Build waves**.
+
+### Build waves
+
+`spec.md` splits the feature into waves: `### Wave W: <name> (serial|parallel)`,
+each with tasks `W.T`. **Waves run in the order listed, one at a time.** The
+mode says how the tasks *inside* a wave run. These are build waves; the
+backlog's `Wave` headings group whole jobs and have nothing to do with them.
+
+Set `waves` in `job.json` (`total`, and `current` = the wave you are on) and
+tell the user one line per wave. For each wave W, in order:
+
+1. **Serial wave.** For each task in order, spawn `builder` named
+   `builder-<job-id>-w<W>t<T>` with the prompt
+   `<paths> Wave W, task T. Port: <port>.` (the builder port). Wait for it.
+2. **Parallel wave.** Tasks of a parallel wave have disjoint files, and each
+   builds in its own worktree so they never share an index or a half-written
+   tree. For task T (index `i` from 0, at most 3 tasks, ports
+   `5103 + 10n + i`):
+   ```bash
+   git worktree add -b factory/<job-id>-w<W>t<T> <worktree>-w<W>t<T> factory/<job-id>
+   ```
+   Run the AGENTS.md fresh-checkout setup in each new worktree, then spawn all
+   task builders **in one message**, each named `builder-<job-id>-w<W>t<T>`
+   with the prompt `Job folder: <repo>/factory/jobs/<job-id>/. Worktree: <worktree>-w<W>t<T>. Branch: factory/<job-id>-w<W>t<T>. Wave W, task T. Port: <port>.`
+   When all are done and READY, merge each into the job branch from the job
+   worktree with `git merge --no-ff factory/<job-id>-w<W>t<T> -m "Merge wave W task T"`,
+   then `git worktree remove` and `git branch -d` the task worktree and branch.
+   If a merge conflicts, `git merge --abort`, remove the task worktrees and
+   branches, and run the wave's tasks again as a serial wave, once. No human
+   is needed: a conflict means the plan's file split was wrong.
+3. **Task check.** Read the first line of each `waves/wave-W/task-T.md`.
+   `STATUS: BLOCKED` goes to **Needs human**. A task that finishes without
+   writing its file is also a stop: tell the user.
+4. **Wave gate.** In the job worktree, run the checks the Validation section of
+   AGENTS.md lists for the files that exist (lint, format check, tests,
+   type-check, build; never a `--write` or `--fix` variant). They must all
+   pass. If one fails, write its output to `waves/wave-W/gate-<k>.md` (`k` = 1
+   or 2), spawn `builder` named `builder-<job-id>-w<W>fix<k>` with
+   `<paths> Wave W gate failed: read waves/wave-W/gate-<k>.md and fix it. Port: <port>.`,
+   and run the gate again. A second failed fix goes to **Needs human**.
+5. Move to wave W+1.
+
+After the last wave, resume the integration with `builder` named
+`builder-<job-id>`, prompt `<paths> Integration pass. Port: <port>.` It reads
+the wave files, checks every acceptance criterion across the whole branch,
+fixes what the waves left over and writes `build.md` for round 1. Wait for it,
+then go to **Build check**. Review rounds resume this same builder.
 
 ### Build check
 
@@ -156,6 +221,7 @@ Read the first line of `build.md`.
 ### Approve
 
 Set `stage: "approve"`. Spawn `approver` with the prompt `<paths> Final round: N.`
+(in loop mode add ` Mode: loop.`)
 When it finishes, read the first line of `decision.md`:
 
 - `APPROVE`: go to **Merge**.
@@ -177,6 +243,10 @@ git worktree remove <worktree>
 git branch -d factory/<job-id>
 ```
 
+In loop mode, add the approver's `## Auto-approved escalations` section from
+`decision.md` to the merge commit as a second `-m` paragraph, so the judgments
+are in git history.
+
 Set `stage: "merged"`. If the merge fails, run `git merge --abort` (when a merge
 is in progress), set `stage: "needs-human"` and tell the user why. If removing the
 worktree fails, the job is still merged: tell the user what `git worktree remove`
@@ -190,13 +260,71 @@ inspect. Tell the user which job is waiting, give the worktree path, and quote
 
 ## /factory next
 
-Read `factory/backlog.md` and take the first `- [ ]` item. Claim it with one
+Read `factory/backlog.md` and take the first `- [ ]` item. (`/factory loop` does
+the same claim before every item.) Claim it with one
 Edit that replaces its exact line with `- [x] <item> → claimed`. If the Edit
 fails because the line changed, another session claimed it: re-read the backlog
 and try the next `- [ ]` item. If none is left, say so and stop.
 
 Run `/factory <item>`, and once step 1 has given it a job id, replace `claimed`
 on its backlog line with the job id.
+
+## Loop mode
+
+Loop mode runs the backlog with no human in the loop: spec, build waves,
+review rounds, approval and merge, then the next item. It changes four things
+and nothing else:
+
+1. **Nothing waits for a person.** Builders are told `Mode: loop`: a judgment
+   call is made (simplest option that follows the stack's recommended
+   practice) and recorded under `## Decisions` in their file, not escalated.
+2. **The approver auto-approves escalations** that pass its three tests (no
+   unnecessary complexity, follows recommended best practice, not diminishing
+   returns) and records each in `## Auto-approved escalations` of `decision.md`.
+   See `.claude/agents/approver.md`. Failures are not escalations and are not
+   auto-approved: see step 5 below.
+3. **Each build wave runs to the end** (**Build waves**), including its gate
+   and fix attempts, without pausing.
+4. **Context is reset after every item**, see below.
+
+### /factory loop [--one]
+
+1. **Preflight.** The main checkout must be on `main` and clean apart from
+   `factory/backlog.md`. If not, write the stop state (step 5) and say why.
+   `mkdir -p factory/loop`.
+2. **Resume.** If a job in `factory/jobs/` has a live stage (`spec`, `build`,
+   `review`, `approve`), a previous run died mid-job. Continue that job from
+   what is on disk instead of claiming a new item: re-run the spec only if
+   `spec.md` is missing, skip wave tasks whose `task-T.md` says
+   `STATUS: READY`, start the review round from the highest `round-N/` that
+   lacks a verdict file, and so on. Otherwise go to step 3.
+3. **Claim.** Do `/factory next`'s claim. No `- [ ]` item left: write
+   `{"status": "done"}` to `factory/loop/state.json` and stop.
+4. **Run the job** exactly as `/factory <item>` does, in loop mode.
+5. **Record and decide.** Append the entry below to `factory/loop/ledger.md`,
+   then write `factory/loop/state.json` as `{"status": "continue", "job": "<id>"}`
+   if the job is `merged`, or `{"status": "stop", "job": "<id>", "reason": "<why>"}`
+   otherwise (`needs-human`, a task `BLOCKED`, rounds exhausted, merge failure,
+   a dirty main checkout, a failed preflight). **Stop on a failure; never
+   skip it and carry on**, because later items build on what a failed item
+   should have delivered. Backlog items that need a person (the human tasks,
+   a provider choice) show up as a `BLOCKED` builder and stop the loop here.
+   ```
+   ## <job-id>: <merged | needs-human>
+   <feature>. <waves> waves, <rounds> review rounds.
+   Auto-approved: <the headings from decision.md, or "none">
+   ```
+6. **Compaction point.** The item is finished and its state is all on disk
+   (`job.json`, the job folder, git, the ledger). Drop everything about it
+   except the ledger line. With `--one`, stop here and print the one-line
+   result: the process driving you starts a fresh session for the next item,
+   which is a full context reset. Without `--one`, go back to step 1 for the
+   next item in this session.
+
+A skill cannot run `/compact` itself. For a real reset after every item, use
+`factory/loop.sh`, which starts one fresh `claude -p "/factory loop --one"`
+session per item. Without it the loop still works in one session, and the
+harness's automatic compaction is the only reset.
 
 ## /factory approve <job-id>
 
