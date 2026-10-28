@@ -260,7 +260,7 @@ async function save(
 					<input
 						id="new-project-due"
 						v-model="form.due_date"
-						class="field"
+						class="field new-project-due"
 						type="date"
 						:aria-invalid="errors.due_date ? 'true' : undefined"
 						:aria-describedby="errors.due_date ? 'new-project-due-error' : undefined"
@@ -403,6 +403,12 @@ async function save(
 .new-project-file {
 	min-width: 0;
 	padding: 9px 14px;
+}
+
+/* The date picker button inside the field takes focus without matching :focus-visible. */
+.new-project-due:focus-within {
+	outline: var(--focus-ring-width) solid var(--focus-ring-color);
+	outline-offset: 2px;
 }
 
 .new-project-note {
