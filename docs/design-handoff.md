@@ -102,6 +102,27 @@ language pair, a stage chip, document type, people, due date and a "Follow up" c
 Lists show 25 at a time with a **Show more** button; there are no numbered pages. The Overview board
 stays as the at-a-glance view; this page is for the full list.
 
+Phase 1 as built (`/projects`): all of the owner's projects load in one query, and filtering, search,
+sorting and paging happen in the browser. Filters: Archived is every project with `archived_at` set,
+whatever its stage; Delivered is a non-archived project whose stage chip reads "Delivered" (every
+stage done, as on Project detail); Active is every other non-archived project; All is every project.
+Each pill shows its total ("Active 6"), which does not change with the search. Search narrows the
+chosen filter to projects whose title or client name contains the trimmed text, case-insensitively.
+Rows sort by due date, soonest first, then by title, and each row is one link to Project detail. The
+stage chip uses the same rule as Project detail. People shows the project's allocations, proposals
+included, translators before reviewers then by start date: at most two initials avatars (translator
+in duck, reviewer in lavender, the second overlapping the first), then "+<n>", with every full name
+in visually hidden text; "None" when there are no allocations. The due date uses the "4 Nov 2026"
+format, after a "Follow up" chip when the project is not archived and has a follow-up waiting (state
+ready or opened), the same rule as the Clients page's "Follow-up due" chip. 25 rows show at first;
+**Show more** reveals the next 25 and moves focus to the first new row, and disappears once every
+matching row shows; changing the filter or the search starts again at 25. A footer line reads
+"Showing <shown> of <matching>." States: nothing until the first load ends; "Projects could not be
+loaded. Nothing was lost." with Try again; "No projects yet" with New project (no filters or search)
+when there are no projects at all; "Nothing here." when the chosen filter is empty; and "No projects
+match “…”" with "Check the spelling, or clear the search." and Clear search when the search finds
+nothing. There are no archive controls, sorting controls or extra columns yet.
+
 ### Project detail (`Project`, `ProjectP1`)
 
 1. Header: title, chips (stage, language pair, document type, and words and due date; the word count

@@ -81,7 +81,10 @@ and a `sign-out` event that `App.vue` handles). Pages are in `src/views/`; Proje
 - The project stage rules are in `src/lib/projects.ts`: `milestoneLabels`, `projectStage` (the six
   stages, done count and board column from allocations and steps), `columnChipClasses`,
   `documentTypeChipClasses` and `formatDate`. Pages that show a stage, column, progress or project
-  date reuse them rather than re-deriving the rules.
+  date reuse them rather than re-deriving the rules. It also holds the Projects list's filter and
+  search rules (`projectGroup`, `projectFilterLabels`, `searchProjects`); the per-project follow-up
+  check shared by the Clients page and the Projects list is `isProjectFollowUpDue` in
+  `src/lib/clients.ts`.
 - `AppShell.vue` renders a route's `meta.sections` (`{ label, hash }[]`, typed in
   `src/router/index.ts`) as the sidebar "This project" links and, below 900 px, the phone chips
   under the top bar. Routes without `sections` show neither.
