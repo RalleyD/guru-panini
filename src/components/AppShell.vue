@@ -3,6 +3,9 @@ withDefaults(defineProps<{ needsYouCount?: number }>(), {
 	needsYouCount: 0,
 });
 
+// The shell does not talk to Supabase; App.vue handles sign-out.
+const emit = defineEmits<{ "sign-out": [] }>();
+
 interface PrimaryLink {
 	label: string;
 	to: string;
@@ -41,6 +44,8 @@ const primaryLinks: PrimaryLink[] = [
 const settingsIcon = "M4 7h9m4 0h3M4 17h3m4 0h9M15 4v6M9 14v6";
 const supportIcon =
 	"M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01";
+const signOutIcon =
+	"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9";
 </script>
 
 <template>
@@ -113,6 +118,22 @@ const supportIcon =
 							Support
 						</a>
 					</RouterLink>
+					<button type="button" class="shell-nav-link shell-sign-out" @click="emit('sign-out')">
+						<svg
+							width="18"
+							height="18"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.6"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<path :d="signOutIcon" />
+						</svg>
+						Sign out
+					</button>
 				</div>
 			</div>
 		</aside>
@@ -127,21 +148,38 @@ const supportIcon =
 					<span class="shell-brand-name">guru-panini</span>
 				</a>
 			</RouterLink>
-			<RouterLink to="/settings" aria-label="Settings" class="shell-icon-link">
-				<svg
-					width="20"
-					height="20"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.6"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					aria-hidden="true"
-				>
-					<path :d="settingsIcon" />
-				</svg>
-			</RouterLink>
+			<div class="shell-topbar-actions">
+				<RouterLink to="/settings" aria-label="Settings" class="shell-icon-link">
+					<svg
+						width="20"
+						height="20"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.6"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<path :d="settingsIcon" />
+					</svg>
+				</RouterLink>
+				<button type="button" aria-label="Sign out" class="shell-icon-link shell-sign-out" @click="emit('sign-out')">
+					<svg
+						width="20"
+						height="20"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.6"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+					>
+						<path :d="signOutIcon" />
+					</svg>
+				</button>
+			</div>
 		</header>
 
 		<main class="shell-main">
@@ -245,6 +283,18 @@ const supportIcon =
 	font-weight: 500;
 }
 
+/* Resets the button so it looks like the links next to it. */
+.shell-sign-out {
+	border: 0;
+	background: none;
+	cursor: pointer;
+}
+
+.shell-side-foot .shell-sign-out {
+	width: 100%;
+	text-align: left;
+}
+
 .shell-badge {
 	display: inline-flex;
 	align-items: center;
@@ -311,6 +361,12 @@ const supportIcon =
 
 	.shell-topbar-brand .shell-brand-name {
 		font-size: 17px;
+	}
+
+	.shell-topbar-actions {
+		display: flex;
+		align-items: center;
+		gap: 4px;
 	}
 
 	.shell-icon-link {
