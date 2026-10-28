@@ -433,7 +433,9 @@ async function toggle(row: StepRow, event: Event) {
 	list-style: none;
 }
 
+/* Relative, so the hidden state text stays inside the scrolling list and never widens the page. */
 .project-stage {
+	position: relative;
 	display: flex;
 	flex: 1 1 140px;
 	align-items: center;
