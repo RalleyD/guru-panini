@@ -226,6 +226,35 @@ export const documentTypeChipClasses: Record<DocumentType, string> = {
 	other: "chip",
 };
 
+export type ProjectFilter = "active" | "delivered" | "archived" | "all";
+
+export const projectFilterLabels: Record<ProjectFilter, string> = {
+	active: "Active",
+	delivered: "Delivered",
+	archived: "Archived",
+	all: "All",
+};
+
+// Archived whatever the stage; Delivered once every stage is done; Active otherwise.
+export function projectGroup(
+	archivedAt: string | null,
+	column: BoardColumn,
+): Exclude<ProjectFilter, "all"> {
+	if (archivedAt) return "archived";
+	return column === "Delivered" ? "delivered" : "active";
+}
+
+export function searchProjects<
+	T extends { title: string; client: { name: string } },
+>(projects: T[], query: string): T[] {
+	const needle = query.trim().toLowerCase();
+	return projects.filter(
+		(project) =>
+			project.title.toLowerCase().includes(needle) ||
+			project.client.name.toLowerCase().includes(needle),
+	);
+}
+
 // en-US because en-GB abbreviates September as "Sept"; UTC so the date never shifts a day.
 const dateParts = new Intl.DateTimeFormat("en-US", {
 	day: "numeric",
