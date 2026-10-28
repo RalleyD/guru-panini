@@ -3,6 +3,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import AppShell from "../components/AppShell.vue";
 import router from "../router";
 
+const auth = vi.hoisted(() => ({ getSession: vi.fn() }));
+vi.mock("../lib/supabase", () => ({ supabase: { auth } }));
+
 function mountShell(needsYouCount: number) {
 	return mount(AppShell, {
 		props: { needsYouCount },
@@ -16,6 +19,10 @@ describe("AppShell", () => {
 	beforeEach(async () => {
 		// jsdom does not implement scrolling, which the router's scrollBehavior calls.
 		vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+		auth.getSession.mockResolvedValue({
+			data: { session: { access_token: "token" } },
+			error: null,
+		});
 		await router.push("/");
 		await router.isReady();
 	});
@@ -123,5 +130,40 @@ describe("AppShell", () => {
 		expect(
 			wrapper.find('aside a[href="/settings"]').attributes("aria-current"),
 		).toBe("page");
+	});
+
+	it("has a Sign out button in the sidebar foot after Support", () => {
+		const wrapper = mountShell(0);
+		const foot = [...wrapper.find(".shell-side-foot").element.children];
+
+		expect(foot.map((el) => el.textContent?.trim())).toEqual([
+			"Settings",
+			"Support",
+			"Sign out",
+		]);
+		expect(foot[2].tagName).toBe("BUTTON");
+		expect(foot[2].getAttribute("type")).toBe("button");
+	});
+
+	it("has an icon-only Sign out button after Settings in the top bar", () => {
+		const wrapper = mountShell(0);
+		const actions = wrapper.findAll("header .shell-topbar-actions > *");
+
+		expect(actions.map((el) => el.attributes("aria-label"))).toEqual([
+			"Settings",
+			"Sign out",
+		]);
+		expect(actions[1].element.tagName).toBe("BUTTON");
+		expect(actions[1].text()).toBe("");
+	});
+
+	it("emits sign-out from either Sign out button", async () => {
+		const wrapper = mountShell(0);
+
+		await wrapper.find(".shell-side-foot button").trigger("click");
+		expect(wrapper.emitted("sign-out")).toHaveLength(1);
+
+		await wrapper.find('header button[aria-label="Sign out"]').trigger("click");
+		expect(wrapper.emitted("sign-out")).toHaveLength(2);
 	});
 });
