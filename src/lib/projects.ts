@@ -119,3 +119,127 @@ export function sourceFileKind(fileName: string): SourceFileKind | undefined {
 	const extension = match[1] as SourceFileKind["extension"];
 	return { extension, contentType: sourceFileTypes[extension] };
 }
+
+export type Milestone = Enums<"project_milestone">;
+
+export const milestoneLabels: Record<Milestone, string> = {
+	draft: "Draft finished",
+	review: "Review finished",
+	client_feedback: "Client feedback dealt with",
+	delivery: "Delivered",
+};
+
+export const stageNames = [
+	"Intake",
+	"Allocated",
+	"Draft",
+	"Review",
+	"Client feedback",
+	"Delivery",
+] as const;
+
+export type StageName = (typeof stageNames)[number];
+
+export type BoardColumn =
+	| "Intake"
+	| "In translation"
+	| "In review"
+	| "With client"
+	| "Delivered";
+
+type StageAllocation = {
+	role: Enums<"allocation_role">;
+	is_proposed: boolean;
+};
+
+type StageStep = { milestone: Milestone | null; completed_at: string | null };
+
+export type ProjectStage = {
+	stages: { name: StageName; done: boolean; current: boolean }[];
+	doneCount: number;
+	column: BoardColumn;
+};
+
+const stageMilestones: Partial<Record<StageName, Milestone>> = {
+	Draft: "draft",
+	Review: "review",
+	"Client feedback": "client_feedback",
+	Delivery: "delivery",
+};
+
+const stageColumns: Record<StageName, BoardColumn> = {
+	Intake: "Intake",
+	Allocated: "Intake",
+	Draft: "In translation",
+	Review: "In review",
+	"Client feedback": "With client",
+	Delivery: "With client",
+};
+
+// Stage and progress are derived from allocations and ticked steps, never stored.
+export function projectStage(
+	allocations: StageAllocation[],
+	steps: StageStep[],
+): ProjectStage {
+	const allocated = allocations.some(
+		(allocation) => allocation.role === "translator" && !allocation.is_proposed,
+	);
+	const ticked = new Set(
+		steps
+			.filter((step) => step.milestone && step.completed_at)
+			.map((step) => step.milestone),
+	);
+	const done = stageNames.map((name) => {
+		if (name === "Intake") return true;
+		if (name === "Allocated") return allocated;
+		return ticked.has(stageMilestones[name] ?? null);
+	});
+	const currentIndex = done.indexOf(false);
+	return {
+		stages: stageNames.map((name, index) => ({
+			name,
+			done: done[index],
+			current: index === currentIndex,
+		})),
+		doneCount: done.filter(Boolean).length,
+		column:
+			currentIndex === -1
+				? "Delivered"
+				: stageColumns[stageNames[currentIndex]],
+	};
+}
+
+// Full class lists, so a chip is just `:class="columnChipClasses[column]"`.
+export const columnChipClasses: Record<BoardColumn, string> = {
+	Intake: "chip",
+	"In translation": "chip chip-lavender",
+	"In review": "chip chip-duck",
+	"With client": "chip chip-blue",
+	Delivered: "chip",
+};
+
+export const documentTypeChipClasses: Record<DocumentType, string> = {
+	legal: "chip chip-lavender",
+	real_estate: "chip chip-blue",
+	technical: "chip chip-duck",
+	business: "chip",
+	other: "chip",
+};
+
+// en-US because en-GB abbreviates September as "Sept"; UTC so the date never shifts a day.
+const dateParts = new Intl.DateTimeFormat("en-US", {
+	day: "numeric",
+	month: "short",
+	year: "numeric",
+	timeZone: "UTC",
+});
+
+// "2026-11-04" -> "4 Nov 2026".
+export function formatDate(date: string): string {
+	const parts = Object.fromEntries(
+		dateParts
+			.formatToParts(new Date(`${date}T00:00:00Z`))
+			.map((part) => [part.type, part.value]),
+	);
+	return `${parts.day} ${parts.month} ${parts.year}`;
+}
