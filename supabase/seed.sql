@@ -85,6 +85,21 @@ begin
     ('de000000-0000-4000-8000-000000000001', now() - interval '5 days', 'de000000-0000-4000-8000-000000000302', 'v1', 'client', 'Demo Contact Two', 'terminology', 'Placeholder client feedback: use the demo glossary term.', 'applied'),
     ('de000000-0000-4000-8000-000000000001', now() - interval '4 days', 'de000000-0000-4000-8000-000000000304', null, 'client', null, null, 'Placeholder client feedback without a version, person or tag.', 'open');
 
+  -- Project steps. Demo lease agreement: draft done and two free-form steps.
+  -- Demo property listing: draft and review done. Demo price list (archived):
+  -- every milestone done. The other projects have no steps yet.
+
+  insert into public.project_steps (owner_id, created_at, project_id, milestone, title, due_date, completed_at) values
+    ('de000000-0000-4000-8000-000000000001', now() - interval '6 days', 'de000000-0000-4000-8000-000000000301', 'draft', null, null, now() - interval '1 day'),
+    ('de000000-0000-4000-8000-000000000001', now() - interval '5 days', 'de000000-0000-4000-8000-000000000301', null, 'Demo step: confirm a term with the client', current_date + 1, null),
+    ('de000000-0000-4000-8000-000000000001', now() - interval '4 days', 'de000000-0000-4000-8000-000000000301', null, 'Demo step: send the glossary query', null, now() - interval '3 days'),
+    ('de000000-0000-4000-8000-000000000001', now() - interval '5 days', 'de000000-0000-4000-8000-000000000302', 'draft', null, null, now() - interval '4 days'),
+    ('de000000-0000-4000-8000-000000000001', now() - interval '2 days', 'de000000-0000-4000-8000-000000000302', 'review', null, null, now() - interval '1 day'),
+    ('de000000-0000-4000-8000-000000000001', now() - interval '45 days', 'de000000-0000-4000-8000-000000000307', 'draft', null, null, now() - interval '40 days'),
+    ('de000000-0000-4000-8000-000000000001', now() - interval '40 days', 'de000000-0000-4000-8000-000000000307', 'review', null, null, now() - interval '35 days'),
+    ('de000000-0000-4000-8000-000000000001', now() - interval '35 days', 'de000000-0000-4000-8000-000000000307', 'client_feedback', null, null, now() - interval '32 days'),
+    ('de000000-0000-4000-8000-000000000001', now() - interval '32 days', 'de000000-0000-4000-8000-000000000307', 'delivery', null, null, now() - interval '30 days');
+
   -- Follow-ups on active projects: every reason and state.
 
   insert into public.follow_ups (owner_id, created_at, project_id, reason, subject, body, state, opened_at, done_at) values
