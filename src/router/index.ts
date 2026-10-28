@@ -5,10 +5,18 @@ import AddTranslatorView from "../views/AddTranslatorView.vue";
 import ClientsView from "../views/ClientsView.vue";
 import NewProjectView from "../views/NewProjectView.vue";
 import OverviewView from "../views/OverviewView.vue";
+import ProjectDetailView from "../views/ProjectDetailView.vue";
 import ProjectsView from "../views/ProjectsView.vue";
 import SettingsView from "../views/SettingsView.vue";
 import SignInView from "../views/SignInView.vue";
 import TranslatorsView from "../views/TranslatorsView.vue";
+
+declare module "vue-router" {
+	interface RouteMeta {
+		// Links to the page's sections, shown in the shell's "On this page" navs.
+		sections?: { label: string; hash: string }[];
+	}
+}
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +35,18 @@ const router = createRouter({
 			path: "/projects/new",
 			name: "new-project",
 			component: NewProjectView,
+		},
+		{
+			path: "/projects/:id",
+			name: "project",
+			component: ProjectDetailView,
+			meta: {
+				sections: [
+					{ label: "Who is on this", hash: "#team" },
+					{ label: "Details", hash: "#details" },
+					{ label: "Notes", hash: "#notes" },
+				],
+			},
 		},
 		{
 			path: "/clients",
