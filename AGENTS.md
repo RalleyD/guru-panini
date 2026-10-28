@@ -73,6 +73,8 @@ and a `sign-out` event that `App.vue` handles). Pages are in `src/views/`.
   guarded by default, and only `sign-in` is open.
 - Tests that import the router, `App` or a component that uses Supabase mock it with
   `vi.mock("../lib/supabase", ...)`, so no test makes a network call.
+- Forms validate input with Zod (`zod`) before writing to Supabase. Client rules shared by the
+  Clients page and the Add client form are in `src/lib/clients.ts`.
 
 Design tokens (CSS custom properties) are in `src/styles/tokens.css` and base classes (`.card`,
 `.btn`, `.btn-primary`, `.chip` and its variants, `.field`, `.field-label`, `.h1`–`.h3`, `.sr-only`)
