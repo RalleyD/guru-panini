@@ -112,6 +112,15 @@ in `src/styles/base.css`; pages should use them rather than raw colours.
   `foreign key (<x>_id, owner_id) references <parent> (id, owner_id)`, so a row can only reference
   the same owner's rows. `supabase/tests/database/same_owner_foreign_keys.test.sql` checks this.
 - Clients, projects and translators are archived via `archived_at`, not deleted.
+- Projects are created through `public.create_project`, so the project and its translator
+  allocation are saved together in one transaction. The `.docx` word count is read in the browser
+  by `src/lib/docx.ts`.
+- Storage: the private `source-files` bucket and its limits (50 MiB, `.docx` and PDF MIME types) are
+  created in a migration that inserts into `storage.buckets`, not in `config.toml`, so the bucket
+  exists on the hosted project too. Object names start with the owner's id folder
+  (`<owner id>/<uuid>.<ext>`), which the `to authenticated` insert and select policies on
+  `storage.objects` check; there is no update or delete policy and nothing for `anon`. A new bucket
+  follows the same pattern.
 - After every schema change, regenerate the types in `src/types/database.types.ts`:
 
   ```bash

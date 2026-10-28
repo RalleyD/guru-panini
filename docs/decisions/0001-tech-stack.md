@@ -110,6 +110,8 @@ claimed elsewhere). The design does not depend on either figure.
 
 - `.docx` text extraction (for example mammoth) runs server-side. PDF text and layout fidelity is the
   least certain part: **spike it early**.
+- The phase 1 `.docx` word count is read in the browser (`fflate` and `DOMParser`); text extraction
+  for the assistant stays server-side.
 - Excel and CSV export: `exceljs` or `fflate` in the browser, or an Edge Function for zipped CSV.
 
 ## Open questions
