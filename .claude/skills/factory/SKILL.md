@@ -258,10 +258,12 @@ Set `stage: "needs-human"`. The branch and its worktree stay for the human to
 inspect. Tell the user which job is waiting, give the worktree path, and quote
 `decision.md` (or the BLOCKED reason from `build.md`).
 
-## /factory next
+## /factory next [--wave N]
 
-Read `factory/backlog.md` and take the first `- [ ]` item. (`/factory loop` does
-the same claim before every item.) Claim it with one
+Read `factory/backlog.md` and take the first `- [ ]` item. With `--wave N`, only
+look under the `## Wave N` heading, up to the next `## ` heading; items elsewhere
+are never taken, and a missing heading is an error. (`/factory loop` does the
+same claim before every item.) Claim it with one
 Edit that replaces its exact line with `- [x] <item> → claimed`. If the Edit
 fails because the line changed, another session claimed it: re-read the backlog
 and try the next `- [ ]` item. If none is left, say so and stop.
@@ -287,7 +289,7 @@ and nothing else:
    and fix attempts, without pausing.
 4. **Context is reset after every item**, see below.
 
-### /factory loop [--one]
+### /factory loop [--one] [--wave N]
 
 1. **Preflight.** The main checkout must be on `main` and clean apart from
    `factory/backlog.md`. If not, write the stop state (step 5) and say why.
@@ -298,7 +300,8 @@ and nothing else:
    `spec.md` is missing, skip wave tasks whose `task-T.md` says
    `STATUS: READY`, start the review round from the highest `round-N/` that
    lacks a verdict file, and so on. Otherwise go to step 3.
-3. **Claim.** Do `/factory next`'s claim. No `- [ ]` item left: write
+3. **Claim.** Do `/factory next`'s claim, with `--wave N` when given. No `- [ ]`
+   item left (in that wave's section, with `--wave N`): write
    `{"status": "done"}` to `factory/loop/state.json` and stop.
 4. **Run the job** exactly as `/factory <item>` does, in loop mode.
 5. **Record and decide.** Append the entry below to `factory/loop/ledger.md`,
@@ -322,8 +325,8 @@ and nothing else:
    next item in this session.
 
 A skill cannot run `/compact` itself. For a real reset after every item, use
-`factory/loop.sh`, which starts one fresh `claude -p "/factory loop --one"`
-session per item. Without it the loop still works in one session, and the
+`factory/loop.sh [--wave N] [max-items]`, which starts one fresh
+`claude -p "/factory loop --one"` session per item. Without it the loop still works in one session, and the
 harness's automatic compaction is the only reset.
 
 ## /factory approve <job-id>

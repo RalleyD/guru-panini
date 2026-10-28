@@ -181,7 +181,7 @@ any page. Phase 1 has no cover-mode UI.
 `/factory <feature>` runs a spec → build → review → approve loop (see
 `.claude/skills/factory/SKILL.md`). The spec splits a feature into waves that run in order, each
 serial or parallel inside. `/factory loop` (or `factory/loop.sh`, one fresh session per item) runs the
-whole backlog with no human in the loop: the approver auto-approves escalations that add no
+whole backlog, or one `## Wave N` group with `--wave N`, with no human in the loop: the approver auto-approves escalations that add no
 unnecessary complexity, follow recommended practice and are worth their cost, and the loop stops on
 any real failure. Job folders in `factory/jobs/` and `factory/loop/` are runtime state and
 gitignored. Backlog: `factory/backlog.md`. Dashboard:
