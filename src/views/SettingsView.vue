@@ -3,7 +3,7 @@ import { computed, nextTick, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import {
 	composeUrl,
-	opensInNewTab,
+	newTabAttrs,
 	reportProblemSubject,
 	supportAddress,
 	supportSubject,
@@ -219,12 +219,6 @@ function invalidAttrs(field: ErrorField) {
 		: {};
 }
 
-function linkAttrs(provider: EmailProvider) {
-	return opensInNewTab(provider)
-		? { target: "_blank", rel: "noopener noreferrer" }
-		: {};
-}
-
 const testEmail = computed(() => {
 	const agency = form.value.agency_name.trim();
 	return composeUrl(form.value.email_provider, {
@@ -362,7 +356,7 @@ const supportLinks = computed(() =>
 				></textarea>
 			</div>
 			<div class="settings-test">
-				<a class="btn" :href="testEmail" v-bind="linkAttrs(form.email_provider)">Open a test email</a>
+				<a class="btn" :href="testEmail" v-bind="newTabAttrs(form.email_provider)">Open a test email</a>
 				<span class="settings-small">
 					Files can't be attached this way, and very long emails may be cut short. “Copy text” is
 					always there as a fallback.
@@ -452,7 +446,7 @@ const supportLinks = computed(() =>
 					class="btn"
 					:class="{ 'btn-primary': link.primary }"
 					:href="link.href"
-					v-bind="linkAttrs(saved.email_provider)"
+					v-bind="newTabAttrs(saved.email_provider)"
 					>{{ link.label }}</a
 				>
 			</div>

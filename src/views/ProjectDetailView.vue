@@ -4,7 +4,7 @@ import { computed, nextTick, ref } from "vue";
 import { useRoute } from "vue-router";
 import { z } from "zod";
 import { longPairLabel, shortPairLabel } from "../lib/clients";
-import { composeUrl, opensInNewTab } from "../lib/email";
+import { composeUrl, newTabAttrs } from "../lib/email";
 import {
 	columnChipClasses,
 	documentTypeChipClasses,
@@ -106,10 +106,7 @@ const messageClient = computed(() => {
 					body: sign_off,
 				})
 			: "",
-		...(opensInNewTab(email_provider) && {
-			target: "_blank",
-			rel: "noopener noreferrer",
-		}),
+		...newTabAttrs(email_provider),
 	};
 });
 

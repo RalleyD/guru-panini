@@ -86,7 +86,8 @@ page updates that ref after a save. Pages are in `src/views/`; Project detail is
   row, to the values every page uses) are in `src/lib/settings.ts`.
 - Every email link the app renders is built with `src/lib/email.ts` (`composeUrl`, `withSignOff`,
   `opensInNewTab`), using the saved provider (`default_app`, `gmail`, `outlook`) and the resolved
-  sign-off; Gmail and Outlook links get `target="_blank"` and `rel="noopener noreferrer"`. The
+  sign-off; Gmail and Outlook links get `target="_blank"` and `rel="noopener noreferrer"` through
+  `newTabAttrs`. The
   support address and subjects are constants there too. Never hand-build a `mailto:` link.
 - The project stage rules are in `src/lib/projects.ts`: `milestoneLabels`, `projectStage` (the six
   stages, done count and board column from allocations and steps), `columnChipClasses`,

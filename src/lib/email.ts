@@ -49,3 +49,10 @@ export function withSignOff(body: string, signOff: string): string {
 export function opensInNewTab(provider: EmailProvider): boolean {
 	return provider !== "default_app";
 }
+
+// The attributes an email link needs for the provider: a new tab for Gmail and Outlook.
+export function newTabAttrs(provider: EmailProvider) {
+	return opensInNewTab(provider)
+		? { target: "_blank", rel: "noopener noreferrer" }
+		: {};
+}

@@ -19,12 +19,6 @@ export const defaultReminderTexts: Record<FollowUpReason, string> = {
 		"Dear [contact name],\n\nA question came up in [project] on [date]. Could you let us know your preference when you have a moment?",
 };
 
-export const reminderColumns = {
-	draft_waiting: "reminder_draft_waiting",
-	quote_not_accepted: "reminder_quote_not_accepted",
-	question_waiting: "reminder_question_waiting",
-} as const satisfies Record<FollowUpReason, keyof SettingsRow>;
-
 export function defaultSignOff(
 	ownerName: string | null | undefined,
 	agencyName: string | null | undefined,
