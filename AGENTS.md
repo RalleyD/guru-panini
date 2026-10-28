@@ -55,7 +55,9 @@ Vite fail if the port is taken instead of silently moving to another port.
 
 - `.env.development` holds `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` for the local
   stack. They are the local CLI defaults and safe to commit; never put hosted values or a secret or
-  service-role key in it. Only the dev server reads it, not `vite build`.
+  service-role key in it. Only the dev server reads it, not `vite build`. `.env.local`,
+  `.env.*.local` and `.env.production*` are gitignored, so a real key can never be committed from
+  one of them.
 - Every route except `/sign-in` needs a session, so a signed-out visit goes to `/sign-in`. Sign in
   with the demo owner (`demo-owner@example.com` / `local-demo-only`, see "Demo data").
 
@@ -66,8 +68,7 @@ desktop, top bar and bottom tab bar below 900 px, the `needsYouCount` prop for t
 and a `sign-out` event that `App.vue` handles). Pages are in `src/views/`.
 
 - The Supabase client is in `src/lib/supabase.ts`; import it from there rather than creating
-  another. `src/lib/` matches the Python `lib/` rule in `.gitignore`, so a new file there needs
-  `git add -f`, and `pnpm exec biome check .` skips the folder.
+  another.
 - The global `router.beforeEach` guard in `src/router/index.ts` fails closed: new routes are
   guarded by default, and only `sign-in` is open.
 - Tests that import the router, `App` or a component that uses Supabase mock it with
