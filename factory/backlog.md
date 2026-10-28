@@ -17,7 +17,7 @@ How to read this file:
 - Wave 4 jobs all edit Project detail. Run them one at a time or expect small merge conflicts.
 - `/factory next` ignores wave headings, so do not start a wave early.
 - `/factory loop` takes the items one at a time in file order and stops at the first failure, so the
-  order here is the order they build. The "waves" in `/factory` specs are different: they split one
+  order here is the order they build. `--wave N` limits it to the items under the `## Wave N` heading. The "waves" in `/factory` specs are different: they split one
   item's build into steps, and are not these headings.
 
 ## Wave 0: foundations (serial, merge each before starting the next)
