@@ -42,7 +42,9 @@ uv sync          # creates .venv and installs deps (once pyproject.toml exists)
 
 ## Dev server
 
-From the repo root, after `pnpm install --frozen-lockfile`:
+From the repo root, after `pnpm install --frozen-lockfile`. The app needs the local Supabase stack
+running (`pnpm exec supabase start`), reset with `pnpm exec supabase db reset` so the demo owner
+exists:
 
 ```bash
 pnpm exec vite --port <port> --strictPort
@@ -51,10 +53,25 @@ pnpm exec vite --port <port> --strictPort
 Then open `http://localhost:<port>/`; the home page (Overview) is at `/`. `--strictPort` makes
 Vite fail if the port is taken instead of silently moving to another port.
 
+- `.env.development` holds `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` for the local
+  stack. They are the local CLI defaults and safe to commit; never put hosted values or a secret or
+  service-role key in it. Only the dev server reads it, not `vite build`.
+- Every route except `/sign-in` needs a session, so a signed-out visit goes to `/sign-in`. Sign in
+  with the demo owner (`demo-owner@example.com` / `local-demo-only`, see "Demo data").
+
 The app lives at the repo root: `index.html` loads `src/main.ts`, which mounts `src/App.vue` with
-the router from `src/router/index.ts`. `src/App.vue` wraps every page in
-`src/components/AppShell.vue` (sidebar on desktop, top bar and bottom tab bar below 900 px, and the
-`needsYouCount` prop for the Overview badge). Pages are in `src/views/`.
+the router from `src/router/index.ts` once the first route guard has run. `src/App.vue` renders
+`/sign-in` on its own and wraps every other page in `src/components/AppShell.vue` (sidebar on
+desktop, top bar and bottom tab bar below 900 px, the `needsYouCount` prop for the Overview badge,
+and a `sign-out` event that `App.vue` handles). Pages are in `src/views/`.
+
+- The Supabase client is in `src/lib/supabase.ts`; import it from there rather than creating
+  another. `src/lib/` matches the Python `lib/` rule in `.gitignore`, so a new file there needs
+  `git add -f`, and `pnpm exec biome check .` skips the folder.
+- The global `router.beforeEach` guard in `src/router/index.ts` fails closed: new routes are
+  guarded by default, and only `sign-in` is open.
+- Tests that import the router, `App` or a component that uses Supabase mock it with
+  `vi.mock("../lib/supabase", ...)`, so no test makes a network call.
 
 Design tokens (CSS custom properties) are in `src/styles/tokens.css` and base classes (`.card`,
 `.btn`, `.btn-primary`, `.chip` and its variants, `.field`, `.field-label`, `.h1`–`.h3`, `.sr-only`)
@@ -112,6 +129,19 @@ in `src/styles/base.css`; pages should use them rather than raw colours.
     (`docs/design-handoff.md` "Sample data"), and only insert (no schema objects, grants or
     settings). Page jobs that need more demo rows add them here.
   - pgTAP tests must not depend on seed rows; they insert their own users and rows.
+
+## Auth
+
+One owner signs in with email and password; there is no sign-up.
+
+- Local config (`supabase/config.toml`): public sign-ups are off through
+  `[auth] enable_signup = false`. `[auth.email] enable_signup` must stay `true`: in this CLI it
+  turns the whole email provider on or off, so `false` turns off email sign-in too.
+- Config changes take effect only after `pnpm exec supabase stop` then `pnpm exec supabase start`.
+- Hosted project (by hand, in the Supabase dashboard): turn off "Allow new users to sign up" and keep
+  the Email provider on. The owner account is created by hand there.
+- Deploy: the build must set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` as build
+  environment variables on the host. `.env.development` is not used by `vite build`.
 
 ## Validation
 
