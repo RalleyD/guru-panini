@@ -35,18 +35,18 @@ How to read this file:
 
 ## Wave 1: people (parallel)
 
-- [ ] Clients page: client list with search, one status chip (Follow-up due, otherwise none), the selected-client panel (contact, how they like it written, history), and the Add client form (required: name, contact name, contact email; optional: usual language pair, usual work type, notes). Match docs/design/screens/ClientsP1 and AddClient.
-- [ ] Translators page: people cards with languages, specialisms, availability and load, and the Add translator form (required: name, email; optional: language pairs, specialisms, availability). Match ResourcesP1 and AddTranslator. No allocation timeline yet.
+- [x] Clients page: client list with search, one status chip (Follow-up due, otherwise none), the selected-client panel (contact, how they like it written, history), and the Add client form (required: name, contact name, contact email; optional: usual language pair, usual work type, notes). Match docs/design/screens/ClientsP1 and AddClient. → 011-clients-page
+- [x] Translators page: people cards with languages, specialisms, availability and load, and the Add translator form (required: name, email; optional: language pairs, specialisms, availability). Match ResourcesP1 and AddTranslator. No allocation timeline yet. → 012-translators-page
 
 ## Wave 2: the project record (serial)
 
-- [ ] New project form and project record: required client, title, document type, due date and language pair (default from the client's usual pair, with the hint text); optional source file uploaded to a private bucket with the word count read from .docx (PDF word count can wait), and optional translator. Match NewProject.
+- [x] New project form and project record: required client, title, document type, due date and language pair (default from the client's usual pair, with the hint text); optional source file uploaded to a private bucket with the word count read from .docx (PDF word count can wait), and optional translator. Match NewProject. → 013-new-project-form
 
 ## Wave 3: project views and settings (parallel)
 
-- [ ] Project detail page, phase 1: header with chips, the "Now" card (stage tracker derived from completed steps, next steps with the milestone steps, needs attention), Who is on this, Details and Notes, and the sidebar section links and phone chips. Follow the "Rules the screens rely on" table in docs/design-handoff.md for stage and progress; neither the tracker nor the board is editable. Match ProjectP1 without the feedback log.
-- [ ] Projects list page: list sorted by due date with the Active, Delivered, Archived and All filters, search, stage chips derived from steps, and a Show more button after 25 rows. The sidebar's Projects link opens it. Match ProjectsP1.
-- [ ] Settings, phase 1: agency name (shown as the brand text in the sidebar and phone top bar in place of the temporary "guru-panini" in AppShell.vue; add the settings column if missing), profile name and photo, email provider choice (default app, Gmail, Outlook) and sign-off used by every email, Open a test email, the Follow-ups section (days setting with default 5 and three editable reminder texts), and Support links. Match SettingsP1. Export is a later item.
+- [x] Project detail page, phase 1: header with chips, the "Now" card (stage tracker derived from completed steps, next steps with the milestone steps, needs attention), Who is on this, Details and Notes, and the sidebar section links and phone chips. Follow the "Rules the screens rely on" table in docs/design-handoff.md for stage and progress; neither the tracker nor the board is editable. Match ProjectP1 without the feedback log. → 014-project-detail-page
+- [x] Projects list page: list sorted by due date with the Active, Delivered, Archived and All filters, search, stage chips derived from steps, and a Show more button after 25 rows. The sidebar's Projects link opens it. Match ProjectsP1. → 015-projects-list-page
+- [x] Settings, phase 1: agency name (shown as the brand text in the sidebar and phone top bar in place of the temporary "guru-panini" in AppShell.vue; add the settings column if missing), profile name and photo, email provider choice (default app, Gmail, Outlook) and sign-off used by every email, Open a test email, the Follow-ups section (days setting with default 5 and three editable reminder texts), and Support links. Match SettingsP1. Export is a later item. → 016-settings-phase-1
 
 ## Wave 4: things that edit Project detail (one at a time)
 
