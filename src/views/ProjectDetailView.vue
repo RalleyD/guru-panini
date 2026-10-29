@@ -13,6 +13,7 @@ import {
 	type Milestone,
 	milestoneLabels,
 	projectStage,
+	sortTeam,
 } from "../lib/projects";
 import { resolveSettings } from "../lib/settings";
 import { supabase } from "../lib/supabase";
@@ -149,13 +150,7 @@ const openFeedback = computed(
 			.length ?? 0,
 );
 
-const team = computed(() =>
-	[...(project.value?.allocations ?? [])].sort(
-		(a, b) =>
-			Number(a.role === "reviewer") - Number(b.role === "reviewer") ||
-			a.start_date.localeCompare(b.start_date),
-	),
-);
+const team = computed(() => sortTeam(project.value?.allocations ?? []));
 
 function roleLine(allocation: Project["allocations"][number]): string {
 	const role = allocation.role === "reviewer" ? "Reviewer" : "Translator";

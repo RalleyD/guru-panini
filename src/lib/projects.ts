@@ -255,6 +255,17 @@ export function searchProjects<
 	);
 }
 
+// Translators before reviewers, then by start date. Returns a sorted copy.
+export function sortTeam<T extends { role: string; start_date: string }>(
+	allocations: T[],
+): T[] {
+	return [...allocations].sort(
+		(a, b) =>
+			Number(a.role === "reviewer") - Number(b.role === "reviewer") ||
+			a.start_date.localeCompare(b.start_date),
+	);
+}
+
 // en-US because en-GB abbreviates September as "Sept"; UTC so the date never shifts a day.
 const dateParts = new Intl.DateTimeFormat("en-US", {
 	day: "numeric",

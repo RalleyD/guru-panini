@@ -12,6 +12,7 @@ import {
 	projectGroup,
 	projectStage,
 	searchProjects,
+	sortTeam,
 } from "../lib/projects";
 import { supabase } from "../lib/supabase";
 import { initials } from "../lib/translators";
@@ -62,12 +63,7 @@ const rows = computed(() =>
 				...project,
 				column,
 				group: projectGroup(project.archived_at, column),
-				// Translators before reviewers, then by start date, as on Project detail.
-				team: [...project.allocations].sort(
-					(a, b) =>
-						Number(a.role === "reviewer") - Number(b.role === "reviewer") ||
-						a.start_date.localeCompare(b.start_date),
-				),
+				team: sortTeam(project.allocations),
 				followUp: isProjectFollowUpDue(project),
 			};
 		})

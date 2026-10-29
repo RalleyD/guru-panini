@@ -15,6 +15,7 @@ import {
 	projectGroup,
 	projectStage,
 	searchProjects,
+	sortTeam,
 	sourceFileKind,
 	usualPair,
 	wordCountLine,
@@ -430,5 +431,26 @@ describe("searchProjects", () => {
 
 	it("matches nothing for an unknown query", () => {
 		expect(searchProjects(projects, "zzz")).toEqual([]);
+	});
+});
+
+describe("sortTeam", () => {
+	const team = [
+		{ id: 1, role: "reviewer", start_date: "2026-10-01" },
+		{ id: 2, role: "translator", start_date: "2026-10-05" },
+		{ id: 3, role: "translator", start_date: "2026-10-02" },
+	];
+
+	it("puts translators before reviewers, then orders by start date", () => {
+		expect(sortTeam(team).map((a) => a.id)).toEqual([3, 2, 1]);
+	});
+
+	it("returns a copy and leaves the input order alone", () => {
+		sortTeam(team);
+		expect(team.map((a) => a.id)).toEqual([1, 2, 3]);
+	});
+
+	it("returns an empty list for no allocations", () => {
+		expect(sortTeam([])).toEqual([]);
 	});
 });
