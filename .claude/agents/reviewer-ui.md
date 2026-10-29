@@ -37,8 +37,25 @@ AGENTS.md in the worktree, in the background, on your port.
 Then use the `agent-browser` CLI (run `agent-browser skills get core` first) to
 screenshot the page at desktop and phone widths. Pass `--session <job-id>-ui` on
 every `agent-browser` call, so other jobs' reviewers never drive your browser.
-Don't sign in or submit forms. When you're done, run
-`agent-browser --session <job-id>-ui close` and stop the dev server.
+
+Every route except `/sign-in` needs a session, so you may sign in, but only to
+the local stack:
+
+1. In the worktree, check that `VITE_SUPABASE_URL` in `.env.development` is
+   `http://127.0.0.1:54321` or a `localhost` address, and that no `.env.local`
+   or other `.env.*.local` file overrides it. If it is anything else, don't
+   sign in: stay signed out and review the rest from the code.
+2. Sign in as the demo owner from AGENTS.md ("Demo data"). These are local-only
+   seed credentials. Never use hosted credentials.
+3. Screenshot every page the change touches. Read only: don't submit forms,
+   tick steps, upload files or save settings. The local database is shared by
+   every job running in parallel.
+
+The orchestrator resets the local database before each review round, so the
+demo data is in its seed state.
+
+When you're done, run `agent-browser --session <job-id>-ui close` and stop the
+dev server.
 
 ## What to look for
 

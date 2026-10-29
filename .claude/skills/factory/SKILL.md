@@ -201,6 +201,9 @@ Read the first line of `build.md`.
 
 1. Set `stage: "review"`, `round: N` and all four reviews to `pending`. Create
    `factory/jobs/<job-id>/round-<N>/`.
+   If AGENTS.md describes a local Supabase stack and it is running, reset it
+   with `pnpm exec supabase db reset` from the main checkout, so the
+   `reviewer-ux` and `reviewer-ui` sign-in sees the seed data.
 2. Spawn all four reviewers **in one message**, so they run in parallel. Each
    gets the prompt `<paths> Review round N.`, plus its port for `reviewer-ux`
    and `reviewer-ui`.
